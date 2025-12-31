@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F6F6F4;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* The browser will look for --font-gilroy first, then fall back to --font-noto */
+  --font-sans: var(--font-gilroy), var(--font-noto);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171717;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
