@@ -2,9 +2,17 @@
 import { Bell, MapPin, Phone, ShieldAlert, FileText, CloudSun } from "lucide-react";
 import Image from "next/image";
 
-export function FeedRightSidebar() {
+interface FeedRightSidebarProps {
+    width: number;
+    compact: boolean;
+}
+
+export function FeedRightSidebar({ width, compact }: FeedRightSidebarProps) {
     return (
-        <aside className="w-80 min-w-[280px] flex-shrink-0 flex flex-col p-4 gap-6">
+        <aside
+            className="flex-shrink-0 flex flex-col p-4 gap-6 transition-all duration-300"
+            style={{ width: `${width}px` }}
+        >
 
             {/* Weather Widget - Kept as it's useful locals */}
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform">
@@ -85,27 +93,29 @@ export function FeedRightSidebar() {
                     </div>
                 </div>
 
-                {/* Local Services / Helper Recommendation */}
-                <div>
-                    <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-green-600" />
-                        Top Local Helpers
-                    </h2>
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
-                            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-gray-100">
-                                <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" alt="Helper" fill className="object-cover" />
+                {/* Local Services / Helper Recommendation - Hidden in compact mode */}
+                {!compact && (
+                    <div>
+                        <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-green-600" />
+                            Top Local Helpers
+                        </h2>
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
+                                <div className="relative w-10 h-10 rounded-full overflow-hidden border border-gray-100">
+                                    <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" alt="Helper" fill className="object-cover" />
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="text-sm font-semibold text-gray-900">Sita Didi</h4>
+                                    <p className="text-xs text-gray-500">House Cleaning • 4.9 ★</p>
+                                </div>
+                                <button className="text-xs border border-gray-200 px-3 py-1.5 rounded-full font-medium hover:bg-black hover:text-white transition-colors">
+                                    Call
+                                </button>
                             </div>
-                            <div className="flex-1">
-                                <h4 className="text-sm font-semibold text-gray-900">Sita Didi</h4>
-                                <p className="text-xs text-gray-500">House Cleaning • 4.9 ★</p>
-                            </div>
-                            <button className="text-xs border border-gray-200 px-3 py-1.5 rounded-full font-medium hover:bg-black hover:text-white transition-colors">
-                                Call
-                            </button>
                         </div>
                     </div>
-                </div>
+                )}
 
             </div>
         </aside>

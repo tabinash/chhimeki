@@ -40,7 +40,6 @@ export default function MainLayout({
                     </div>
 
                 </div>
-                {/* in a systematic and semantic and logical hirrrerachy show the useresponse hook parameters in this left over space */}
 
 
 

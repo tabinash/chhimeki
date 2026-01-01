@@ -97,7 +97,7 @@ const posts = [
 
 export default function FeedPage() {
     return (
-        <div className="w-full max-w-[700px] mx-auto py-8 px-4 space-y-6">
+        <div className="w-full py-8 px-4 space-y-6">
 
             {/* Vital Alerts Showcase (Stories Style) */}
             <div>

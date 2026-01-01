@@ -68,7 +68,7 @@ export function useResponsive(): UseResponsiveReturn {
     // Calculate intelligent layout dimensions
     const calculateLayout = (screenWidth: number, forceCollapsedSidebar: boolean): LayoutDimensions => {
         const SIDEBAR_MIN = 72;
-        const SIDEBAR_MAX = 256;
+        const SIDEBAR_MAX = 216;
         const MAIN_MIN = 400;
         const MAIN_MAX = 700;
         const RIGHT_COMPACT = 240;

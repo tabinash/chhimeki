@@ -1,8 +1,9 @@
 "use client";
-import { FeedRightSidebar } from "./FeedRightSidebar";
-import { useFeedLayout } from "@/hooks/useFeedLayout";
 
-export default function FeedLayout({
+import { useFeedLayout } from "@/hooks/useFeedLayout";
+import { FeedRightSidebar } from "@/app/(main)/(feed)/FeedRightSidebar";
+
+export default function NotificationsLayout({
     children,
 }: {
     children: React.ReactNode;

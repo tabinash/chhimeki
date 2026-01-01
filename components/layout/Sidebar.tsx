@@ -23,7 +23,6 @@ export function Sidebar() {
         { icon: LayoutGrid, href: "/", label: "Feed" },
         { icon: Users, href: "/groups", label: "Groups" },
         { icon: Compass, href: "/explore", label: "Explore" },
-        { icon: Calendar, href: "/events", label: "Events" },
         { icon: GraduationCap, href: "/jobs", label: "Jobs" },
         { icon: ShoppingCart, href: "/marketplace", label: "Marketplace" },
         { icon: Settings, href: "/settings", label: "Settings" },
@@ -67,19 +66,25 @@ export function Sidebar() {
             </nav>
 
             {/* Bottom Section */}
-            <div className={cn("flex flex-col gap-4 mt-2", showLabels ? "px-4" : "px-2")}>
+            <div className={cn("flex flex-col gap-4 mt-auto pb-6", showLabels ? "px-4" : "px-3")}>
                 {/* Notifications */}
-                <button className={cn(
-                    "flex items-center gap-3 rounded-xl bg-white shadow-sm text-gray-400 hover:text-gray-600 transition-all",
-                    showLabels ? "px-4 py-3" : "px-3 py-3 justify-center"
-                )}>
-                    <Bell className="h-5 w-5 flex-shrink-0" strokeWidth={2} />
+                <Link
+                    href="/notifications"
+                    className={cn(
+                        "flex items-center gap-3 rounded-xl transition-all duration-200 group border border-transparent hover:border-gray-200 hover:bg-gray-50",
+                        showLabels ? "px-4 py-3" : "p-3 justify-center",
+                        pathname === "/notifications" && "bg-blue-50 border-blue-100 text-blue-700"
+                    )}>
+                    <div className="relative">
+                        <Bell className={cn("h-5 w-5 transition-colors", pathname === "/notifications" ? "text-blue-600" : "text-gray-500 group-hover:text-gray-700")} strokeWidth={2} />
+                        <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white" />
+                    </div>
                     {showLabels && (
-                        <span className="text-base font-medium text-gray-700 whitespace-nowrap">
+                        <span className={cn("text-sm font-semibold whitespace-nowrap", pathname === "/notifications" ? "text-blue-700" : "text-gray-600 group-hover:text-gray-900")}>
                             Notifications
                         </span>
                     )}
-                </button>
+                </Link>
             </div>
         </aside>
     );
