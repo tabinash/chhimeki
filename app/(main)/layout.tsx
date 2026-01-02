@@ -1,7 +1,6 @@
 "use client";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
-import { useResponsive } from "@/hooks/useResponsive";
 
 
 export default function MainLayout({
@@ -9,13 +8,7 @@ export default function MainLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { screenSize,
-        isMobile,
-        isTablet,
-        isDesktop,
-        isLargeDesktop,
-        width,
-        layout } = useResponsive();
+
     return (
         <div className="min-h-screen flex flex-col">
             {/* Header - Fixed at top */}
@@ -34,10 +27,7 @@ export default function MainLayout({
                     <div className="flex-1 flex min-w-0 h-full">
                         {children}
                     </div>
-                    {/* in a systematic and semantic and logical hirrrerachy show the useresponse hook parameters in this left over space */}
-                    <div>
 
-                    </div>
 
                 </div>
 

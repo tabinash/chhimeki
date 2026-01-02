@@ -1,19 +1,20 @@
 "use client";
 import { Plus, Briefcase, UserCheck, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 
 export function JobsRightSidebar() {
     return (
-        <aside className="w-80 dashed min-w-[280px] flex-shrink-0 flex flex-col p-4 gap-6">
+        <aside className="w-50 min-w-[280px] dashed flex-shrink-0 flex flex-col p-4 gap-6">
 
             {/* Hiring Widget -- Main Action for Locals */}
             <div className="bg-blue-600 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden group">
                 <div className="relative z-10">
                     <h3 className="text-lg font-bold mb-1">Hiring?</h3>
                     <p className=" text-xs mb-4 max-w-[200px]">Find a helper, tutor, or staff from your own neighborhood.</p>
-                    <button className="w-full py-3 bg-white text-black font-bold rounded-xl text-sm hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
+                    <Link href="/jobs?action=post-job" className="w-full py-3 bg-white text-black font-bold rounded-xl text-sm hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
                         <Plus className="w-4 h-4" />
                         Post a Job Free
-                    </button>
+                    </Link>
                 </div>
                 <div className="absolute top-4 right-4 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Briefcase className="w-6 h-6 text-white" />

@@ -1,157 +1,170 @@
 "use client";
-import { Search, MapPin, Grid, List, X, Heart, MessageCircle, Share2, ShieldCheck, Tag } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
 
-const items = [
-    {
-        id: 1,
-        title: "Modern Sofa Set - Like New",
-        price: "$450",
-        location: "Downtown",
-        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
-        time: "2h ago",
-        seller: "Sarah J.",
-        sellerImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-        isVerified: true,
-        condition: "Like New",
-        description: "Moving out sale! This sofa was bought 6 months ago from IKEA. No stains, pet-free home. Includes the cushions shown in the picture. Must pick up by this weekend.",
-        category: "Furniture"
-    },
-    {
-        id: 2,
-        title: "MacBook Pro M1 2021",
-        price: "$1,200",
-        location: "North Hills",
-        image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?w=400&h=300&fit=crop",
-        time: "5h ago",
-        seller: "Mike C.",
-        sellerImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-        isVerified: false,
-        condition: "Good",
-        description: "14-inch MacBook Pro, M1 Pro chip, 16GB RAM, 512GB SSD. Minor scratches on the bottom case, but screen and keyboard are perfect. Battery health 92%.",
-        category: "Electronics"
-    },
-    {
-        id: 3,
-        title: "Vintage Camera Collection",
-        price: "$350",
-        location: "Westside",
-        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop",
-        time: "1d ago",
-        seller: "Alex R.",
-        sellerImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-        isVerified: true,
-        condition: "Vintage",
-        description: "Selling my grandfather's collection of film cameras. Includes a Canon AE-1 and a Nikon F3. Haven't tested them recently but they have been stored carefully.",
-        category: "Collectibles"
-    },
-    {
-        id: 4,
-        title: "Oak Dining Table",
-        price: "$200",
-        location: "Downtown",
-        image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=400&h=300&fit=crop",
-        time: "3d ago",
-        seller: "Emily W.",
-        sellerImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-        isVerified: true,
-        condition: "Used",
-        description: "Solid oak dining table, seats 6. A bit of wear on the surface but can be refinished. Great sturdy table for a family.",
-        category: "Furniture"
-    },
-    {
-        id: 5,
-        title: "Mountain Bike",
-        price: "$550",
-        location: "Greenwood",
-        image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=300&fit=crop",
-        time: "4h ago",
-        seller: "John D.",
-        sellerImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-        isVerified: false,
-        condition: "Good",
-        description: "Trek Marlin 5. Ridden for one season. Tuned up recently. Comes with a lock and helmet if needed.",
-        category: "Sports"
-    },
-    {
-        id: 6,
-        title: "Pottery Set (Handmade)",
-        price: "$85",
-        location: "Arts District",
-        image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&h=300&fit=crop",
-        time: "1h ago",
-        seller: "Lisa M.",
-        sellerImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
-        isVerified: true,
-        condition: "New",
-        description: "Set of 4 handmade ceramic bowls and plates. Microwave and dishwasher safe. Made by me in my local studio!",
-        category: "Home & Garden"
-    }
-];
+import { Search, MapPin, Grid, List, X, Heart, MessageCircle, Share2, ShieldCheck, Tag, ShoppingBag, Filter } from "lucide-react";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import ProductPostModal from "@/components/marketplace/ProductPostModal";
+import { marketplaceItems } from "@/data/mockMarketplaceData";
 
 export default function MarketplacePage() {
-    const [selectedItem, setSelectedItem] = useState<typeof items[0] | null>(null);
+    const [selectedItem, setSelectedItem] = useState<typeof marketplaceItems[0] | null>(null);
+    const [viewMode, setViewMode] = useState<'browse' | 'selling'>('browse');
+
+    const searchParams = useSearchParams();
+    const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState<typeof marketplaceItems[0] | null>(null);
+
+    // Auto-open modal if URL has ?action=sell-item
+    useEffect(() => {
+        if (searchParams.get('action') === 'sell-item') {
+            setIsPostModalOpen(true);
+            setEditingItem(null);
+        }
+    }, [searchParams]);
+
+    const handlePostClick = () => {
+        setEditingItem(null);
+        setIsPostModalOpen(true);
+    };
+
+    const handleEditClick = (item: typeof marketplaceItems[0]) => {
+        setEditingItem(item);
+        setIsPostModalOpen(true);
+        setSelectedItem(null); // Close the detail view
+    };
+
+    const handleFormSubmit = (data: any) => {
+        console.log("Listing Submitted:", data);
+        setIsPostModalOpen(false);
+        setEditingItem(null);
+        window.history.replaceState(null, '', '/marketplace');
+    };
+
+    const handleModalClose = () => {
+        setIsPostModalOpen(false);
+        window.history.replaceState(null, '', '/marketplace');
+    };
+
+    const filteredItems = viewMode === 'selling'
+        ? marketplaceItems.filter(item => item.isOwner)
+        : marketplaceItems;
 
     return (
         <div className="min-h-screen p-8 relative">
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                {/* Header Row: Title, Tabs, Action */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-gray-100 pb-6 md:pb-0 md:border-0">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Marketplace</h1>
                         <p className="text-gray-500 text-sm mt-1">Buy and sell with your neighbors</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search listings..."
-                                className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 shadow-sm"
-                            />
-                        </div>
-                        <div className="flex bg-gray-100 p-1 rounded-lg">
-                            <button className="p-2 bg-white rounded-md shadow-sm"><Grid className="h-4 w-4 text-gray-700" /></button>
-                            <button className="p-2 hover:bg-gray-200 rounded-md transition-colors"><List className="h-4 w-4 text-gray-500" /></button>
-                        </div>
+
+                    <div className="flex items-center gap-4 bg-gray-100/80 p-1.5 rounded-xl self-start md:self-auto">
+                        <button
+                            onClick={() => setViewMode('browse')}
+                            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'browse' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            Browse Market
+                        </button>
+                        <button
+                            onClick={() => setViewMode('selling')}
+                            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'selling' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            My Listings
+                        </button>
                     </div>
+
+                    <button
+                        onClick={handlePostClick}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200 self-start md:self-auto"
+                    >
+                        <Tag className="w-4 h-4" />
+                        <span className="hidden sm:inline">Sell Item</span>
+                        <span className="inline sm:hidden">Sell</span>
+                    </button>
+                </div>
+
+                {/* Search Row: Search Bar & Filters */}
+                <div className="flex gap-3 mb-8">
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder={viewMode === 'selling' ? "Search your listings..." : "Search for bicycles, furniture, etc."}
+                            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors shadow-sm"
+                        />
+                    </div>
+                    {viewMode === 'browse' && (
+                        <button className="px-5 flex items-center gap-2 border border-gray-200 bg-white rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                            <Filter className="h-4 w-4" />
+                            <span className="hidden sm:inline">Filters</span>
+                        </button>
+                    )}
+                    <button className="px-6 bg-black text-white font-bold rounded-xl text-sm hover:bg-gray-800 transition-colors">
+                        Search
+                    </button>
                 </div>
 
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((item) => (
-                        <div
-                            key={item.id}
-                            onClick={() => setSelectedItem(item)}
-                            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-gray-100"
-                        >
-                            <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
-                                <Image
-                                    src={item.image}
-                                    alt={item.title}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-semibold text-gray-900 shadow-sm">
-                                    {item.time}
-                                </div>
-                            </div>
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-semibold text-gray-900 text-lg leading-tight group-hover:text-blue-600 transition-colors line-clamp-1">{item.title}</h3>
-                                    <span className="font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded-lg">{item.price}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-xs text-gray-500 mt-4 pt-4 border-t border-gray-50">
-                                    <div className="flex items-center gap-1">
-                                        <MapPin className="h-3 w-3" />
-                                        {item.location}
+                    {filteredItems.length > 0 ? (
+                        filteredItems.map((item) => (
+                            <div
+                                key={item.id}
+                                onClick={() => setSelectedItem(item)}
+                                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-gray-100 flex flex-col"
+                            >
+                                <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
+                                    <Image
+                                        src={item.image}
+                                        alt={item.title}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-semibold text-gray-900 shadow-sm">
+                                        {item.time}
                                     </div>
-                                    <span className="font-medium text-gray-400">by {item.seller}</span>
+                                    {item.isOwner && (
+                                        <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                            Your Listing
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-4 flex flex-col flex-1">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="font-semibold text-gray-900 text-lg leading-tight group-hover:text-blue-600 transition-colors line-clamp-1">{item.title}</h3>
+                                        <span className="font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded-lg">{item.price}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-4 border-t border-gray-50">
+                                        <div className="flex items-center gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            {item.location}
+                                        </div>
+                                        <span className="font-medium text-gray-400">by {item.seller}</span>
+                                    </div>
                                 </div>
                             </div>
+                        ))
+                    ) : (
+                        <div className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
+                                <ShoppingBag className="w-8 h-8 text-gray-300" />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">No listings found</h3>
+                            <p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
+                                {viewMode === 'selling' ? "You haven't listed any items specifically yet." : "No items match your criteria."}
+                            </p>
+                            {viewMode === 'selling' && (
+                                <button
+                                    onClick={handlePostClick}
+                                    className="mt-6 px-6 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors"
+                                >
+                                    Listing Your First Item
+                                </button>
+                            )}
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
 
@@ -200,7 +213,7 @@ export default function MarketplacePage() {
                                 </div>
                                 <div>
                                     <div className="font-bold text-gray-900 text-sm flex items-center gap-1">
-                                        {selectedItem.seller}
+                                        {selectedItem.seller} {selectedItem.isOwner && "(You)"}
                                         {selectedItem.isVerified && <ShieldCheck className="w-4 h-4 text-green-500" />}
                                     </div>
                                     <div className="text-xs text-gray-500 flex items-center gap-1">
@@ -208,9 +221,11 @@ export default function MarketplacePage() {
                                         {selectedItem.location} • Verified neighbor
                                     </div>
                                 </div>
-                                <button className="ml-auto p-2 bg-white rounded-full border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 transition-colors">
-                                    <Heart className="w-5 h-5" />
-                                </button>
+                                {!selectedItem.isOwner && (
+                                    <button className="ml-auto p-2 bg-white rounded-full border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 transition-colors">
+                                        <Heart className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
 
                             {/* Description */}
@@ -221,21 +236,45 @@ export default function MarketplacePage() {
                                 </p>
                             </div>
 
-                            {/* Actions */}
+                            {/* Actions - Dynamic based on Ownership */}
                             <div className="flex gap-3 mt-auto pt-4 border-t border-gray-50">
-                                <button className="flex-1 bg-black text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
-                                    <MessageCircle className="w-5 h-5" />
-                                    Message Seller
-                                </button>
-                                <button className="p-3.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-600">
-                                    <Share2 className="w-5 h-5" />
-                                </button>
+                                {selectedItem.isOwner ? (
+                                    <>
+                                        <button className="flex-1 bg-gray-100 text-gray-900 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                                            Mark as Sold
+                                        </button>
+                                        <button
+                                            onClick={() => handleEditClick(selectedItem)}
+                                            className="flex-1 bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 "
+                                        >
+                                            Edit Listing
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button className="flex-1 bg-black text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg ">
+                                            <MessageCircle className="w-5 h-5" />
+                                            Message Seller
+                                        </button>
+                                        <button className="p-3.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-600">
+                                            <Share2 className="w-5 h-5" />
+                                        </button>
+                                    </>
+                                )}
                             </div>
 
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* Post/Edit Product Modal */}
+            <ProductPostModal
+                isOpen={isPostModalOpen}
+                onClose={handleModalClose}
+                initialData={editingItem}
+                onSubmit={handleFormSubmit}
+            />
         </div>
     );
 }

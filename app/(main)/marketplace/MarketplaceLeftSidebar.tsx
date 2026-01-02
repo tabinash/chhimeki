@@ -1,9 +1,9 @@
 "use client";
 import { SlidersHorizontal, MapPin, Tag, ShoppingBag } from "lucide-react";
 
-export function MarketplaceRightSidebar() {
+export function MarketplaceLeftSidebar() {
     return (
-        <aside className="w-80 min-w-[280px] flex-shrink-0 flex flex-col p-4">
+        <aside className="w-50 min-w-[280px] flex-shrink-0 flex flex-col p-4">
             <div className="bg-white rounded-3xl shadow-sm p-6 flex flex-col gap-6">
 
                 {/* Filters Header */}

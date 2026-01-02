@@ -1,4 +1,4 @@
-import { MarketplaceRightSidebar } from "./MarketplaceRightSidebar";
+import { MarketplaceLeftSidebar } from "./MarketplaceLeftSidebar";
 
 export default function MarketplaceLayout({
     children,
@@ -7,15 +7,15 @@ export default function MarketplaceLayout({
 }) {
     return (
         <>
-            <MarketplaceRightSidebar />
             {/* Main Marketplace Content */}
+            <div className="flex-shrink-0 h-full overflow-y-auto">
+                <MarketplaceLeftSidebar />
+            </div>
             <main className="flex-1 min-w-0 h-full overflow-y-auto">
                 {children}
             </main>
 
             {/* Marketplace-specific Right Sidebar */}
-            <div className="flex-shrink-0 h-full overflow-y-auto">
-            </div>
         </>
     );
 }

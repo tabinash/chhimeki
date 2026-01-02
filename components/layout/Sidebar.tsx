@@ -44,8 +44,11 @@ export function Sidebar() {
                             className={cn(
                                 "flex items-center gap-3 rounded-2xl transition-all",
                                 showLabels ? "px-4 py-3" : "px-3 py-3 justify-center",
-                                isActive && "text-bold bg-[#ffffff]"
+                                isActive
+                                    ? "bg-white border border-gray-200 shadow-sm"
+                                    : "border border-transparent hover:bg-gray-50 hover:border-gray-200"
                             )}
+
                             title={!showLabels ? item.label : undefined}
                         >
                             <item.icon
