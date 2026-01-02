@@ -36,8 +36,8 @@ export default function JobsPage() {
                     <button
                         onClick={() => setViewMode('seeking')}
                         className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === 'seeking'
-                                ? 'bg-white text-gray-900 shadow-sm'
-                                : 'text-gray-500'
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-500'
                             }`}
                     >
                         Find Work
@@ -45,8 +45,8 @@ export default function JobsPage() {
                     <button
                         onClick={() => setViewMode('hiring')}
                         className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === 'hiring'
-                                ? 'bg-white text-gray-900 shadow-sm'
-                                : 'text-gray-500'
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-500'
                             }`}
                     >
                         Hiring
@@ -111,8 +111,7 @@ export default function JobsPage() {
                                     </div>
 
                                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500">
-                                        <div className="flex items-center gap-1 font-bold text-green-600">
-                                            <DollarSign className="w-3 h-3" />
+                                        <div className="flex items-center gap-1 font-bold text-blue-600">
                                             {job.salary}
                                         </div>
                                         <div className="flex items-center gap-1">

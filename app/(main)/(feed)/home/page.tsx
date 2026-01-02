@@ -1,7 +1,7 @@
 "use client";
-import AlertShowcase from "./_components/AlertShowcase";
-import CreatePostWidget from "./_components/CreatePostWidget";
-import FeedList from "./_components/FeedList";
+import AlertShowcase from "../_components/AlertShowcase";
+import CreatePostWidget from "../_components/CreatePostWidget";
+import FeedList from "../_components/FeedList";
 
 export default function FeedPage() {
     return (

@@ -8,7 +8,7 @@ export function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
-        { icon: LayoutGrid, href: "/?header=true", label: "Feed" },
+        { icon: LayoutGrid, href: "/home?header=true", label: "Feed" },
         { icon: Compass, href: "/explore", label: "Explore" },
         { icon: ShoppingCart, href: "/marketplace", label: "Market" },
         { icon: GraduationCap, href: "/jobs", label: "Jobs" },

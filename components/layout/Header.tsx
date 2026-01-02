@@ -42,8 +42,8 @@ export function Header() {
                                 <Image
                                     src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
                                     alt="User"
-                                    width={40}
-                                    height={40}
+                                    width={42}
+                                    height={42}
                                     className="object-cover"
                                 />
                             </div>
@@ -52,8 +52,8 @@ export function Header() {
                     </Link>
 
                     {/* Center: Title & Subtitle */}
-                    <div className="text-center">
-                        <h1 className="text-xl font-bold text-blue-600 tracking-tight">Chhimeki</h1>
+                    <div className="text-center leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl font-[700] text-blue-600  ">Chhimeki</h1>
                         <p className="text-[10px] font-medium text-gray-500 flex items-center justify-center gap-1">
                             Ward 4 • Baneshwor
                         </p>
@@ -63,13 +63,13 @@ export function Header() {
                     <div className="flex items-center gap-2">
                         {/* Messages */}
                         <Link href="/messages" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                            <Mail className="w-6 h-6" strokeWidth={2} />
+                            <Mail className="w-6.5 h-6.5" strokeWidth={2} />
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white" />
                         </Link>
 
                         {/* Notifications */}
                         <Link href="/notifications" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                            <Bell className="w-6 h-6" strokeWidth={2} />
+                            <Bell className="w-6.5 h-6.5" strokeWidth={2} />
                             <span className="absolute top-1.5 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
                         </Link>
                     </div>
