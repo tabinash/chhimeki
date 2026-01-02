@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   // images.unsplash.com
   // https://ui-avatars.com
+  // https://api.dicebear.com
+
   images: {
     remotePatterns: [
       {
@@ -13,6 +15,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "ui-avatars.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
       },
     ],
   },

@@ -12,12 +12,26 @@ export interface Business {
     phone: string;
     email: string;
     website?: string;
-    features: string[]; // e.g. ["Home Delivery", "Digital Payment"]
+    features: string[];
     products: {
         id: number;
         name: string;
         price: string;
         image: string;
+    }[];
+    services: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+    }[];
+    reviews: {
+        id: number;
+        user: string;
+        rating: number;
+        comment: string;
+        date: string;
+        avatar: string; // user avatar
     }[];
     joinedDate: string;
 }
@@ -42,6 +56,13 @@ export const businesses: Business[] = [
             { id: 101, name: "Basmati Rice (25kg)", price: "Rs. 2500", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop" },
             { id: 102, name: "Sunflower Oil (1L)", price: "Rs. 280", image: "https://images.unsplash.com/photo-1474979266404-7cadd259c308?w=200&h=200&fit=crop" },
             { id: 103, name: "Local Honey", price: "Rs. 600", image: "https://images.unsplash.com/photo-1587049359509-b78504be6751?w=200&h=200&fit=crop" }
+        ],
+        services: [
+            { id: 1, name: "General Checkup", description: "Full body checkup by physician.", price: "Rs. 500" },
+            { id: 2, name: "Dental Scaling", description: "Professional teeth cleaning.", price: "Rs. 1200" }
+        ], reviews: [
+            { id: 1, user: "Ram K.", rating: 5, comment: "Always fresh items and quick delivery!", date: "2 days ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ram" },
+            { id: 2, user: "Sita M.", rating: 4, comment: "Good prices but sometimes out of stock.", date: "1 week ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sita" }
         ]
     },
     {
@@ -62,6 +83,14 @@ export const businesses: Business[] = [
         products: [
             { id: 201, name: "Black Forest Cake", price: "Rs. 650/lb", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop" },
             { id: 202, name: "Chicken Patties", price: "Rs. 60", image: "https://images.unsplash.com/photo-1626015499273-2c0aaca135fc?w=200&h=200&fit=crop" },
+        ],
+        services: [
+            { id: 1, name: "Birthday Cake Customization", description: "Custom designs for your special day.", price: "Starts from Rs. 1000" },
+            { id: 2, name: "Event Catering", description: "Coffee and snacks for small events.", price: "Contact for quote" }
+        ],
+        reviews: [
+            { id: 1, user: "Aayush P.", rating: 5, comment: "Best coffee in Baneshwor area!", date: "1 day ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aayush" },
+            { id: 2, user: "Rita S.", rating: 4, comment: "Love the cakes.", date: "3 weeks ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rita" }
         ]
     },
     {
@@ -79,7 +108,14 @@ export const businesses: Business[] = [
         email: "ram.plumber@example.com",
         features: ["Emergency 24/7", "Cheap Rates"],
         joinedDate: "2022",
-        products: []
+        products: [],
+        services: [
+            { id: 1, name: "Leak Repair", description: "Fixing leaking pipes and taps.", price: "Rs. 500 visit charge" },
+            { id: 2, name: "Bathroom Installation", description: "Complete setup of bathroom fittings.", price: "Rs. 15000 approx" }
+        ],
+        reviews: [
+            { id: 1, user: "Hari B.", rating: 5, comment: "Came at midnight to fix a burst pipe. Lifesaver!", date: "1 month ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Hari" }
+        ]
     },
     {
         id: 4,
@@ -96,6 +132,13 @@ export const businesses: Business[] = [
         email: "contact@citypolyclinic.com.np",
         features: ["Valid Licence", "Specialist Doctors"],
         joinedDate: "2019",
-        products: []
+        products: [],
+        services: [
+            { id: 1, name: "General Checkup", description: "Full body checkup by physician.", price: "Rs. 500" },
+            { id: 2, name: "Dental Scaling", description: "Professional teeth cleaning.", price: "Rs. 1200" }
+        ],
+        reviews: [
+            { id: 1, user: "Binod C.", rating: 5, comment: "Very professional doctors.", date: "2 weeks ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Binod" }
+        ]
     }
 ];

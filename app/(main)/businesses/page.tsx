@@ -13,7 +13,7 @@ export default function BusinessDirectoryPage() {
     );
 
     return (
-        <div className="flex-1 min-w-0 bg-white">
+        <div className="flex-1 min-w-0">
             {/* Header Section */}
             <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100">
                 <div className="px-6 py-4">

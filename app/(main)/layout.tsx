@@ -1,39 +1,31 @@
 "use client";
-import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
-
+import { BottomNav } from "@/components/layout/BottomNav";
+import { useSearchParams } from "next/navigation";
 
 export default function MainLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const searchParams = useSearchParams();
+    const showHeader = searchParams.get("header") === "true";
+    const showBottomNav = searchParams.get("bottomNav") === "false";
 
     return (
-        <div className="min-h-screen flex flex-col">
-            {/* Header - Fixed at top */}
-            <Header />
+        <div className="min-h-screen">
+            {/* Header - Conditional Rendering */}
+            {showHeader && <Header />}
 
-            {/* Main Layout */}
-            <div className="flex-1 flex justify-left">
-                {/* Container with max-width */}
-                <div className="w-full max-w-[1400px] flex h-[calc(100vh-64px)] overflow-hidden">
-                    {/* Left Sidebar - Sticky */}
-                    <div className="flex-shrink-0 h-full overflow-y-auto">
-                        <Sidebar />
-                    </div>
-
-                    {/* Main Content Area - Scrollable - Children will add their own right sidebars */}
-                    <div className="flex-1 flex min-w-0 h-full">
-                        {children}
-                    </div>
-
-
+            {/* Main Content Area */}
+            <div className="pb-20 px-0">
+                <div className="w-full max-w-md mx-auto min-h-[calc(100vh-180px)]">
+                    {children}
                 </div>
-
-
-
             </div>
+
+            {/* Bottom Navigation */}
+            {!showBottomNav && <BottomNav />}
         </div>
     );
 }

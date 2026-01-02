@@ -1,349 +1,153 @@
 "use client";
-import { Search, MapPin, Briefcase, DollarSign, Clock, Building2, Filter, Phone, Star, Plus } from "lucide-react";
-import Image from "next/image";
 
+import { Search, MapPin, Briefcase, DollarSign, Clock, Filter, Plus } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { jobCategories, jobs } from "@/data/mockJobsData";
-import JobPostModal from "@/components/jobs/JobPostModal";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from 'react';
-import { X, CheckCircle, Share2, ShieldCheck, MessageCircle } from "lucide-react";
+import { useState } from 'react';
 
 export default function JobsPage() {
-
-    const [selectedJob, setSelectedJob] = useState<typeof jobs[0] | null>(null);
     const [viewMode, setViewMode] = useState<'seeking' | 'hiring'>('seeking');
-
-    const searchParams = useSearchParams();
-    const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-    const [editingJob, setEditingJob] = useState<typeof jobs[0] | null>(null);
-
-    // Auto-open modal if URL has ?action=post-job
-    useEffect(() => {
-        if (searchParams.get('action') === 'post-job') {
-            setIsPostModalOpen(true);
-            setEditingJob(null);
-        }
-    }, [searchParams]);
 
     const filteredJobs = viewMode === 'hiring'
         ? jobs.filter(job => job.isPostedByMe)
         : jobs;
 
-    const handlePostClick = () => {
-        setEditingJob(null);
-        setIsPostModalOpen(true);
-    };
-
-    const handleEditClick = (job: typeof jobs[0]) => {
-        setEditingJob(job);
-        setIsPostModalOpen(true);
-        setSelectedJob(null); // Close the detail view
-    };
-
-    const handleFormSubmit = (data: any) => {
-        console.log("Job Submitted:", data);
-        // Here we would actually update the data source
-        setIsPostModalOpen(false);
-        setEditingJob(null);
-        // Clean URL
-        window.history.replaceState(null, '', '/jobs');
-    };
-
-    const handleModalClose = () => {
-        setIsPostModalOpen(false);
-        // Clean URL
-        window.history.replaceState(null, '', '/jobs');
-    }
-
     return (
-        <div className="min-h-screen p-6 md:p-8 relative">
-            <div className="max-w-4xl mx-auto">
-                {/* Header & Tabs */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-gray-100 pb-6 md:pb-0 md:border-0">
+        <div className="min-h-screen bg-gray-50/50 pb-24">
+            {/* Mobile Header */}
+            <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3">
+                <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Neighborhood Jobs</h1>
-                        <p className="text-gray-500 text-sm mt-1">Find work nearby or hire a neighbor.</p>
+                        <h1 className="text-xl font-bold text-gray-900">Neighborhood Jobs</h1>
+                        <p className="text-xs text-gray-500">Find work nearby</p>
                     </div>
-
-                    <div className="flex items-center gap-4 bg-gray-100/80 p-1.5 rounded-xl self-start md:self-auto">
-                        <button
-                            onClick={() => setViewMode('seeking')}
-                            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'seeking' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            Find Work
-                        </button>
-                        <button
-                            onClick={() => setViewMode('hiring')}
-                            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'hiring' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            Hiring
-                        </button>
-                    </div>
+                    <Link
+                        href="/jobs/new"
+                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-lg shadow-blue-200 active:scale-95 transition-transform"
+                    >
+                        <Plus className="w-4 h-4" />
+                        <span>Post Job</span>
+                    </Link>
                 </div>
 
-                {/* Search & Filter */}
-                <div className="flex gap-3 mb-8">
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder={viewMode === 'hiring' ? "Search your job posts..." : "What kind of work are you looking for?"}
-                            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors shadow-sm"
-                        />
-                    </div>
-                    {viewMode === 'seeking' && (
-                        <button className="px-5 flex items-center gap-2 border border-gray-200 bg-white rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                            <Filter className="h-4 w-4" />
-                            <span className="hidden sm:inline">Filters</span>
-                        </button>
-                    )}
-                    <button className="px-6 bg-black text-white font-bold rounded-xl text-sm hover:bg-gray-800 transition-colors">
-                        Search
+                {/* Navigation Tabs */}
+                <div className="flex p-1 bg-gray-100 rounded-xl mb-4">
+                    <button
+                        onClick={() => setViewMode('seeking')}
+                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === 'seeking'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-500'
+                            }`}
+                    >
+                        Find Work
+                    </button>
+                    <button
+                        onClick={() => setViewMode('hiring')}
+                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === 'hiring'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-500'
+                            }`}
+                    >
+                        Hiring
                     </button>
                 </div>
 
-                {/* Categories Pills */}
+                {/* Search Bar */}
+                <div className="flex gap-2">
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder={viewMode === 'hiring' ? "Search your posts..." : "Search jobs..."}
+                            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                        />
+                    </div>
+                    {viewMode === 'seeking' && (
+                        <button className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50">
+                            <Filter className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+
+                {/* Categories Pills (Horizontal Scroll) */}
                 {viewMode === 'seeking' && (
-                    <div className="flex flex-wrap gap-2 mb-8">
+                    <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
                         {jobCategories.map((cat, i) => (
-                            <button key={i} className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${i === 0 ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                            <button key={i} className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${i === 0 ? 'bg-black text-white' : 'bg-white border border-gray-200 text-gray-600'}`}>
                                 {cat.name}
                             </button>
                         ))}
                     </div>
                 )}
-
-                {/* Job Listings */}
-                <div className="space-y-4">
-                    <h2 className="text-lg font-bold text-gray-900 mb-4 px-1">
-                        {viewMode === 'hiring' ? 'Your Job Posts' : 'Latest Opportunities'}
-                    </h2>
-
-                    {filteredJobs.length > 0 ? (
-                        filteredJobs.map((job) => (
-                            <div
-                                key={job.id}
-                                onClick={() => setSelectedJob(job)}
-                                className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
-                            >
-                                {job.isPostedByMe && (
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-                                )}
-
-                                <div className="flex md:items-center gap-5">
-                                    {/* Image/Avatar */}
-                                    <div className="w-16 h-16 rounded-xl bg-gray-100 relative overflow-hidden flex-shrink-0 border border-gray-100">
-                                        <Image src={job.image} alt={job.title} fill className="object-cover" />
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 mb-2">
-                                            <div>
-                                                <h3 className="text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-2">
-                                                    {job.title}
-                                                    {job.isPostedByMe && (
-                                                        <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] uppercase font-bold rounded-md">You</span>
-                                                    )}
-                                                </h3>
-                                                <div className="flex items-center gap-2 text-sm text-gray-600 mt-0.5">
-                                                    <span className="font-medium text-gray-900">{job.employer}</span>
-                                                    {job.isLocal && <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase font-bold rounded-md">Verified Neighbor</span>}
-                                                </div>
-                                            </div>
-                                            <div className="text-xs font-medium text-gray-400 whitespace-nowrap hidden md:block">{job.posted}</div>
-                                        </div>
-
-                                        {/* Grid Details */}
-                                        <div className="grid grid-cols-2 md:flex md:items-center gap-y-2 gap-x-4 text-xs font-medium text-gray-500 mb-3">
-                                            <div className="flex items-center gap-1.5">
-                                                <MapPin className="h-3.5 w-3.5" />
-                                                {job.location}
-                                            </div>
-                                            <div className="flex items-center gap-1.5 text-gray-900 font-bold">
-                                                <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                                                {job.salary}
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <Clock className="h-3.5 w-3.5" />
-                                                {job.type}
-                                            </div>
-                                        </div>
-
-                                        {/* Mobile Timestamp */}
-                                        <div className="text-xs font-medium text-gray-400 mt-1 md:hidden">{job.posted}</div>
-                                    </div>
-
-                                    {/* Call to Action */}
-                                    <div className="hidden md:block">
-                                        {job.isPostedByMe ? (
-                                            <button className="px-5 py-2 rounded-xl bg-gray-100 text-gray-900 text-sm font-bold hover:bg-gray-200 transition-colors">
-                                                Manage
-                                            </button>
-                                        ) : (
-                                            <button className="px-5 py-2 rounded-xl bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors shadow-sm">
-                                                View Details
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Mobile Footer with Tags and Button */}
-                                <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between md:hidden">
-                                    <div className="flex gap-2">
-                                        {job.tags.slice(0, 2).map((tag, i) => (
-                                            <span key={i} className="text-[10px] font-medium bg-gray-100 px-2 py-1 rounded-md text-gray-600">{tag}</span>
-                                        ))}
-                                    </div>
-                                    <button className="text-xs font-bold text-blue-600">
-                                        {job.isPostedByMe ? "Manage Post" : "View Details"} &rarr;
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
-                            <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                            <h3 className="font-bold text-gray-900">No jobs found</h3>
-                            <p className="text-sm text-gray-500 max-w-xs mx-auto mt-1">
-                                {viewMode === 'hiring' ? "You haven't posted any jobs yet." : "No jobs match your search."}
-                            </p>
-                            {viewMode === 'hiring' && (
-                                <button
-                                    onClick={handlePostClick}
-                                    className="mt-4 px-6 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors"
-                                >
-                                    Post a Job
-                                </button>
-                            )}
-                        </div>
-                    )}
-                </div>
             </div>
 
-            {/* Job Detail Modal */}
-            {selectedJob && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200 relative">
+            {/* Job Listings */}
+            <div className="p-4 space-y-3">
+                {filteredJobs.length > 0 ? (
+                    filteredJobs.map((job) => (
+                        <Link
+                            href={`/jobs/${job.id}`}
+                            key={job.id}
+                            className="block bg-white p-4 rounded-xl border border-gray-100 shadow-sm active:scale-[0.98] transition-transform relative overflow-hidden"
+                        >
+                            {/* Blue Accent for Own Posts */}
+                            {job.isPostedByMe && (
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                            )}
 
-                        {/* Header Image & Close */}
-                        <div className="relative h-48 bg-gray-100">
-                            <Image src={selectedJob.image} alt={selectedJob.title} fill className="object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <button
-                                onClick={() => setSelectedJob(null)}
-                                className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-md transition-colors"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                            <div className="absolute bottom-4 left-6 text-white">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-md text-[10px] font-bold uppercase tracking-wider border border-white/20">
-                                        {selectedJob.type}
-                                    </span>
-                                    {selectedJob.isLocal && (
-                                        <span className="px-2 py-0.5 bg-green-500/80 backdrop-blur-md rounded-md text-[10px] font-bold uppercase tracking-wider border border-green-400/30 flex items-center gap-1">
-                                            <ShieldCheck className="w-3 h-3" /> Verified Neighbor
-                                        </span>
-                                    )}
+                            <div className="flex items-start gap-3">
+                                <div className="w-12 h-12 rounded-lg bg-gray-100 relative overflow-hidden flex-shrink-0 border border-gray-50">
+                                    <Image src={job.image} alt={job.title} fill className="object-cover" />
                                 </div>
-                                <h2 className="text-2xl font-bold leading-tight">{selectedJob.title}</h2>
-                            </div>
-                        </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-sm font-bold text-gray-900 leading-tight mb-1 truncate pr-2">
+                                        {job.title}
+                                    </h3>
+                                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
+                                        <span className="font-medium text-gray-900 truncate max-w-[120px]">{job.employer}</span>
+                                        <span>•</span>
+                                        <span className="truncate">{job.posted}</span>
+                                    </div>
 
-                        {/* Content */}
-                        <div className="p-6 md:p-8">
-
-                            {/* Key Stats Row */}
-                            <div className="flex flex-wrap gap-4 md:gap-8 pb-6 border-b border-gray-100 mb-6">
-                                <div>
-                                    <div className="text-xs font-medium text-gray-500 mb-1">Employer</div>
-                                    <div className="font-bold text-gray-900">{selectedJob.employer} {selectedJob.isPostedByMe && '(You)'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs font-medium text-gray-500 mb-1">Location</div>
-                                    <div className="font-bold text-gray-900 flex items-center gap-1">
-                                        <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                                        {selectedJob.location}
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500">
+                                        <div className="flex items-center gap-1 font-bold text-green-600">
+                                            <DollarSign className="w-3 h-3" />
+                                            {job.salary}
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <MapPin className="w-3 h-3" />
+                                            {job.location}
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Clock className="w-3 h-3" />
+                                            {job.type}
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs font-medium text-gray-500 mb-1">Salary</div>
-                                    <div className="font-bold text-green-600">{selectedJob.salary}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs font-medium text-gray-500 mb-1">Posted</div>
-                                    <div className="font-bold text-gray-900">{selectedJob.posted}</div>
-                                </div>
                             </div>
-
-                            {/* Description & Requirements */}
-                            <div className="space-y-6 mb-8">
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">About the Role</h3>
-                                    <p className="text-gray-600 leading-relaxed text-sm">
-                                        {selectedJob.description}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Requirements</h3>
-                                    <ul className="space-y-2">
-                                        {selectedJob.requirements?.map((req, i) => (
-                                            <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                                                <div className="mt-1">
-                                                    <CheckCircle className="w-4 h-4 text-green-600" />
-                                                </div>
-                                                {req}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-
-                            {/* Action Footer - Dynamic based on Ownership */}
-                            <div className="flex gap-3 pt-6 border-t border-gray-100">
-                                <button className="p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-600">
-                                    <Share2 className="w-5 h-5" />
-                                </button>
-                                {selectedJob.isPostedByMe ? (
-                                    <>
-                                        <button className="flex-1 bg-gray-100 text-gray-900 font-bold text-sm rounded-xl py-3 hover:bg-gray-200 transition-colors">
-                                            Mark as Closed
-                                        </button>
-                                        <button
-                                            onClick={() => handleEditClick(selectedJob)}
-                                            className="flex-1 bg-black text-white font-bold text-sm rounded-xl py-3 hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"
-                                        >
-                                            Edit Job
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button className="flex-1 bg-black text-white font-bold text-sm rounded-xl py-3 hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200 flex items-center justify-center gap-2">
-                                            <MessageCircle className="w-4 h-4" />
-                                            Message Employer
-                                        </button>
-                                        <button className="flex-1 border border-gray-200 text-gray-700 font-bold text-sm rounded-xl py-3 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-                                            <Phone className="w-4 h-4" />
-                                            Call
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-
+                        </Link>
+                    ))
+                ) : (
+                    <div className="text-center py-16">
+                        <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Briefcase className="w-6 h-6 text-gray-400" />
                         </div>
+                        <h3 className="text-base font-bold text-gray-900">No jobs found</h3>
+                        <p className="text-gray-500 text-xs mt-1 mb-4">
+                            {viewMode === 'hiring' ? "You haven't posted any jobs yet." : "No jobs match your search."}
+                        </p>
+                        {viewMode === 'hiring' && (
+                            <Link
+                                href="/jobs/new"
+                                className="px-5 py-2 inline-flex bg-blue-600 text-white rounded-xl text-xs font-bold"
+                            >
+                                Post a Job
+                            </Link>
+                        )}
                     </div>
-                </div>
-            )}
-
-            {/* Post/Edit Job Modal */}
-            <JobPostModal
-                isOpen={isPostModalOpen}
-                onClose={handleModalClose}
-                initialData={editingJob}
-                onSubmit={handleFormSubmit}
-            />
+                )}
+            </div>
         </div>
     );
 }

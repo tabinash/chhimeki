@@ -35,9 +35,9 @@ export default function NotificationItem({ notification }: NotificationItemProps
     };
 
     return (
-        <div className={`flex items-start gap-4 p-4 rounded-xl transition-colors ${notification.isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50/50 hover:bg-blue-50'}`}>
+        <div className={`flex items-start gap-4 p-4 transition-colors ${notification.isRead ? 'bg-white active:bg-gray-50' : 'bg-blue-50/40 active:bg-blue-100/50'}`}>
             <div className="relative flex-shrink-0">
-                <div className="w-10 h-10 rounded-full overflow-hidden relative">
+                <div className="w-12 h-12 rounded-full overflow-hidden relative">
                     <Image
                         src={notification.actor.avatar}
                         alt={notification.actor.name}
@@ -50,17 +50,17 @@ export default function NotificationItem({ notification }: NotificationItemProps
                 </div>
             </div>
 
-            <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900 leading-relaxed">
+            <div className="flex-1 min-w-0 pt-0.5">
+                <p className="text-[15px] text-gray-900 leading-snug">
                     <span className="font-bold">{notification.actor.name}</span> {notification.content}
                 </p>
-                <span className="text-xs text-gray-500 font-medium mt-1 block">
+                <span className="text-xs text-gray-500 font-medium mt-1.5 block">
                     {notification.timestamp}
                 </span>
             </div>
 
             {!notification.isRead && (
-                <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
             )}
         </div>
     );

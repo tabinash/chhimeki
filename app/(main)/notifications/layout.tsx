@@ -19,14 +19,7 @@ export default function NotificationsLayout({
                 {children}
             </main>
 
-            {rightPanel.visible && (
-                <div className="flex-shrink-0 h-full overflow-y-auto">
-                    <FeedRightSidebar
-                        width={rightPanel.width}
-                        compact={rightPanel.compact}
-                    />
-                </div>
-            )}
+
         </>
     );
 }
