@@ -12,7 +12,7 @@ import {
 import {
     suggestedUsers,
     suggestedInstitutions,
-    nearbyInstitutions,
+    groups,
 } from "@/data/explore";
 import { businesses } from "@/data/mockBusinessData";
 
@@ -242,32 +242,50 @@ const ExplorePage: React.FC = () => {
                 </div>
             </section>
 
-            {/* ================= Nearby ================= */}
+            {/* ================= Groups ================= */}
             <section className="px-4">
-                <h2 className="text-base font-bold mb-4">Nearby</h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-base font-bold">Groups</h2>
+                    <Link
+                        href="/explore/groups"
+                        className="text-xs text-blue-600 font-semibold uppercase"
+                    >
+                        See All
+                    </Link>
+                </div>
                 <div className="space-y-3">
-                    {nearbyInstitutions.map((place) => (
+                    {groups.map((group) => (
                         <div
-                            key={place.name}
+                            key={group.id}
                             className="flex items-center gap-3 p-3
-                bg-white border  border-gray-300 rounded-2xl shadow-sm"
+                bg-white border text-start  border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                         >
                             <img
-                                src={place.avatar}
-                                alt={place.name}
+                                src={group.avatar}
+                                alt={group.name}
                                 className="w-12 h-12 rounded-xl object-cover"
                             />
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-semibold truncate">
-                                    {place.name}
+                                <h3 className="text-sm font-bold truncate text-gray-900">
+                                    {group.name}
                                 </h3>
-                                <div className="flex items-center gap-1 text-xs text-gray-500">
-                                    <MapPin className="w-3 h-3 text-blue-600" />
-                                    {place.location}
+                                <p className="text-xs text-gray-500 truncate mb-0.5">
+                                    {group.description}
+                                </p>
+                                <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
+                                    <span>{group.members}</span>
+                                    {group.verified && (
+                                        <>
+                                            <span>•</span>
+                                            <span className="text-blue-600 flex items-center gap-0.5">
+                                                Verified <CheckCircle2 className="w-2.5 h-2.5" />
+                                            </span>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                            <button className="px-3 py-1.5 text-xs border  border-gray-300 rounded-lg">
-                                View
+                            <button className="px-4 py-2 text-xs font-bold bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                                Join
                             </button>
                         </div>
                     ))}

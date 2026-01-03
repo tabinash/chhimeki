@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function CreatePostWidget() {
     return (
         <Link
-            href="/post/create"
+            href="/post/create?bottomNav=false"
             className="block bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
         >
             <div className="flex gap-3 items-center">

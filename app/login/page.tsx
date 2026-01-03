@@ -1,143 +1,138 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Phone, Lock, Eye, EyeOff, LogIn, ChevronRight, Github } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, Phone, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
+
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setTimeout(() => {
+    const handleSubmit = () => {
+        // basic validation
+        if (phoneNumber.length >= 10 && password.length > 0) {
             router.push("/home");
-        }, 1200);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-white font-sans text-[#171717] flex flex-col">
-            {/* Top Navigation */}
-            <div className="px-6 py-6 flex items-center justify-between">
+        <div className="min-h-screen bg-blue-600 flex flex-col font-sans">
+
+            {/* Top Section */}
+            <div className="flex-none p-6 pt-12 pb-16 flex flex-col items-center justify-center relative">
                 <button
                     onClick={() => router.back()}
-                    className="p-2 -ml-2 hover:bg-gray-50 rounded-full transition-colors active:scale-90"
+                    className="absolute top-12 left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                 >
-                    <ArrowLeft className="w-6 h-6" />
+                    <ArrowLeft className="w-6 h-6 text-white" />
                 </button>
-                <Link href="/help" className="text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest">
-                    Need Help?
-                </Link>
-            </div>
 
-            <div className="flex-1 px-8 pt-6 pb-20 max-w-md mx-auto w-full">
-                {/* Branding & Welcome */}
-                <div className="mb-12">
-                    <div className="mb-6 inline-flex flex-col">
-                        <span className="text-blue-600 font-black text-4xl tracking-tighter leading-none mb-1">Chhimeki</span>
-                        <div className="h-1.5 w-12 bg-blue-600 rounded-full" />
-                    </div>
-
-                    <h1 className="text-4xl font-extrabold tracking-tight leading-tight mb-3">
-                        Join the <br />
-                        <span className="text-gray-400">Neighborhood.</span>
-                    </h1>
-                    <p className="text-gray-600 font-medium max-w-[240px]">
-                        Sign in to connect with people and shops around you.
-                    </p>
+                <div className="flex items-center gap-1 mb-1">
+                    <span className="text-2xl font-bold text-white tracking-tight">
+                        Chhimeki
+                    </span>
+                    <span className="text-2xl font-bold text-orange-400 tracking-tight">
+                        App
+                    </span>
                 </div>
 
-                {/* Form Section */}
-                <form onSubmit={handleLogin} className="space-y-8">
-                    <div className="space-y-5">
-                        {/* Phone Field */}
-                        <div className="relative">
-                            <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-black text-blue-600 uppercase tracking-widest z-10">
+                {/* Smile Curve */}
+                <svg width="40" height="12" viewBox="0 0 60 20" fill="none" className="opacity-80">
+                    <path
+                        d="M5 2C15 15 45 15 55 2"
+                        stroke="white"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                    />
+                </svg>
+            </div>
+
+            {/* Bottom Section */}
+            <div className="flex-1 bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] animate-in slide-in-from-bottom-10 duration-500">
+                <div className="flex flex-col h-full max-w-sm mx-auto">
+
+                    {/* Header */}
+                    <div className="mb-8 text-center space-y-2">
+                        <h2 className="text-3xl font-bold text-gray-900">
+                            Welcome Back
+                        </h2>
+                        <p className="text-gray-500 text-sm font-medium">
+                            Sign in to continue to your neighborhood
+                        </p>
+                    </div>
+
+                    {/* Form */}
+                    <div className="space-y-5 flex-1">
+
+                        {/* Phone Number */}
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-500 ml-3 uppercase tracking-wider">
                                 Phone Number
                             </label>
-                            <div className="relative">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">+977</span>
+                            <div className="flex items-center bg-gray-50 rounded-2xl p-4 border border-gray-100 focus-within:border-blue-500 transition-colors">
+                                <span className="font-bold text-gray-500 border-r border-gray-200 pr-3 mr-3">
+                                    +977
+                                </span>
                                 <input
                                     type="tel"
                                     placeholder="98XXXXXXXX"
-                                    required
-                                    className="w-full pl-16 pr-6 py-5 bg-white border-2 border-gray-100 rounded-2xl text-lg font-bold focus:border-blue-600 focus:ring-0 transition-all outline-none"
+                                    className="flex-1 bg-transparent outline-none text-lg font-bold text-gray-900 placeholder:text-gray-300"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                 />
+                                <Phone className="w-5 h-5 text-gray-400" />
                             </div>
                         </div>
 
-                        {/* Password Field */}
-                        <div className="relative">
-                            <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-black text-gray-400 uppercase tracking-widest z-10">
-                                Your Password
+                        {/* Password */}
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-500 ml-3 uppercase tracking-wider">
+                                Password
                             </label>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="••••••••"
-                                required
-                                className="w-full px-6 py-5 bg-white border-2 border-gray-100 rounded-2xl text-lg font-bold focus:border-blue-600 focus:ring-0 transition-all outline-none"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <div className="flex items-center bg-gray-50 rounded-2xl p-4 border border-gray-100 focus-within:border-blue-500 transition-colors">
+                                <Lock className="w-5 h-5 text-gray-400 mr-3" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    className="flex-1 bg-transparent outline-none text-lg font-bold text-gray-900 placeholder:text-gray-300"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="text-gray-400 hover:text-gray-600"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="w-5 h-5" />
+                                    ) : (
+                                        <Eye className="w-5 h-5" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Forgot Password */}
+                        <div className="flex justify-end pt-1">
                             <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-5 top-1/2 -translate-y-1/2 p-1 text-gray-300 hover:text-blue-600 transition-colors"
-                            >
-                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                onClick={() => router.push("/forgot-password")}
+                                className="text-sm font-bold text-blue-600 hover:underline">
+                                Forgot Password?
                             </button>
                         </div>
+
+                        {/* Login Button */}
+                        <button
+                            onClick={handleSubmit}
+                            className="w-full bg-blue-600 text-white py-4 rounded-full font-bold shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4"
+                        >
+                            Login
+                        </button>
                     </div>
 
-                    {/* Forgot Password */}
-                    <div className="text-right">
-                        <Link href="#" className="text-xs font-bold text-gray-400 hover:text-blue-600 transition-colors">
-                            FORGOT PASSWORD?
-                        </Link>
-                    </div>
-
-                    {/* Main Action */}
-                    <button
-                        type="submit"
-                        disabled={isLoading || phoneNumber.length < 10 || password.length < 6}
-                        className="group w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all disabled:bg-gray-100 disabled:text-gray-300 shadow-xl shadow-blue-600/20"
-                    >
-                        {isLoading ? (
-                            <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <>
-                                Sign In to Home
-                                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </>
-                        )}
-                    </button>
-                </form>
-
-                {/* Secondary Actions */}
-                <div className="mt-12 space-y-6">
-                    <div className="flex items-center gap-4">
-                        <div className="h-[1px] flex-1 bg-gray-100" />
-                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">or better yet</span>
-                        <div className="h-[1px] flex-1 bg-gray-100" />
-                    </div>
-
-                    <button className="w-full py-4 px-6 border-2 border-gray-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-[#171717] hover:bg-gray-50 transition-colors active:scale-95">
-                        <span className="text-sm">Create New Account</span>
-                    </button>
                 </div>
-            </div>
-
-            {/* Bottom Branding */}
-            <div className="px-8 py-10 text-center mt-auto">
-                <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em]">
-                    Chhimeki &bull; Ward 4
-                </p>
             </div>
         </div>
     );

@@ -18,10 +18,12 @@ import {
     Bookmark,
     Bell,
 } from "lucide-react";
+// useRouter
+import { useRouter } from "next/navigation";
 
 export default function MenuPage() {
     const [isDarkMode, setIsDarkMode] = useState(false);
-
+    const router = useRouter();
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Profile Header */}
@@ -123,7 +125,9 @@ export default function MenuPage() {
 
                 {/* Logout */}
                 <div className="px-4 mt-6">
-                    <button className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors">
+                    <button className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors"
+                        onClick={() => router.push("/")}
+                    >
                         <LogOut className="w-5 h-5" strokeWidth={2} />
                         Log Out
                     </button>

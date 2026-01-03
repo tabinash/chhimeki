@@ -122,3 +122,38 @@ export const nearbyInstitutions = [
         verified: true,
     },
 ];
+
+export const groups = [
+    {
+        id: 1,
+        name: "Morning Walkers",
+        members: "125 Members",
+        description: "Daily morning walks at Shankhamul Park.",
+        avatar: "https://images.unsplash.com/photo-1552674605-46f5383a67d4?w=200&h=200&fit=crop",
+        verified: false,
+    },
+    {
+        id: 2,
+        name: "Ward 4 Youth Club",
+        members: "340 Members",
+        description: "Community service and sports events.",
+        avatar: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=200&h=200&fit=crop",
+        verified: true,
+    },
+    {
+        id: 3,
+        name: "Baneshwor Book Club",
+        members: "45 Members",
+        description: "Monthly meetups for book lovers.",
+        avatar: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=200&fit=crop",
+        verified: false,
+    },
+    {
+        id: 4,
+        name: "Local Business Network",
+        members: "89 Members",
+        description: "Supporting local entrepreneurs.",
+        avatar: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=200&fit=crop",
+        verified: true,
+    },
+];

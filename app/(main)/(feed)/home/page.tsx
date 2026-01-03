@@ -12,8 +12,8 @@ export default function FeedPage() {
                 <AlertShowcase />
 
                 {/* Create Post Widget */}
-                <CreatePostWidget />
             </div>
+            <CreatePostWidget />
 
             {/* Filterable Posts Feed */}
             <FeedList />
