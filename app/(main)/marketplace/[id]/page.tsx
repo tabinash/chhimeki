@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft, MapPin, ShieldCheck, Heart, MessageCircle, Share2, Tag, MoreVertical } from "lucide-react";
 import { marketplaceItems } from "@/data/mockMarketplaceData";
+import Link from "next/link";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -146,10 +147,12 @@ export default function ProductDetailPage() {
                             </button>
                         </>
                     ) : (
-                        <button className="flex-1 bg-black text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
+                        <Link
+                            href={`/messages/${item.sellerId}`}
+                            className="flex-1 bg-black text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
                             <MessageCircle className="w-5 h-5" />
                             Message Seller
-                        </button>
+                        </Link>
                     )}
                 </div>
             </div>

@@ -15,6 +15,10 @@ import {
     groups,
 } from "@/data/explore";
 import { businesses } from "@/data/mockBusinessData";
+import PeopleCard from "./_components/PeopleCard";
+import OrganizationCard from "./_components/OrganizationCard";
+import BusinessCard from "./_components/BusinessCard";
+import GroupCard from "./_components/GroupCard";
 
 /* -------------------- Types -------------------- */
 type ScrollDirection = "left" | "right";
@@ -101,35 +105,7 @@ const ExplorePage: React.FC = () => {
               snap-x snap-mandatory no-scrollbar"
                     >
                         {suggestedUsers.map((user) => (
-                            <div
-                                key={user.username}
-                                className="snap-start flex-shrink-0 w-[140px]
-                  bg-white border  border-gray-300 rounded-2xl p-3 text-center shadow-sm"
-                            >
-                                <div className="relative w-16 h-16 mx-auto">
-                                    <img
-                                        src={user.avatar}
-                                        alt={user.name}
-                                        className="w-full h-full rounded-full object-cover"
-                                    />
-                                    {user.verified && (
-                                        <span className="absolute bottom-0 right-0
-                      bg-blue-500 rounded-full p-1">
-                                            <CheckCircle2 className="w-3 h-3 text-white" />
-                                        </span>
-                                    )}
-                                </div>
-                                <h3 className="mt-2 text-sm font-semibold truncate">
-                                    {user.name}
-                                </h3>
-                                <p className="text-[10px] text-gray-500 truncate">
-                                    {user.username}
-                                </p>
-                                <button className="mt-2 w-full py-1.5 text-xs font-bold
-                  bg-blue-50 text-blue-600 rounded-lg">
-                                    Follow
-                                </button>
-                            </div>
+                            <PeopleCard key={user.username} user={user} />
                         ))}
                     </div>
                 </div>
@@ -163,25 +139,7 @@ const ExplorePage: React.FC = () => {
               snap-x snap-mandatory no-scrollbar"
                     >
                         {suggestedInstitutions.map((inst) => (
-                            <div
-                                key={inst.name}
-                                className="snap-center w-[240px] flex-shrink-0
-                  bg-white border  border-gray-300 rounded-2xl shadow-sm overflow-hidden"
-                            >
-                                <div className="h-20 bg-gray-100 relative">
-                                    <span className="absolute -bottom-5 left-4 text-3xl">
-                                        {inst.icon}
-                                    </span>
-                                </div>
-                                <div className="pt-7 px-4 pb-4">
-                                    <h3 className="font-bold">{inst.name}</h3>
-                                    <p className="text-xs text-gray-500">{inst.type}</p>
-                                    <button className="mt-2 px-3 py-1.5 text-xs font-bold
-                    bg-blue-600 text-white rounded-lg">
-                                        Follow
-                                    </button>
-                                </div>
-                            </div>
+                            <OrganizationCard key={inst.name} organization={inst} />
                         ))}
                     </div>
                 </div>
@@ -215,28 +173,7 @@ const ExplorePage: React.FC = () => {
               snap-x snap-mandatory no-scrollbar"
                     >
                         {businesses.slice(0, 5).map((business) => (
-                            <Link
-                                key={business.id}
-                                href={`/businesses/${business.id}`}
-                                className="snap-center w-[220px] flex-shrink-0
-                  bg-white border  border-gray-300  rounded-2xl shadow-sm overflow-hidden"
-                            >
-                                <div className="h-24 bg-gray-100">
-                                    <img
-                                        src={business.coverImage}
-                                        alt={business.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div className="px-3 py-2">
-                                    <h3 className="font-bold text-sm truncate">
-                                        {business.name}
-                                    </h3>
-                                    <p className="text-xs text-gray-500">
-                                        {business.category}
-                                    </p>
-                                </div>
-                            </Link>
+                            <BusinessCard key={business.id} business={business} />
                         ))}
                     </div>
                 </div>
@@ -255,39 +192,7 @@ const ExplorePage: React.FC = () => {
                 </div>
                 <div className="space-y-3">
                     {groups.map((group) => (
-                        <div
-                            key={group.id}
-                            className="flex items-center gap-3 p-3
-                bg-white border text-start  border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                        >
-                            <img
-                                src={group.avatar}
-                                alt={group.name}
-                                className="w-12 h-12 rounded-xl object-cover"
-                            />
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-bold truncate text-gray-900">
-                                    {group.name}
-                                </h3>
-                                <p className="text-xs text-gray-500 truncate mb-0.5">
-                                    {group.description}
-                                </p>
-                                <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
-                                    <span>{group.members}</span>
-                                    {group.verified && (
-                                        <>
-                                            <span>•</span>
-                                            <span className="text-blue-600 flex items-center gap-0.5">
-                                                Verified <CheckCircle2 className="w-2.5 h-2.5" />
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                            <button className="px-4 py-2 text-xs font-bold bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                                Join
-                            </button>
-                        </div>
+                        <GroupCard key={group.id} group={group} />
                     ))}
                 </div>
             </section>

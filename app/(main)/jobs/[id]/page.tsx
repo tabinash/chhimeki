@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft, MapPin, DollarSign, Clock, ShieldCheck, Share2, MoreVertical, MessageCircle, Phone, CheckCircle, Briefcase } from "lucide-react";
 import { jobs } from "@/data/mockJobsData";
+import Link from "next/link";
 
 export default function JobDetailPage() {
     const params = useParams();
@@ -144,10 +145,10 @@ export default function JobDetailPage() {
                                 <Phone className="w-4 h-4" />
                                 Call
                             </button>
-                            <button className="flex-[2] bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
+                            <Link href={`/messages/${job.id}`} className="flex-[2] bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
                                 <MessageCircle className="w-5 h-5" />
-                                Apply Now
-                            </button>
+                                Message
+                            </Link>
                         </>
                     )}
                 </div>

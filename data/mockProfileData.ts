@@ -1,5 +1,5 @@
 export interface UserProfile {
-    id: string;
+    id: number;
     name: string;
     username: string;
     avatar: string;
@@ -43,7 +43,7 @@ export interface UserProfile {
 
 export const mockUsers: Record<string, UserProfile> = {
     "current": {
-        id: "current",
+        id: 1,
         name: "Abinash Thapa",
         username: "abinash",
         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
@@ -108,7 +108,7 @@ export const mockUsers: Record<string, UserProfile> = {
         isOwnProfile: true
     },
     "sita": {
-        id: "sita",
+        id: 1,
         name: "Sita Sharma",
         username: "sita_sharma",
         avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",

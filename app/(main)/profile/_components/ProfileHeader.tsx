@@ -69,18 +69,21 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                     </div>
 
                     <div className="flex gap-2 mb-1">
-                        {isOwnProfile ? (
-                            <button className="px-4 py-2 bg-gray-100 text-gray-900 rounded-full text-sm font-bold border border-gray-200">
+                        {!isOwnProfile ? (
+                            <Link
+                                href="/profile/edit"
+                                className="px-4 py-2 bg-gray-100 text-gray-900 rounded-full text-sm font-bold border border-gray-200 hover:bg-gray-200 transition-colors"
+                            >
                                 Edit Profile
-                            </button>
+                            </Link>
                         ) : (
                             <>
                                 <button className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-bold shadow-sm">
                                     Follow
                                 </button>
-                                <button className="p-2 bg-gray-100 text-gray-900 rounded-full border border-gray-200">
+                                <Link href={`/messages/${user.id}`} className="p-2 bg-gray-100 text-gray-900 rounded-full border border-gray-200">
                                     <MessageCircle className="w-5 h-5" />
-                                </button>
+                                </Link>
                             </>
                         )}
                     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import ProfileHeader from "./ProfileHeader";
+import ProfileHeader from "./_components/ProfileHeader";
 import { mockUsers, currentUser } from "@/data/mockProfileData";
 
 export default function ProfileLayout({
@@ -18,7 +18,7 @@ export default function ProfileLayout({
 
     return (
         <main className="flex-1 h-full min-h-screen bg-white max-w-[1035px]">
-            <ProfileHeader user={user} isOwnProfile={isOwnProfile} />
+            <ProfileHeader user={user} isOwnProfile={true} />
             {children}
         </main>
     );

@@ -6,6 +6,7 @@ export interface MarketplaceItem {
     image: string;
     time: string;
     seller: string;
+    sellerId: number;
     sellerImage: string;
     isVerified: boolean;
     condition: string;
@@ -23,6 +24,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
         time: "2h ago",
         seller: "Sarah J.",
+        sellerId: 1,
         sellerImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
         isVerified: true,
         condition: "Like New",
@@ -38,6 +40,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?w=400&h=300&fit=crop",
         time: "5h ago",
         seller: "Mike C.",
+        sellerId: 2,
         sellerImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
         isVerified: false,
         condition: "Good",
@@ -53,6 +56,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop",
         time: "1d ago",
         seller: "Alex R.",
+        sellerId: 3,
         sellerImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
         isVerified: true,
         condition: "Vintage",
@@ -68,6 +72,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=400&h=300&fit=crop",
         time: "3d ago",
         seller: "Emily W.",
+        sellerId: 4,
         sellerImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
         isVerified: true,
         condition: "Used",
@@ -83,6 +88,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=300&fit=crop",
         time: "4h ago",
         seller: "John D.",
+        sellerId: 5,
         sellerImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
         isVerified: false,
         condition: "Good",
@@ -98,6 +104,7 @@ export const marketplaceItems: MarketplaceItem[] = [
         image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&h=300&fit=crop",
         time: "1h ago",
         seller: "You",
+        sellerId: 6,
         sellerImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
         isVerified: true,
         condition: "New",

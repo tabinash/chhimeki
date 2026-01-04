@@ -34,7 +34,7 @@ export default function LoginPage() {
                     <span className="text-2xl font-bold text-white tracking-tight">
                         Chhimeki
                     </span>
-                    <span className="text-2xl font-bold text-orange-400 tracking-tight">
+                    <span className="text-2xl font-bold text-orange-500 tracking-tight">
                         App
                     </span>
                 </div>
