@@ -1,4 +1,4 @@
-import { MarketplaceLeftSidebar } from "./MarketplaceLeftSidebar";
+import { MarketplaceLeftSidebar } from "./_components/MarketplaceLeftSidebar";
 
 export default function MarketplaceLayout({
     children,

@@ -3,9 +3,12 @@ import { Search, SlidersHorizontal, Mail, Bell, ChevronDown, User, Settings, Log
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export function Header() {
+    const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Close dropdown when clicking outside
@@ -19,6 +22,15 @@ export function Header() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    // Handle search
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        } else {
+            router.push('/search');
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100/50 shadow-sm transition-all duration-300">
@@ -38,13 +50,28 @@ export function Header() {
                 {/* Center Search Bar */}
                 <div className="flex-1 max-w-xl mx-8 hidden md:block">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" strokeWidth={2.5} />
+                        <button
+                            onClick={handleSearch}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 hover:text-blue-600 transition-colors z-10"
+                        >
+                            <Search className="h-4 w-4" strokeWidth={2.5} />
+                        </button>
                         <input
                             type="text"
                             placeholder="Search neighbors, services, events..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSearch();
+                                }
+                            }}
                             className="w-full h-11 pl-11 pr-12 bg-gray-100/80 border border-transparent rounded-full text-sm font-medium text-gray-700 placeholder:text-gray-500 focus:outline-none focus:bg-white focus:border-blue-500/30 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
                         />
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white rounded-full transition-all text-gray-400 hover:text-blue-600 hover:shadow-sm">
+                        <button
+                            onClick={handleSearch}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white rounded-full transition-all text-gray-400 hover:text-blue-600 hover:shadow-sm"
+                        >
                             <SlidersHorizontal className="h-4 w-4" strokeWidth={2.5} />
                         </button>
                     </div>

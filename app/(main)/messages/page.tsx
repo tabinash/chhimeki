@@ -109,10 +109,10 @@ export default function MessagesPage() {
                 {activeConversation.messages.map((message, index) => {
                     const isCurrentUser = message.senderId === currentUser.id;
                     const showAvatar = !isCurrentUser && (
-                        index === 0 || 
+                        index === 0 ||
                         activeConversation.messages[index - 1].senderId !== message.senderId
                     );
-                    
+
                     return (
                         <div
                             key={message.id}
@@ -134,17 +134,15 @@ export default function MessagesPage() {
                                 </div>
                             )}
                             <div
-                                className={`max-w-[70%] ${
-                                    isCurrentUser
+                                className={`max-w-[70%] ${isCurrentUser
                                         ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                                         : "bg-white text-gray-900 shadow-md"
-                                } rounded-2xl px-4 py-2.5 transition-all hover:shadow-lg`}
+                                    } rounded-2xl px-4 py-2.5 transition-all hover:shadow-lg`}
                             >
                                 <p className="text-sm leading-relaxed">{message.text}</p>
                                 <div
-                                    className={`flex items-center gap-1.5 mt-1 text-xs ${
-                                        isCurrentUser ? "text-blue-100" : "text-gray-400"
-                                    }`}
+                                    className={`flex items-center gap-1.5 mt-1 text-xs ${isCurrentUser ? "text-blue-100" : "text-gray-400"
+                                        }`}
                                 >
                                     <span className="font-medium">{message.timestamp}</span>
                                     {isCurrentUser && (
@@ -187,7 +185,7 @@ export default function MessagesPage() {
                         </div>
                     </div>
                 )}
-                
+
                 <div ref={messagesEndRef} />
             </div>
 
@@ -212,7 +210,7 @@ export default function MessagesPage() {
                             placeholder="Type a message..."
                             className="w-full px-5 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all"
                         />
-                        <button 
+                        <button
                             className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
                             title="Emoji"
                         >

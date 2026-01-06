@@ -1,4 +1,4 @@
-import { GroupsRightSidebar } from "./GroupsRightSidebar";
+import { GroupsRightSidebar } from "./_components/GroupsRightSidebar";
 
 export default function GroupsLayout({
     children,

@@ -1,4 +1,4 @@
-import { JobsRightSidebar } from "./JobsRightSidebar";
+import { JobsRightSidebar } from "./_components/JobsRightSidebar";
 
 export default function JobsLayout({
     children,

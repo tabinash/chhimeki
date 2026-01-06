@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import {
     Edit3,
     MoreHorizontal,
@@ -13,6 +14,8 @@ import {
     ShieldCheck
 } from "lucide-react";
 import { UserProfile } from "@/data/mockProfileData";
+import ProfileEditModal, { ProfileFormData } from "@/components/modals/ProfileEditModal";
+import { getChatUrl } from "@/lib/chatUtils";
 
 interface ProfileHeaderProps {
     user: UserProfile;
@@ -22,6 +25,13 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps) {
     const searchParams = useSearchParams();
     const activeTab = searchParams.get("tab") || "posts";
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const router = useRouter();
+
+    const handleSaveProfile = (data: ProfileFormData) => {
+        console.log("Saving profile data:", data);
+        // TODO: Save to backend
+    };
 
     const tabs = [
         { id: "posts", label: "Posts", icon: <Briefcase className="w-4 h-4" /> },
@@ -44,7 +54,10 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
                     {isOwnProfile && (
-                        <button className="absolute bottom-4 right-4 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-xl text-xs font-bold hover:bg-white transition-colors flex items-center gap-2">
+                        <button
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="absolute bottom-4 right-4 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-xl text-xs font-bold hover:bg-white transition-colors flex items-center gap-2"
+                        >
                             <Edit3 className="w-3 h-3" />
                             Edit Cover
                         </button>
@@ -84,7 +97,10 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                         <div className="flex gap-3 justify-center md:justify-end md:pb-4">
                             {isOwnProfile ? (
                                 <>
-                                    <button className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors flex items-center gap-2">
+                                    <button
+                                        onClick={() => setIsEditModalOpen(true)}
+                                        className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors flex items-center gap-2"
+                                    >
                                         <Edit3 className="w-4 h-4" />
                                         Edit Profile
                                     </button>
@@ -98,7 +114,9 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                                         <UserPlus className="w-4 h-4" />
                                         Connect
                                     </button>
-                                    <button className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors flex items-center gap-2">
+                                    <button
+                                        onClick={() => router.push(getChatUrl(user.id, { hideSidebar: true, source: "profile" }))}
+                                        className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors flex items-center gap-2">
                                         <MessageCircle className="w-4 h-4" />
                                         Message
                                     </button>
@@ -131,6 +149,14 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                     </div>
                 </div>
             </div>
+
+            {/* Profile Edit Modal */}
+            <ProfileEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={user}
+                onSave={handleSaveProfile}
+            />
         </div>
     );
 }
