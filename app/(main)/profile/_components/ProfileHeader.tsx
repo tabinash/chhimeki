@@ -115,7 +115,7 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                     {tabs.map((tab) => (
                         <Link
                             key={tab.id}
-                            href={`/profile?${isOwnProfile ? "" : `user=${user.id}&`}tab=${tab.id}`}
+                            href={`/profile/${user.id}?tab=${tab.id}`}
                             className={`relative py-3 text-base font-bold whitespace-nowrap transition-colors ${activeTab === tab.id
                                 ? "text-blue-600 border-b-2 border-blue-600"
                                 : "text-gray-500 hover:text-gray-700"

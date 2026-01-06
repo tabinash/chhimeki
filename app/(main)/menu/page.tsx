@@ -18,28 +18,31 @@ import {
     Bookmark,
     Bell,
 } from "lucide-react";
-// useRouter
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { useLogout } from "@/hooks/api/useLogout";
+import { AvatarWithFallback } from "@/components/shared-component/AvatarWithFallback";
 
 export default function MenuPage() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const router = useRouter();
+    const { user } = useUser();
+    const { mutate: logout } = useLogout();
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Profile Header */}
             <div className="bg-white px-4 pt-6 pb-4 border-b border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-full overflow-hidden relative flex-shrink-0">
-                        <Image
-                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
-                            alt="Profile"
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
+                    <AvatarWithFallback
+                        src={user?.profilePicture}
+                        name={user?.name}
+                        size={64}
+                    />
                     <div className="flex-1 min-w-0">
-                        <h2 className="font-bold text-gray-900 text-lg truncate">Abinash Thapa</h2>
-                        <p className="text-sm text-gray-500">Ward 4, Baneshwor</p>
+                        <h2 className="font-bold text-gray-900 text-lg truncate">{user?.name || "Loading..."}</h2>
+                        <p className="text-sm text-gray-500">
+                            {user ? `Ward ${user.wada}, ${user.palika}` : "Loading..."}
+                        </p>
                     </div>
                 </div>
 
@@ -54,7 +57,7 @@ export default function MenuPage() {
                         <p className="text-xs text-gray-500">Neighbors</p>
                     </div>
                     <Link
-                        href="/profile"
+                        href={`/profile/${user?.id}`}
                         className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold text-gray-700 transition-colors"
                     >
                         View Profile
@@ -125,8 +128,9 @@ export default function MenuPage() {
 
                 {/* Logout */}
                 <div className="px-4 mt-6">
-                    <button className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors"
-                        onClick={() => router.push("/")}
+                    <button
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors"
+                        onClick={() => logout()}
                     >
                         <LogOut className="w-5 h-5" strokeWidth={2} />
                         Log Out

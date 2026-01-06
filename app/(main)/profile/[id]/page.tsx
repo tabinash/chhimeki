@@ -1,4 +1,5 @@
 "use client";
+import { use } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
@@ -16,14 +17,25 @@ import { mockUsers, currentUser } from "@/data/mockProfileData";
 import { marketplaceItems } from "@/data/mockMarketplaceData";
 import { jobs } from "@/data/mockJobsData";
 import { posts } from "@/data/mockFeedData";
-import PostCard from "../(feed)/_components/PostCard";
-import ProductCard from "./_components/ProductCard";
-import JobCard from "./_components/JobCard";
+import PostCard from "../_components/PostCard";
+import ProductCard from "../_components/ProductCard";
+import JobCard from "../_components/JobCard";
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+    params: Promise<{
+        id: string;
+    }>;
+}
+
+export default function ProfilePage({ params }: ProfilePageProps) {
+    // Unwrap the Promise using React's use() hook (Next.js 16+)
+    const { id } = use(params);
     const searchParams = useSearchParams();
-    const userId = searchParams.get("user");
+
+    const userId = id;
     const activeTab = searchParams.get("tab") || "posts";
+
+    console.log("user id from route:", userId);
 
     const user = userId ? (mockUsers[userId] || currentUser) : currentUser;
     const isOwnProfile = !userId || userId === "current";

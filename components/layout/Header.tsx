@@ -4,12 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { AvatarWithFallback } from "@/components/shared-component/AvatarWithFallback";
 
 export function Header() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
+    const { user } = useUser();
 
     const handleSearch = (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -36,18 +39,12 @@ export function Header() {
                 {/* Top Row: Avatar - Title - Bell */}
                 <div className="flex items-center justify-between px-4 pt-3 pb-4">
                     {/* Left: User Avatar */}
-                    <Link href="/profile" className="relative group">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 p-[2px]">
-                            <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                                <Image
-                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
-                                    alt="User"
-                                    width={42}
-                                    height={42}
-                                    className="object-cover"
-                                />
-                            </div>
-                        </div>
+                    <Link href={`/profile/${user?.id}`} className="relative group">
+                        <AvatarWithFallback
+                            src={user?.profilePicture}
+                            name={user?.name}
+                            size={40}
+                        />
                         <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
                     </Link>
 
@@ -55,7 +52,7 @@ export function Header() {
                     <div className="text-center leading-[1.1] tracking-tight">
                         <h1 className="text-4xl font-[700] text-blue-600  ">Chhimeki</h1>
                         <p className="text-[10px] font-medium text-gray-500 flex items-center justify-center gap-1">
-                            Ward 4 • Baneshwor
+                            {user ? `Ward ${user.wada} • ${user.palika}` : "Loading..."}
                         </p>
                     </div>
 

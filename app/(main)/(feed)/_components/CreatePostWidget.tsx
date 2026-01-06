@@ -3,8 +3,12 @@
 import { ImageIcon, MapPin, Smile } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
+import { AvatarWithFallback } from "@/components/shared-component/AvatarWithFallback";
 
 export default function CreatePostWidget() {
+    const { user } = useUser();
+
     return (
         <Link
             href="/post/create?bottomNav=false"
@@ -12,14 +16,12 @@ export default function CreatePostWidget() {
         >
             <div className="flex gap-3 items-center">
                 {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 relative">
-                    <Image
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
-                        alt="You"
-                        fill
-                        className="object-cover"
-                    />
-                </div>
+                <AvatarWithFallback
+                    src={user?.profilePicture}
+                    name={user?.name}
+                    size={40}
+                    className="flex-shrink-0"
+                />
 
                 {/* Input Placeholder */}
                 <div className="flex-1 bg-gray-50 rounded-full px-4 py-3 flex items-center">

@@ -2,20 +2,35 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Phone, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Phone, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useLogin } from "@/hooks/api/useLogin";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { mutate: login, isPending, error } = useLogin();
 
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = () => {
-        // basic validation
-        if (phoneNumber.length >= 10 && password.length > 0) {
-            router.push("/home");
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Basic validation
+        if (identifier.length < 10 || password.length === 0) {
+            return;
         }
+
+        // Call login API
+        login(
+            { identifier, password },
+            {
+                onSuccess: (data) => {
+                    // Redirect to home on success
+                    router.push("/home");
+                },
+            }
+        );
     };
 
     return (
@@ -65,23 +80,22 @@ export default function LoginPage() {
                     </div>
 
                     {/* Form */}
-                    <div className="space-y-5 flex-1">
+                    <form onSubmit={handleSubmit} className="space-y-5 flex-1">
 
-                        {/* Phone Number */}
+                        {/* Phone Number / Email */}
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-gray-500 ml-3 uppercase tracking-wider">
-                                Phone Number
+                                Phone Number Or Email
                             </label>
                             <div className="flex items-center bg-gray-50 rounded-2xl p-4 border border-gray-100 focus-within:border-blue-500 transition-colors">
-                                <span className="font-bold text-gray-500 border-r border-gray-200 pr-3 mr-3">
-                                    +977
-                                </span>
+
                                 <input
                                     type="tel"
                                     placeholder="98XXXXXXXX"
                                     className="flex-1 bg-transparent outline-none text-lg font-bold text-gray-900 placeholder:text-gray-300"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    value={identifier}
+                                    onChange={(e) => setIdentifier(e.target.value)}
+                                    disabled={isPending}
                                 />
                                 <Phone className="w-5 h-5 text-gray-400" />
                             </div>
@@ -100,10 +114,13 @@ export default function LoginPage() {
                                     className="flex-1 bg-transparent outline-none text-lg font-bold text-gray-900 placeholder:text-gray-300"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    disabled={isPending}
                                 />
                                 <button
+                                    type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="text-gray-400 hover:text-gray-600"
+                                    disabled={isPending}
                                 >
                                     {showPassword ? (
                                         <EyeOff className="w-5 h-5" />
@@ -123,14 +140,25 @@ export default function LoginPage() {
                             </button>
                         </div>
 
+                        {/* Error Message */}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <p className="text-sm font-bold text-red-600 text-center">
+                                    {error.message}
+                                </p>
+                            </div>
+                        )}
+
                         {/* Login Button */}
                         <button
-                            onClick={handleSubmit}
-                            className="w-full bg-blue-600 text-white py-4 rounded-full font-bold shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4"
+                            type="submit"
+                            disabled={isPending || identifier.length < 10 || password.length === 0}
+                            className="w-full bg-blue-600 text-white py-4 rounded-full font-bold shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                         >
-                            Login
+                            {isPending && <Loader2 className="w-5 h-5 animate-spin" />}
+                            {isPending ? "Logging in..." : "Login"}
                         </button>
-                    </div>
+                    </form>
 
                 </div>
             </div>
