@@ -30,73 +30,88 @@ export interface PagedResponse<T> {
 // Post Domain Types
 // ============================================
 
-export interface PostAuthor {
-    id: number;
-    name: string;
-    userType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
-    profilePicture: string | null;
-    isVerified: boolean;
-}
-
-export interface MediaItem {
-    id: number;
-    url: string;
-    thumbnailUrl: string | null;
-    mediaType: "IMAGE" | "VIDEO";
-    processingStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-    duration: number | null;
-}
-
 export interface PostResponse {
+    // Post details
     id: number;
-    content: string;
+    content: string | null;
     postType: "GENERAL" | "ALERT" | "GROUP";
-    visibility: "WADA" | "PALIKA" | "DISTRICT";
-    author: PostAuthor;
-    media: MediaItem[];
+    visibilityLevel: "WADA" | "PALIKA" | "DISTRICT" | null;
+
+    // Geography
+    district: string;
+    palika: string;
+    wada: string;
+
+    // Group information (only for GROUP posts)
+    groupId: number | null;
+    groupName: string | null;
+    groupProfileImage: string | null;
+
+    // Media information (flat structure)
+    imageUrls: string[]; // Empty array if no images
+    videoUrl: string | null;
+    videoThumbnail: string | null;
+    videoDuration: number | null; // Duration in seconds
+
+    // Author information
+    authorId: number;
+    authorName: string;
+    authorProfilePicture: string | null;
+    authorUserType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
+
+    // Engagement metrics
     likeCount: number;
     commentCount: number;
-    isLikedByMe: boolean;
+    shareCount: number;
+    isLikedByCurrentUser: boolean;
+
+    // Timestamps
     createdAt: string;
     updatedAt: string;
 }
 
 // ============================================
-// Create Post API
+// Create Post API (JSON - Text Only)
 // POST /api/posts
+// Content-Type: application/json
 // ============================================
 
-export interface CreatePostRequest {
-    content: string;
-    postType: "GENERAL" | "ALERT";
-    visibility: "WADA" | "PALIKA" | "DISTRICT";
-    mediaIds?: number[]; // Optional array of media IDs uploaded via MediaController
+export interface CreatePostJsonRequest {
+    content?: string; // Max 2000 characters
+    postType: "GENERAL" | "ALERT" | "GROUP";
+    visibilityLevel?: "WADA" | "PALIKA" | "DISTRICT"; // Required for non-GROUP posts
+    groupId?: number; // Required if postType = GROUP
 }
 
-export type CreatePostResponse = ApiResponse<PostResponse>;
+export type CreatePostJsonResponse = ApiResponse<PostResponse>;
+
+// ============================================
+// Create Post API (Multipart - With Media)
+// POST /api/posts
+// Content-Type: multipart/form-data
+// ============================================
+
+export interface CreatePostWithMediaRequest {
+    content?: string; // Max 2000 characters
+    postType: "GENERAL" | "ALERT" | "GROUP";
+    visibilityLevel?: "WADA" | "PALIKA" | "DISTRICT"; // Required for non-GROUP posts
+    groupId?: number; // Required if postType = GROUP
+    images?: File[]; // Max 5 images
+    video?: File; // Max 1 video, 3 minutes
+}
+
+export type CreatePostWithMediaResponse = ApiResponse<PostResponse>;
 
 // ============================================
 // Get Post By ID API
-// GET /api/posts/{postId}
+// GET /api/posts/{id}
 // ============================================
 
 export type GetPostByIdResponse = ApiResponse<PostResponse>;
 
 // ============================================
-// Update Post API
-// PUT /api/posts/{postId}
-// ============================================
-
-export interface UpdatePostRequest {
-    content: string;
-    visibility: "WADA" | "PALIKA" | "DISTRICT";
-}
-
-export type UpdatePostResponse = ApiResponse<PostResponse>;
-
-// ============================================
 // Delete Post API
-// DELETE /api/posts/{postId}
+// DELETE /api/posts/{id}
 // ============================================
 
 export type DeletePostResponse = ApiResponse<void>;
@@ -124,17 +139,3 @@ export interface GetUserPostsParams {
 }
 
 export type GetUserPostsResponse = PagedResponse<PostResponse>;
-
-// ============================================
-// Like Post API
-// POST /api/posts/{postId}/like
-// ============================================
-
-export type LikePostResponse = ApiResponse<void>;
-
-// ============================================
-// Unlike Post API
-// DELETE /api/posts/{postId}/like
-// ============================================
-
-export type UnlikePostResponse = ApiResponse<void>;

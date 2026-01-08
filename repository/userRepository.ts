@@ -35,6 +35,7 @@ export const userRepository = {
         console.log("Updating profile with data:", data);
         const response = await api.put<UpdateProfileResponse>("/users/profile", data);
         console.log("Update Profile Response:", response);
+        localStorage.setItem("user", JSON.stringify(response.data));
         return response;
     },
 
@@ -58,6 +59,7 @@ export const userRepository = {
             }
         );
         console.log("Update Profile Picture Response:", response);
+        localStorage.setItem("user", JSON.stringify(response.data));
         return response;
     },
 
@@ -81,6 +83,7 @@ export const userRepository = {
             }
         );
         console.log("Update Cover Picture Response:", response);
+        localStorage.setItem("user", JSON.stringify(response.data));
         return response;
     },
 

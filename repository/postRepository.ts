@@ -1,33 +1,84 @@
 import { api } from "./http";
 import {
-    CreatePostRequest,
-    CreatePostResponse,
+    CreatePostJsonRequest,
+    CreatePostJsonResponse,
+    CreatePostWithMediaRequest,
+    CreatePostWithMediaResponse,
     GetPostByIdResponse,
-    UpdatePostRequest,
-    UpdatePostResponse,
     DeletePostResponse,
     GetMyPostsParams,
     GetMyPostsResponse,
     GetUserPostsParams,
     GetUserPostsResponse,
-    LikePostResponse,
-    UnlikePostResponse,
 } from "@/types/api/post";
 
 // ============================================
-// Post Repository
+// POST REPOSITORY - Available APIs
 // ============================================
+// 1. createPostJson()      POST   /api/posts                       -- JSON, Auth required
+// 2. createPostWithMedia() POST   /api/posts                       -- Multipart, Auth required
+// 3. getPostById()         GET    /api/posts/{postId}              -- Public
+// 4. deletePost()          DELETE /api/posts/{postId}              -- Soft delete, owner only
+// 5. getMyPosts()          GET    /api/posts/my-posts                -- All posts by user, public
+// 6. getUserPosts()        GET    /api/posts/user/{userId}         -- All posts by user, public
 
 export const postRepository = {
     /**
-     * Create a new post (General or Alert)
-     * @param data - Post creation data with content, type, visibility, and optional media
+     * Create a text-only post (no media)
+     * Content-Type: application/json
+     * @param data - Post creation data (content, type, visibility, groupId)
      * @returns Created post data
      */
-    createPost: async (data: CreatePostRequest): Promise<CreatePostResponse> => {
-        console.log("Creating post with data:", data);
-        const response = await api.post<CreatePostResponse>("/posts", data);
-        console.log("Create Post Response:", response);
+    createPostJson: async (data: CreatePostJsonRequest): Promise<CreatePostJsonResponse> => {
+        console.log("Creating text-only post:", data);
+        const response = await api.post<CreatePostJsonResponse>("/posts", data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log("Create Post (JSON) Response:", response);
+        return response;
+    },
+
+    /**
+     * Create a post with media files (images and/or video)
+     * Content-Type: multipart/form-data
+     * @param data - Post creation data with optional images (max 5) and video (max 1)
+     * @returns Created post data
+     */
+    createPostWithMedia: async (data: CreatePostWithMediaRequest): Promise<CreatePostWithMediaResponse> => {
+        console.log("Creating post with media:", {
+            postType: data.postType,
+            hasImages: data.images && data.images.length > 0,
+            hasVideo: !!data.video,
+        });
+
+        const formData = new FormData();
+
+        // Add text fields
+        if (data.content) formData.append("content", data.content);
+        formData.append("postType", data.postType);
+        if (data.visibilityLevel) formData.append("visibilityLevel", data.visibilityLevel);
+        if (data.groupId) formData.append("groupId", data.groupId.toString());
+
+        // Add images (max 5)
+        if (data.images && data.images.length > 0) {
+            data.images.forEach((image) => {
+                formData.append("images", image);
+            });
+        }
+
+        // Add video (max 1)
+        if (data.video) {
+            formData.append("video", data.video);
+        }
+
+        const response = await api.post<CreatePostWithMediaResponse>("/posts", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        console.log("Create Post (Multipart) Response:", response);
         return response;
     },
 
@@ -44,20 +95,7 @@ export const postRepository = {
     },
 
     /**
-     * Update an existing post (only content and visibility can be updated)
-     * @param postId - The ID of the post to update
-     * @param data - Updated post data
-     * @returns Updated post data
-     */
-    updatePost: async (postId: number, data: UpdatePostRequest): Promise<UpdatePostResponse> => {
-        console.log("Updating post ID:", postId, "with data:", data);
-        const response = await api.put<UpdatePostResponse>(`/posts/${postId}`, data);
-        console.log("Update Post Response:", response);
-        return response;
-    },
-
-    /**
-     * Delete a post (only post author can delete)
+     * Delete a post (soft delete - only post author can delete)
      * @param postId - The ID of the post to delete
      * @returns Success response
      */
@@ -100,30 +138,6 @@ export const postRepository = {
             },
         });
         console.log("User Posts Response:", response);
-        return response;
-    },
-
-    /**
-     * Like a post
-     * @param postId - The ID of the post to like
-     * @returns Success response
-     */
-    likePost: async (postId: number): Promise<LikePostResponse> => {
-        console.log("Liking post with ID:", postId);
-        const response = await api.post<LikePostResponse>(`/posts/${postId}/like`);
-        console.log("Like Post Response:", response);
-        return response;
-    },
-
-    /**
-     * Unlike a post (remove like)
-     * @param postId - The ID of the post to unlike
-     * @returns Success response
-     */
-    unlikePost: async (postId: number): Promise<UnlikePostResponse> => {
-        console.log("Unliking post with ID:", postId);
-        const response = await api.delete<UnlikePostResponse>(`/posts/${postId}/like`);
-        console.log("Unlike Post Response:", response);
         return response;
     },
 };

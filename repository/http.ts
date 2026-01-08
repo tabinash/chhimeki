@@ -1,18 +1,30 @@
+import { useRefreshToken } from "@/hooks/api/useRefreshToken";
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
 // ============================================
-// Types
+// Types (Matching Backend ErrorResponse.java)
 // ============================================
 interface ApiErrorResponse {
+    status: string; // Always "error"
     message: string;
-    statusCode: number;
-    errors?: Record<string, string[]>;
+    errorCode: string;
+    path: string;
+    timestamp: string;
+    fieldErrors?: FieldError[];
+}
+
+interface FieldError {
+    field: string;
+    message: string;
 }
 
 export interface ApiError {
+    status: string;
     message: string;
-    statusCode: number;
-    errors?: Record<string, string[]>;
+    errorCode: string;
+    path?: string;
+    timestamp?: string;
+    fieldErrors?: FieldError[];
     isNetworkError: boolean;
 }
 
@@ -40,12 +52,12 @@ const http: AxiosInstance = axios.create({
 // ============================================
 http.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Token is handled via HttpOnly cookies (sent automatically with withCredentials: true)
-        // If you need to add any custom headers, do it here:
-
-        // Example: Add language header for i18n
-        // const language = localStorage.getItem("language") || "en";
-        // config.headers["Accept-Language"] = language;
+        // Get token from localStorage and add to headers
+        const token = localStorage.getItem("accessToken");
+        console.log("Access token:", token);
+        if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        }
 
         return config;
     },
@@ -64,65 +76,93 @@ http.interceptors.response.use(
     },
     async (error: AxiosError<ApiErrorResponse>) => {
         const apiError: ApiError = {
+            status: "error",
             message: "An unexpected error occurred",
-            statusCode: 500,
+            errorCode: "INTERNAL_SERVER_ERROR",
             isNetworkError: false,
         };
 
         // Network Error (No internet, server down, etc.)
         if (!error.response) {
             apiError.message = "Network error. Please check your connection.";
+            apiError.errorCode = "NETWORK_ERROR";
             apiError.isNetworkError = true;
             return Promise.reject(apiError);
         }
 
         const { status, data } = error.response;
-        apiError.statusCode = status;
+        console.log("Error response:", error);
 
-        switch (status) {
-            case 400:
-                // Bad Request - Validation errors
-                apiError.message = data?.message || "Invalid request";
-                apiError.errors = data?.errors;
-                break;
+        // If backend sent structured ErrorResponse, use it
+        if (data && data.status === "error") {
+            apiError.message = data.message;
+            apiError.errorCode = data.errorCode;
+            apiError.path = data.path;
+            apiError.timestamp = data.timestamp;
+            apiError.fieldErrors = data.fieldErrors;
+        } else {
+            // Fallback to status code-based messages
+            switch (status) {
+                case 400:
+                    // Bad Request - Business logic errors, validation errors
+                    apiError.message = data?.message || "Invalid request";
+                    apiError.errorCode = data?.errorCode || "BAD_REQUEST";
+                    apiError.fieldErrors = data?.fieldErrors;
+                    break;
 
-            case 401:
-                // Unauthorized - Token expired or invalid
-                apiError.message = "Session expired. Please login again.";
-                // Clear any client-side auth state and redirect to login
-                handleUnauthorized();
-                break;
+                case 401:
+                    // Unauthorized - Authentication failed
+                    apiError.message = data?.message || "Authentication required. Please login.";
+                    apiError.errorCode = data?.errorCode || "UNAUTHORIZED";
+                    handleUnauthorized();
+                    break;
 
-            case 403:
-                // Forbidden - User doesn't have permission
-                apiError.message = "You don't have permission to perform this action.";
-                break;
+                case 403:
+                    // Forbidden - User doesn't have permission
+                    apiError.message = data?.message || "You don't have permission to access this resource";
+                    apiError.errorCode = data?.errorCode || "ACCESS_DENIED";
+                    break;
 
-            case 404:
-                // Not Found
-                apiError.message = data?.message || "Resource not found";
-                break;
+                case 404:
+                    // Not Found - Resource not found
+                    apiError.message = data?.message || "Resource not found";
+                    apiError.errorCode = data?.errorCode || "RESOURCE_NOT_FOUND";
+                    break;
 
-            case 422:
-                // Unprocessable Entity - Validation errors
-                apiError.message = data?.message || "Validation failed";
-                apiError.errors = data?.errors;
-                break;
+                case 409:
+                    // Conflict - Data integrity violation (duplicate records)
+                    apiError.message = data?.message || "This record already exists";
+                    apiError.errorCode = data?.errorCode || "DATA_INTEGRITY_VIOLATION";
+                    break;
 
-            case 429:
-                // Too Many Requests
-                apiError.message = "Too many requests. Please try again later.";
-                break;
+                case 429:
+                    // Too Many Requests - Rate limit exceeded
+                    apiError.message = data?.message || "Too many requests. Please try again later.";
+                    apiError.errorCode = data?.errorCode || "RATE_LIMIT_EXCEEDED";
+                    break;
 
-            case 500:
-            case 502:
-            case 503:
-                // Server errors
-                apiError.message = "Server error. Please try again later.";
-                break;
+                case 500:
+                    // Internal Server Error
+                    apiError.message = data?.message || "Server error. Please try again later.";
+                    apiError.errorCode = data?.errorCode || "INTERNAL_SERVER_ERROR";
+                    break;
 
-            default:
-                apiError.message = data?.message || "Something went wrong";
+                case 502:
+                    // Bad Gateway
+                    apiError.message = "Service temporarily unavailable. Please try again.";
+                    apiError.errorCode = "BAD_GATEWAY";
+                    break;
+
+                case 503:
+                    // Service Unavailable
+                    apiError.message = "Service temporarily unavailable. Please try again.";
+                    apiError.errorCode = "SERVICE_UNAVAILABLE";
+                    break;
+
+                default:
+                    apiError.message = data?.message || "Something went wrong";
+                    apiError.errorCode = data?.errorCode || "UNKNOWN_ERROR";
+            }
         }
 
         return Promise.reject(apiError);
@@ -141,6 +181,7 @@ function handleUnauthorized(): void {
     // Clear any client-side storage if needed
     if (typeof window !== "undefined") {
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         // Redirect to login page
         window.location.href = "/login";
     }

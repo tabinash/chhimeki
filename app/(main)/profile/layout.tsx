@@ -12,7 +12,7 @@ export default function ProfileLayout({
 
 
     return (
-        <main className="flex-1 h-full min-h-screen bg-white max-w-[1035px]">
+        <main className="flex-1 h-full min-h-screen  max-w-[1035px]">
 
             {children}
         </main>

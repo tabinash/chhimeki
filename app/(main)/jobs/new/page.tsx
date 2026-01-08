@@ -1,29 +1,164 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Briefcase, DollarSign, MapPin, Clock } from "lucide-react";
+import { ArrowLeft, Loader2, X } from "lucide-react";
+import { useCreateJob } from "../_hook";
+import { useUser } from "@/hooks/useUser";
+import { JobCategory, EmploymentType } from "@/types/api/job";
+
+// Category options matching API JobCategory enum
+const JOB_CATEGORIES: { label: string; value: JobCategory }[] = [
+    { label: "Construction", value: "CONSTRUCTION" },
+    { label: "Domestic Help", value: "DOMESTIC_HELP" },
+    { label: "Driving", value: "DRIVING" },
+    { label: "Teaching", value: "TEACHING" },
+    { label: "IT & Tech", value: "IT_TECHNOLOGY" },
+    { label: "Sales & Marketing", value: "SALES_MARKETING" },
+    { label: "Healthcare", value: "HEALTHCARE" },
+    { label: "Agriculture", value: "AGRICULTURE" },
+    { label: "Hospitality", value: "HOSPITALITY" },
+    { label: "Retail", value: "RETAIL" },
+    { label: "Manufacturing", value: "MANUFACTURING" },
+    { label: "Security", value: "SECURITY" },
+    { label: "Delivery", value: "DELIVERY" },
+    { label: "Beauty & Wellness", value: "BEAUTY_WELLNESS" },
+    { label: "Others", value: "OTHERS" },
+];
+
+// Employment type options matching API EmploymentType enum
+const EMPLOYMENT_TYPES: { label: string; value: EmploymentType }[] = [
+    { label: "Full-time", value: "FULL_TIME" },
+    { label: "Part-time", value: "PART_TIME" },
+    { label: "Contract", value: "CONTRACT" },
+    { label: "Freelance", value: "FREELANCE" },
+    { label: "Daily Wage", value: "DAILY_WAGE" },
+    { label: "Temporary", value: "TEMPORARY" },
+];
 
 export default function PostJobPage() {
     const router = useRouter();
+    const { user } = useUser();
+    const { mutate: createJob, isPending } = useCreateJob();
+
     const [formData, setFormData] = useState({
         title: "",
-        category: "Household Help",
-        salary: "",
-        type: "Part-time",
-        location: "",
         description: "",
-        requirements: ""
+        category: "DOMESTIC_HELP" as JobCategory,
+        employmentType: "FULL_TIME" as EmploymentType,
+        salaryAmount: "",
+        isNegotiable: false,
+        contactPhone: "",
+        palika: "",
+        district: "",
     });
+
+    // Field-level errors
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    // Modal error state
+    const [errorModal, setErrorModal] = useState<string | null>(null);
+
+    // Track if form was submitted (to show errors)
+    const [submitted, setSubmitted] = useState(false);
+
+    // Pre-fill location from user profile when loaded
+    useEffect(() => {
+        if (user && !formData.palika && !formData.district) {
+            setFormData((prev) => ({
+                ...prev,
+                palika: user.palika || "",
+                district: user.district || "",
+            }));
+        }
+    }, [user, formData.palika, formData.district]);
+
+    // Validate form
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+
+        if (!formData.title.trim()) {
+            newErrors.title = "Job title is required";
+        }
+        if (!formData.description.trim()) {
+            newErrors.description = "Job description is required";
+        }
+        if (!formData.contactPhone.trim()) {
+            newErrors.contactPhone = "Contact phone is required";
+        }
+        if (!formData.palika.trim()) {
+            newErrors.palika = "Palika is required";
+        }
+        if (!formData.district.trim()) {
+            newErrors.district = "District is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Job Posted:", formData);
-        router.push("/jobs");
+        setSubmitted(true);
+
+        if (!validateForm()) {
+            return;
+        }
+
+        createJob(
+            {
+                title: formData.title,
+                description: formData.description,
+                category: formData.category,
+                employmentType: formData.employmentType,
+                salaryAmount: formData.salaryAmount ? Number(formData.salaryAmount) : undefined,
+                isNegotiable: formData.isNegotiable,
+                contactPhone: formData.contactPhone,
+                palika: formData.palika,
+                district: formData.district,
+            },
+            {
+                onSuccess: (response) => {
+                    router.push(`/jobs/${response.data.id}`);
+                },
+                onError: (error) => {
+                    setErrorModal(error.message || "Failed to create job");
+                },
+            }
+        );
+    };
+
+    // Clear error when field is edited
+    const handleFieldChange = (field: string, value: string | boolean) => {
+        setFormData({ ...formData, [field]: value });
+        if (submitted && errors[field]) {
+            setErrors({ ...errors, [field]: "" });
+        }
     };
 
     return (
         <div className="min-h-screen bg-white pb-24">
+            {/* Error Modal */}
+            {errorModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-gray-900">Error</h3>
+                            <button onClick={() => setErrorModal(null)} className="p-1 hover:bg-gray-100 rounded-full">
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-6">{errorModal}</p>
+                        <button
+                            onClick={() => setErrorModal(null)}
+                            className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-sm"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
                 <button
@@ -36,83 +171,116 @@ export default function PostJobPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-5 space-y-6">
-
-                {/* Title & Category */}
+                {/* Title */}
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Job Title</label>
                     <input
                         type="text"
-                        required
                         placeholder="e.g. Housekeeper Needed"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.title ? "border-red-400" : "border-gray-200"
+                            }`}
                         value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        onChange={(e) => handleFieldChange("title", e.target.value)}
                     />
+                    {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
                 </div>
 
+                {/* Category */}
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
                     <select
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium appearance-none"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
                         value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        onChange={(e) => handleFieldChange("category", e.target.value)}
                     >
-                        <option>Household Help</option>
-                        <option>Driver / Delivery</option>
-                        <option>Sales / Shop</option>
-                        <option>Education</option>
-                        <option>Construction</option>
-                        <option>Office Admin</option>
+                        {JOB_CATEGORIES.map((cat) => (
+                            <option key={cat.value} value={cat.value}>
+                                {cat.label}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
-                {/* Salary & Type */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Salary</label>
-                        <div className="relative">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                required
-                                placeholder="e.g. 15000"
-                                className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
-                                value={formData.salary}
-                                onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Type</label>
-                        <div className="relative">
-                            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <select
-                                className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium appearance-none"
-                                value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                {/* Employment Type */}
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Employment Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {EMPLOYMENT_TYPES.map((type) => (
+                            <button
+                                key={type.value}
+                                type="button"
+                                onClick={() => handleFieldChange("employmentType", type.value)}
+                                className={`py-2.5 rounded-xl text-sm font-bold transition-colors ${formData.employmentType === type.value
+                                        ? "bg-black text-white"
+                                        : "bg-gray-50 border border-gray-200 text-gray-600"
+                                    }`}
                             >
-                                <option>Full-time</option>
-                                <option>Part-time</option>
-                                <option>Contract</option>
-                                <option>One-time</option>
-                            </select>
-                        </div>
+                                {type.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                {/* Location */}
+                {/* Salary */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Location</label>
-                    <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Salary (Rs.)</label>
+                    <input
+                        type="number"
+                        placeholder="e.g. 15000"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
+                        value={formData.salaryAmount}
+                        onChange={(e) => handleFieldChange("salaryAmount", e.target.value)}
+                    />
+                    <label className="flex items-center gap-2 mt-2">
+                        <input
+                            type="checkbox"
+                            checked={formData.isNegotiable}
+                            onChange={(e) => handleFieldChange("isNegotiable", e.target.checked)}
+                            className="w-4 h-4 rounded"
+                        />
+                        <span className="text-sm text-gray-600">Salary is negotiable</span>
+                    </label>
+                </div>
+
+                {/* Contact Phone */}
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Contact Phone</label>
+                    <input
+                        type="tel"
+                        placeholder="e.g. 9801234567"
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.contactPhone ? "border-red-400" : "border-gray-200"
+                            }`}
+                        value={formData.contactPhone}
+                        onChange={(e) => handleFieldChange("contactPhone", e.target.value)}
+                    />
+                    {errors.contactPhone && <p className="text-xs text-red-500 mt-1">{errors.contactPhone}</p>}
+                </div>
+
+                {/* Location */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Palika</label>
                         <input
                             type="text"
-                            required
-                            placeholder="e.g. Baneshwor"
-                            className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
-                            value={formData.location}
-                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                            placeholder="e.g. Kathmandu"
+                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.palika ? "border-red-400" : "border-gray-200"
+                                }`}
+                            value={formData.palika}
+                            onChange={(e) => handleFieldChange("palika", e.target.value)}
                         />
+                        {errors.palika && <p className="text-xs text-red-500 mt-1">{errors.palika}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">District</label>
+                        <input
+                            type="text"
+                            placeholder="e.g. Kathmandu"
+                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.district ? "border-red-400" : "border-gray-200"
+                                }`}
+                            value={formData.district}
+                            onChange={(e) => handleFieldChange("district", e.target.value)}
+                        />
+                        {errors.district && <p className="text-xs text-red-500 mt-1">{errors.district}</p>}
                     </div>
                 </div>
 
@@ -120,21 +288,21 @@ export default function PostJobPage() {
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Job Description</label>
                     <textarea
-                        required
                         rows={5}
-                        placeholder="Describe the role responsibilities..."
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium resize-none"
+                        placeholder="Describe the role, responsibilities, and what you're looking for..."
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium resize-none ${errors.description ? "border-red-400" : "border-gray-200"
+                            }`}
                         value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        onChange={(e) => handleFieldChange("description", e.target.value)}
                     />
+                    {errors.description && <p className="text-xs text-red-500 mt-1">{errors.description}</p>}
                 </div>
 
                 {/* Spacer for fixed footer */}
                 <div className="h-20" />
 
                 {/* Fixed Footer */}
-                {/* Fixed action bar positioned above global bottom nav (bottom-16) */}
-                <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-gray-200 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div className=" bottom-16 left-0 right-0 p-4 bg-white ">
                     <div className="max-w-md mx-auto grid grid-cols-2 gap-3">
                         <button
                             type="button"
@@ -145,10 +313,11 @@ export default function PostJobPage() {
                         </button>
                         <button
                             type="submit"
-                            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
+                            disabled={isPending}
+                            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200 disabled:opacity-50"
                         >
-                            <Check className="w-4 h-4" />
-                            Post Job
+                            {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {isPending ? "Posting..." : "Post Job"}
                         </button>
                     </div>
                 </div>

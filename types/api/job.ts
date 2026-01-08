@@ -30,56 +30,95 @@ export interface PagedResponse<T> {
 // Job Domain Types
 // ============================================
 
-export interface JobPoster {
+export type JobCategory =
+    | "CONSTRUCTION"
+    | "DOMESTIC_HELP"
+    | "DRIVING"
+    | "TEACHING"
+    | "IT_TECHNOLOGY"
+    | "SALES_MARKETING"
+    | "HEALTHCARE"
+    | "AGRICULTURE"
+    | "HOSPITALITY"
+    | "RETAIL"
+    | "MANUFACTURING"
+    | "SECURITY"
+    | "DELIVERY"
+    | "BEAUTY_WELLNESS"
+    | "OTHERS";
+
+export type EmploymentType =
+    | "FULL_TIME"
+    | "PART_TIME"
+    | "CONTRACT"
+    | "FREELANCE"
+    | "DAILY_WAGE"
+    | "TEMPORARY";
+
+export type JobStatus = "ACTIVE" | "FILLED" | "CLOSED";
+
+export interface PosterInfo {
     id: number;
     name: string;
-    userType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
-    profilePicture: string | null;
-    isVerified: boolean;
+    profileImage: string | null;
 }
 
 export interface JobResponse {
     id: number;
     title: string;
     description: string;
-    category: string;
-    employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "FREELANCE";
-    salaryRange: string | null;
-    requirements: string | null;
-    status: "ACTIVE" | "CLOSED" | "INACTIVE";
-    poster: JobPoster;
-    location: {
-        district: string;
-        palika: string;
-        wada: string | null;
-    };
-    contactPhone: string | null;
-    contactEmail: string | null;
-    applicationCount: number;
+    category: JobCategory;
+    employmentType: EmploymentType;
+    salaryAmount: number | null; // BigDecimal in Java -> number in TS
+    isNegotiable: boolean;
+    contactPhone: string;
+    poster: PosterInfo;
+    palika: string;
+    district: string;
+    status: JobStatus;
     viewCount: number;
     createdAt: string;
     updatedAt: string;
-    expiresAt: string | null;
 }
 
 // ============================================
 // Create Job API
 // POST /api/jobs
+// Content-Type: application/json
 // ============================================
 
 export interface CreateJobRequest {
-    title: string;
-    description: string;
-    category: string;
-    employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "FREELANCE";
-    salaryRange?: string;
-    requirements?: string;
-    contactPhone?: string;
-    contactEmail?: string;
-    expiresAt?: string; // ISO date string
+    title: string; // 3-100 chars
+    description: string; // 10-3000 chars
+    category: JobCategory;
+    employmentType: EmploymentType;
+    salaryAmount?: number; // >= 0, optional
+    isNegotiable?: boolean; // default: false
+    contactPhone: string;
+    palika: string;
+    district: string;
 }
 
 export type CreateJobResponse = ApiResponse<JobResponse>;
+
+// ============================================
+// Update Job API
+// PUT /api/jobs/{jobId}
+// Content-Type: application/json
+// ============================================
+
+export interface UpdateJobRequest {
+    title?: string; // 3-100 chars
+    description?: string; // 10-3000 chars
+    category?: JobCategory;
+    employmentType?: EmploymentType;
+    salaryAmount?: number; // >= 0
+    isNegotiable?: boolean;
+    contactPhone?: string;
+    status?: JobStatus;
+}
+
+export type UpdateJobResponse = ApiResponse<JobResponse>;
 
 // ============================================
 // Get Job By ID API
@@ -89,26 +128,6 @@ export type CreateJobResponse = ApiResponse<JobResponse>;
 export type GetJobByIdResponse = ApiResponse<JobResponse>;
 
 // ============================================
-// Update Job API
-// PUT /api/jobs/{jobId}
-// ============================================
-
-export interface UpdateJobRequest {
-    title: string;
-    description: string;
-    category: string;
-    employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "FREELANCE";
-    salaryRange?: string;
-    requirements?: string;
-    status: "ACTIVE" | "CLOSED" | "INACTIVE";
-    contactPhone?: string;
-    contactEmail?: string;
-    expiresAt?: string; // ISO date string
-}
-
-export type UpdateJobResponse = ApiResponse<JobResponse>;
-
-// ============================================
 // Delete Job API
 // DELETE /api/jobs/{jobId}
 // ============================================
@@ -116,34 +135,18 @@ export type UpdateJobResponse = ApiResponse<JobResponse>;
 export type DeleteJobResponse = ApiResponse<void>;
 
 // ============================================
-// Get All Jobs API (Browse Jobs)
+// Browse Jobs By Geography API
 // GET /api/jobs
 // ============================================
 
-export interface GetAllJobsParams {
-    page?: number;
-    size?: number;
-    category?: string;
-    employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "FREELANCE";
-    status?: "ACTIVE" | "CLOSED" | "INACTIVE";
-    geography?: string; // District or Palika name
-    search?: string;
+export interface BrowseJobsParams {
+    geography: string; // Palika or District name (required)
+    category?: JobCategory; // Optional filter
+    page?: number; // Default: 0
+    size?: number; // Default: 20
 }
 
-export type GetAllJobsResponse = PagedResponse<JobResponse>;
-
-// ============================================
-// Get My Jobs API
-// GET /api/jobs/my-jobs
-// ============================================
-
-export interface GetMyJobsParams {
-    page?: number;
-    size?: number;
-    status?: "ACTIVE" | "CLOSED" | "INACTIVE";
-}
-
-export type GetMyJobsResponse = PagedResponse<JobResponse>;
+export type BrowseJobsResponse = PagedResponse<JobResponse>;
 
 // ============================================
 // Get User Jobs API
@@ -151,24 +154,9 @@ export type GetMyJobsResponse = PagedResponse<JobResponse>;
 // ============================================
 
 export interface GetUserJobsParams {
-    page?: number;
-    size?: number;
+    status?: "ACTIVE" | "FILLED" | "CLOSED" | "ALL"; // Default: ALL
+    page?: number; // Default: 0
+    size?: number; // Default: 20
 }
 
 export type GetUserJobsResponse = PagedResponse<JobResponse>;
-
-// ============================================
-// Search Jobs API
-// GET /api/jobs/search
-// ============================================
-
-export interface SearchJobsParams {
-    query: string;
-    page?: number;
-    size?: number;
-    category?: string;
-    employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "FREELANCE";
-    geography?: string;
-}
-
-export type SearchJobsResponse = PagedResponse<JobResponse>;

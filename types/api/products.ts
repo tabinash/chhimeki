@@ -30,37 +30,47 @@ export interface PagedResponse<T> {
 // Product Domain Types
 // ============================================
 
-export interface ProductSeller {
-    id: number;
+export type ProductCategory =
+    | "ELECTRONICS"
+    | "FURNITURE"
+    | "VEHICLES"
+    | "FASHION"
+    | "HOME_GARDEN"
+    | "SPORTS"
+    | "BOOKS"
+    | "TOYS"
+    | "MOBILE"
+    | "OTHERS";
+
+export type ProductStatus = "ACTIVE" | "SOLD" | "INACTIVE";
+
+export interface SellerInfo {
+    id: number; // Always the user ID (owner ID for messaging)
+    storefrontId: number | null; // Only populated when type = "STOREFRONT"
     name: string;
-    userType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
-    profilePicture: string | null;
-    isVerified: boolean;
+    phone: string;
+    type: "INDIVIDUAL" | "STOREFRONT";
+    profileImage: string | null; // User profile image or storefront logo
 }
 
-export interface ProductMediaItem {
+export interface ImageInfo {
     id: number;
     url: string;
-    thumbnailUrl: string | null;
-    mediaType: "IMAGE" | "VIDEO";
 }
 
 export interface ProductResponse {
     id: number;
     title: string;
     description: string;
-    price: number;
-    category: string;
-    condition: "NEW" | "USED" | "LIKE_NEW";
-    status: "AVAILABLE" | "SOLD" | "RESERVED";
-    seller: ProductSeller;
-    media: ProductMediaItem[];
-    location: {
-        district: string;
-        palika: string;
-        wada: string;
-    };
+    price: number; // BigDecimal in Java -> number in TS
+    isNegotiable: boolean;
+    category: ProductCategory;
+    seller: SellerInfo;
+    palika: string;
+    district: string;
+    status: ProductStatus;
     viewCount: number;
+    images: ImageInfo[];
     createdAt: string;
     updatedAt: string;
 }
@@ -68,18 +78,41 @@ export interface ProductResponse {
 // ============================================
 // Create Product API
 // POST /api/marketplace/products
+// Content-Type: multipart/form-data
 // ============================================
 
 export interface CreateProductRequest {
-    title: string;
-    description: string;
-    price: number;
-    category: string;
-    condition: "NEW" | "USED" | "LIKE_NEW";
-    mediaIds?: number[]; // Optional array of media IDs
+    title: string; // 3-100 chars
+    description: string; // 10-2000 chars
+    price: number; // > 0
+    isNegotiable?: boolean; // default: false
+    category: ProductCategory;
+    storefrontId?: number; // Optional - if provided, geography is inherited
+    palika?: string; // Required if storefrontId is null
+    district?: string; // Required if storefrontId is null
+    images: File[]; // 1-5 images required
 }
 
 export type CreateProductResponse = ApiResponse<ProductResponse>;
+
+// ============================================
+// Update Product API
+// PUT /api/marketplace/products/{productId}
+// Content-Type: multipart/form-data
+// ============================================
+
+export interface UpdateProductRequest {
+    title?: string; // 3-100 chars
+    description?: string; // 10-2000 chars
+    price?: number; // > 0
+    isNegotiable?: boolean;
+    category?: ProductCategory;
+    status?: ProductStatus; // Mark as SOLD, INACTIVE, etc.
+    newImages?: File[]; // New images to add
+    removeImageIds?: number[]; // IDs of images to remove
+}
+
+export type UpdateProductResponse = ApiResponse<ProductResponse>;
 
 // ============================================
 // Get Product By ID API
@@ -89,22 +122,6 @@ export type CreateProductResponse = ApiResponse<ProductResponse>;
 export type GetProductByIdResponse = ApiResponse<ProductResponse>;
 
 // ============================================
-// Update Product API
-// PUT /api/marketplace/products/{productId}
-// ============================================
-
-export interface UpdateProductRequest {
-    title: string;
-    description: string;
-    price: number;
-    category: string;
-    condition: "NEW" | "USED" | "LIKE_NEW";
-    status: "AVAILABLE" | "SOLD" | "RESERVED";
-}
-
-export type UpdateProductResponse = ApiResponse<ProductResponse>;
-
-// ============================================
 // Delete Product API
 // DELETE /api/marketplace/products/{productId}
 // ============================================
@@ -112,34 +129,20 @@ export type UpdateProductResponse = ApiResponse<ProductResponse>;
 export type DeleteProductResponse = ApiResponse<void>;
 
 // ============================================
-// Get All Products API (Browse Marketplace)
+// Browse Products By Geography API
 // GET /api/marketplace/products
 // ============================================
 
-export interface GetAllProductsParams {
-    page?: number;
-    size?: number;
-    category?: string;
-    condition?: "NEW" | "USED" | "LIKE_NEW";
-    status?: "AVAILABLE" | "SOLD" | "RESERVED";
-    minPrice?: number;
-    maxPrice?: number;
-    search?: string;
+export interface BrowseProductsParams {
+    geography: string; // Palika or District name (required)
+    category?: ProductCategory; // Optional filter
+    page?: number; // Default: 0
+    size?: number; // Default: 20
+    sort?: "createdAt" | "price"; // Default: createdAt
+    direction?: "ASC" | "DESC"; // Default: DESC
 }
 
-export type GetAllProductsResponse = PagedResponse<ProductResponse>;
-
-// ============================================
-// Get My Products API
-// GET /api/marketplace/products/my-products
-// ============================================
-
-export interface GetMyProductsParams {
-    page?: number;
-    size?: number;
-}
-
-export type GetMyProductsResponse = PagedResponse<ProductResponse>;
+export type BrowseProductsResponse = PagedResponse<ProductResponse>;
 
 // ============================================
 // Get User Products API
@@ -147,24 +150,21 @@ export type GetMyProductsResponse = PagedResponse<ProductResponse>;
 // ============================================
 
 export interface GetUserProductsParams {
-    page?: number;
-    size?: number;
+    status?: "ACTIVE" | "SOLD" | "INACTIVE" | "ALL"; // Default: ALL
+    page?: number; // Default: 0
+    size?: number; // Default: 20
 }
 
 export type GetUserProductsResponse = PagedResponse<ProductResponse>;
 
 // ============================================
-// Search Products API
-// GET /api/marketplace/products/search
+// Get Storefront Products API
+// GET /api/marketplace/products/storefront/{storefrontId}/products
 // ============================================
 
-export interface SearchProductsParams {
-    query: string;
-    page?: number;
-    size?: number;
-    category?: string;
-    minPrice?: number;
-    maxPrice?: number;
+export interface GetStorefrontProductsParams {
+    page?: number; // Default: 0
+    size?: number; // Default: 20
 }
 
-export type SearchProductsResponse = PagedResponse<ProductResponse>;
+export type GetStorefrontProductsResponse = PagedResponse<ProductResponse>;

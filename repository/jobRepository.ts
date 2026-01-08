@@ -2,63 +2,48 @@ import { api } from "./http";
 import {
     CreateJobRequest,
     CreateJobResponse,
-    GetJobByIdResponse,
     UpdateJobRequest,
     UpdateJobResponse,
+    GetJobByIdResponse,
     DeleteJobResponse,
-    GetAllJobsParams,
-    GetAllJobsResponse,
-    GetMyJobsParams,
-    GetMyJobsResponse,
+    BrowseJobsParams,
+    BrowseJobsResponse,
     GetUserJobsParams,
     GetUserJobsResponse,
-    SearchJobsParams,
-    SearchJobsResponse,
 } from "@/types/api/job";
 
 // ============================================
-// Job Repository
+// JOB REPOSITORY - Available APIs
+// do in this format for below comments--// POST   /api/marketplace/products                    - Create product
+
 // ============================================
-// Endpoints:
-// POST   /api/jobs                    - Create job posting
-// GET    /api/jobs/{jobId}            - Get job by ID
-// PUT    /api/jobs/{jobId}            - Update job posting
-// DELETE /api/jobs/{jobId}            - Delete job posting
-// GET    /api/jobs                    - Get all jobs (browse)
-// GET    /api/jobs/my-jobs            - Get my job postings
-// GET    /api/jobs/user/{userId}      - Get user's job postings
-// GET    /api/jobs/search             - Search jobs
+// 1. createJob()       POST   /api/jobs                       -- JSON, Auth required
+// 2. updateJob()       PUT    /api/jobs/{jobId}              -- JSON, owner only
+// 3. deleteJob()       DELETE /api/jobs/{jobId}              -- Soft delete, owner only
+// 4. getJobById()      GET    /api/jobs/{jobId}              -- Public
+// 5. browseJobs()      GET    /api/jobs                      -- By geography & category, public
+// 6. getUserJobs()     GET    /api/jobs/user/{userId}        -- All jobs by user, public
 // ============================================
 
 export const jobRepository = {
     /**
-     * Create a new job posting
-     * @param data - Job creation data
-     * @returns Created job data
+     * Create a new job listing
+     * Content-Type: application/json
+     * @param data - Job creation data with all required fields
+     * @returns Created job data with poster info
      */
     createJob: async (data: CreateJobRequest): Promise<CreateJobResponse> => {
-        console.log("Creating job with data:", data);
+        console.log("Creating job:", data.title);
         const response = await api.post<CreateJobResponse>("/jobs", data);
         console.log("Create Job Response:", response);
         return response;
     },
 
     /**
-     * Get a specific job by ID
-     * @param jobId - The ID of the job to fetch
-     * @returns Job data
-     */
-    getJobById: async (jobId: number): Promise<GetJobByIdResponse> => {
-        console.log("Fetching job with ID:", jobId);
-        const response = await api.get<GetJobByIdResponse>(`/jobs/${jobId}`);
-        console.log("Get Job Response:", response);
-        return response;
-    },
-
-    /**
-     * Update an existing job posting
-     * @param jobId - The ID of the job to update
-     * @param data - Updated job data
+     * Update existing job listing
+     * Content-Type: application/json
+     * @param jobId - ID of the job to update
+     * @param data - Updated job data (all fields optional)
      * @returns Updated job data
      */
     updateJob: async (jobId: number, data: UpdateJobRequest): Promise<UpdateJobResponse> => {
@@ -69,8 +54,8 @@ export const jobRepository = {
     },
 
     /**
-     * Delete a job posting
-     * @param jobId - The ID of the job to delete
+     * Delete job listing (soft delete)
+     * @param jobId - ID of the job to delete
      * @returns Success response
      */
     deleteJob: async (jobId: number): Promise<DeleteJobResponse> => {
@@ -81,82 +66,52 @@ export const jobRepository = {
     },
 
     /**
-     * Get all jobs (browse job board)
-     * Filtered by location and optional filters
-     * @param params - Filter and pagination parameters
+     * Get job details by ID
+     * @param jobId - ID of the job
+     * @returns Full job details with poster info
+     */
+    getJobById: async (jobId: number): Promise<GetJobByIdResponse> => {
+        console.log("Fetching job with ID:", jobId);
+        const response = await api.get<GetJobByIdResponse>(`/jobs/${jobId}`);
+        console.log("Get Job Response:", response);
+        return response;
+    },
+
+    /**
+     * Browse jobs by geography and category
+     * @param params - Geography (required), category, pagination
      * @returns Paginated list of jobs
      */
-    getAllJobs: async (params?: GetAllJobsParams): Promise<GetAllJobsResponse> => {
-        console.log("Fetching all jobs with params:", params);
-        const response = await api.get<GetAllJobsResponse>("/jobs", {
+    browseJobs: async (params: BrowseJobsParams): Promise<BrowseJobsResponse> => {
+        console.log("Browsing jobs with params:", params);
+        const response = await api.get<BrowseJobsResponse>("/jobs", {
             params: {
-                page: params?.page ?? 0,
-                size: params?.size ?? 20,
-                category: params?.category,
-                employmentType: params?.employmentType,
-                status: params?.status,
-                geography: params?.geography,
-                search: params?.search,
+                geography: params.geography,
+                category: params.category,
+                page: params.page ?? 0,
+                size: params.size ?? 20,
             },
         });
-        console.log("All Jobs Response:", response);
+        console.log("Browse Jobs Response:", response);
         return response;
     },
 
     /**
-     * Get all job postings created by the current authenticated user
-     * @param params - Filter and pagination parameters
-     * @returns Paginated list of user's own job postings
-     */
-    getMyJobs: async (params?: GetMyJobsParams): Promise<GetMyJobsResponse> => {
-        console.log("Fetching my jobs with params:", params);
-        const response = await api.get<GetMyJobsResponse>("/jobs/my-jobs", {
-            params: {
-                page: params?.page ?? 0,
-                size: params?.size ?? 20,
-                status: params?.status,
-            },
-        });
-        console.log("My Jobs Response:", response);
-        return response;
-    },
-
-    /**
-     * Get all job postings created by a specific user
-     * @param userId - The ID of the user whose jobs to fetch
-     * @param params - Pagination parameters
-     * @returns Paginated list of user's job postings
+     * Get user's job listings
+     * @param userId - ID of the user
+     * @param params - Status filter and pagination
+     * @returns Paginated list of user's jobs
      */
     getUserJobs: async (userId: number, params?: GetUserJobsParams): Promise<GetUserJobsResponse> => {
         console.log("Fetching jobs for user ID:", userId, "with params:", params);
         const response = await api.get<GetUserJobsResponse>(`/jobs/user/${userId}`, {
             params: {
+                status: params?.status ?? "ALL",
                 page: params?.page ?? 0,
                 size: params?.size ?? 20,
             },
         });
         console.log("User Jobs Response:", response);
-        return response;
-    },
-
-    /**
-     * Search jobs by query and filters
-     * @param params - Search query and filter parameters
-     * @returns Paginated search results
-     */
-    searchJobs: async (params: SearchJobsParams): Promise<SearchJobsResponse> => {
-        console.log("Searching jobs with params:", params);
-        const response = await api.get<SearchJobsResponse>("/jobs/search", {
-            params: {
-                query: params.query,
-                page: params.page ?? 0,
-                size: params.size ?? 20,
-                category: params.category,
-                employmentType: params.employmentType,
-                geography: params.geography,
-            },
-        });
-        console.log("Search Jobs Response:", response);
         return response;
     },
 };
