@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   // images.unsplash.com
   // https://ui-avatars.com
+  // https://api.dicebear.com
+  // (https://chemiki.b-cdn.net
+
   images: {
     remotePatterns: [
       {
@@ -13,6 +16,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "ui-avatars.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+      },
+      {
+        protocol: "https",
+        hostname: "chemiki.b-cdn.net",
       },
     ],
   },

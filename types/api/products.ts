@@ -42,7 +42,7 @@ export type ProductCategory =
     | "MOBILE"
     | "OTHERS";
 
-export type ProductStatus = "ACTIVE" | "SOLD" | "INACTIVE";
+export type ProductStatus = "ACTIVE" | "SOLD";
 
 export interface SellerInfo {
     id: number; // Always the user ID (owner ID for messaging)

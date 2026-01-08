@@ -2,6 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from "next/navigation";
 
+// Hooks
+import { useUser } from "@/hooks/useUser";
+import { useBrowseJobs, useMyJobs } from "./_hook";
+
 // Local components
 import { JobsHeader } from "./_components/JobsHeader";
 import { JobsSearchBar } from "./_components/JobsSearchBar";
@@ -10,57 +14,84 @@ import { JobCard } from "./_components/JobCard";
 import { EmptyJobsState } from "./_components/EmptyJobsState";
 
 // Global modals (keep these in global components folder)
-import JobPostModal from "@/components/jobs/JobPostModal";
+import CreateJobModal from "@/components/modals/CreateJobModal";
+import EditJobModal from "@/components/modals/EditJobModal";
 import JobDetailModal from "@/components/modals/JobDetailModal";
 
-// Data
-import { jobCategories, jobs } from "@/data/mockJobsData";
+// Types
+import { JobResponse, JobCategory } from "@/types/api/job";
 
 export default function JobsPage() {
-    const [selectedJob, setSelectedJob] = useState<typeof jobs[0] | null>(null);
-    const [viewMode, setViewMode] = useState<'seeking' | 'hiring'>('seeking');
+    const [selectedJob, setSelectedJob] = useState<JobResponse | null>(null);
+    const [viewMode, setViewMode] = useState<'all' | 'my jobs'>('all');
+    const [selectedCategory, setSelectedCategory] = useState<JobCategory | undefined>(undefined);
 
     const searchParams = useSearchParams();
-    const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-    const [editingJob, setEditingJob] = useState<typeof jobs[0] | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingJob, setEditingJob] = useState<JobResponse | null>(null);
+
+    // Get current user for geography
+    const { user } = useUser();
+
+    // Fetch jobs based on view mode
+    const { data: browseData, isLoading: isBrowseLoading } = useBrowseJobs(
+        user?.palika || "",
+        {
+            category: selectedCategory,
+            page: 0,
+            size: 20,
+        }
+    );
+
+    const { data: myJobsData, isLoading: isMyJobsLoading } = useMyJobs(
+        user?.id || 0,
+        {
+            status: "ALL",
+            page: 0,
+            size: 20,
+        }
+    );
 
     // Auto-open modal if URL has ?action=post-job
     useEffect(() => {
         if (searchParams.get('action') === 'post-job') {
-            setIsPostModalOpen(true);
-            setEditingJob(null);
+            setIsCreateModalOpen(true);
         }
     }, [searchParams]);
 
-    const filteredJobs = viewMode === 'hiring'
-        ? jobs.filter(job => job.isPostedByMe)
-        : jobs;
+    // Get jobs based on view mode
+    const jobs: JobResponse[] = viewMode === 'my jobs'
+        ? (myJobsData?.data || [])
+        : (browseData?.data || []);
+
+    const isLoading = viewMode === 'my jobs' ? isMyJobsLoading : isBrowseLoading;
 
     const handlePostClick = () => {
-        setEditingJob(null);
-        setIsPostModalOpen(true);
+        setIsCreateModalOpen(true);
     };
 
-    const handleEditClick = (job: typeof jobs[0]) => {
+    const handleEditClick = (job: JobResponse) => {
         setEditingJob(job);
-        setIsPostModalOpen(true);
+        setIsEditModalOpen(true);
         setSelectedJob(null); // Close the detail view
     };
 
-    const handleFormSubmit = (data: any) => {
-        console.log("Job Submitted:", data);
-        // Here we would actually update the data source
-        setIsPostModalOpen(false);
-        setEditingJob(null);
+    const handleCreateSuccess = () => {
         // Clean URL
         window.history.replaceState(null, '', '/jobs');
     };
 
-    const handleModalClose = () => {
-        setIsPostModalOpen(false);
+    const handleCreateClose = () => {
+        setIsCreateModalOpen(false);
         // Clean URL
         window.history.replaceState(null, '', '/jobs');
-    }
+    };
+
+    const handleEditClose = () => {
+        setIsEditModalOpen(false);
+        setEditingJob(null);
+    };
 
     return (
         <div className="min-h-screen p-6 md:p-8 relative">
@@ -72,18 +103,37 @@ export default function JobsPage() {
                 <JobsSearchBar viewMode={viewMode} />
 
                 {/* Categories Pills */}
-                {viewMode === 'seeking' && (
-                    <JobCategoriesFilter categories={jobCategories} />
+                {viewMode === 'all' && (
+                    <JobCategoriesFilter
+                        selectedCategory={selectedCategory}
+                        onCategoryChange={setSelectedCategory}
+                    />
                 )}
 
                 {/* Job Listings */}
                 <div className="space-y-4">
                     <h2 className="text-lg font-bold text-gray-900 mb-4 px-1">
-                        {viewMode === 'hiring' ? 'Your Job Posts' : 'Latest Opportunities'}
+                        {viewMode === 'my jobs' ? 'Your Job Posts' : 'Latest Opportunities'}
                     </h2>
 
-                    {filteredJobs.length > 0 ? (
-                        filteredJobs.map((job) => (
+                    {isLoading ? (
+                        // Loading skeleton
+                        <div className="space-y-4">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 animate-pulse">
+                                    <div className="flex gap-5">
+                                        <div className="w-16 h-16 rounded-xl bg-gray-200" />
+                                        <div className="flex-1 space-y-3">
+                                            <div className="h-4 bg-gray-200 rounded w-2/3" />
+                                            <div className="h-3 bg-gray-200 rounded w-1/2" />
+                                            <div className="h-3 bg-gray-200 rounded w-1/3" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : jobs.length > 0 ? (
+                        jobs.map((job) => (
                             <JobCard
                                 key={job.id}
                                 job={job}
@@ -103,12 +153,18 @@ export default function JobsPage() {
                 onEdit={handleEditClick}
             />
 
-            {/* Post/Edit Job Modal */}
-            <JobPostModal
-                isOpen={isPostModalOpen}
-                onClose={handleModalClose}
-                initialData={editingJob}
-                onSubmit={handleFormSubmit}
+            {/* Create Job Modal */}
+            <CreateJobModal
+                isOpen={isCreateModalOpen}
+                onClose={handleCreateClose}
+                onSuccess={handleCreateSuccess}
+            />
+
+            {/* Edit Job Modal */}
+            <EditJobModal
+                isOpen={isEditModalOpen}
+                onClose={handleEditClose}
+                job={editingJob}
             />
         </div>
     );

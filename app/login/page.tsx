@@ -12,8 +12,8 @@ export default function LoginPage() {
     const router = useRouter();
     const { mutate: login, isPending, error } = useLogin();
 
-    const [identifier, setIdentifier] = useState("tabinash7@gmail.com");
-    const [password, setPassword] = useState("password123");
+    const [identifier, setIdentifier] = useState("9742555741");
+    const [password, setPassword] = useState("tttttttttt");
     const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {

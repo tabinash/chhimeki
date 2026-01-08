@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gilroy.variable} ${notoDevanagari.variable} font-sans antialiased`}>
+      <body className={`${gilroy.variable} ${notoDevanagari.variable} font-sans antialiased overflow-hidden`}>
         <ReactQueryProvider>
           {children}
         </ReactQueryProvider>

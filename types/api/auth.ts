@@ -63,6 +63,25 @@ export interface LoginResponseData {
 export type LoginResponse = ApiResponse<LoginResponseData>;
 
 // ============================================
+// Register API
+// ============================================
+
+export interface RegisterRequest {
+    name: string;
+    email: string;
+    phone: string;
+    password?: string; // Optional if using OTP flow
+    province?: string;
+    district: string;
+    palika: string;
+    wada: number;
+    profilePicture?: File | null;
+}
+
+export type RegisterResponse = ApiResponse<LoginResponseData>; // Assuming auto-login after register, or just generic success
+
+
+// ============================================
 // Refresh Token API
 // ============================================
 

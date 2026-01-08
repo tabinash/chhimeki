@@ -1,152 +1,22 @@
 "use client";
-import { Search, Plus, Building2, MapPin, CheckCircle2 } from "lucide-react";
 
-const suggestedUsers = [
-    {
-        name: "Sarah Johnson",
-        username: "@sarah.design",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop",
-        followers: "2.5k followers",
-        verified: false,
-    },
-    {
-        name: "Michael Chen",
-        username: "@mike.dev",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
-        followers: "1.8k followers",
-        verified: true,
-    },
-    {
-        name: "Emma Wilson",
-        username: "@emma.creative",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop",
-        followers: "3.2k followers",
-        verified: false,
-    },
-];
-
-const suggestedInstitutions = [
-    {
-        name: "City General Hospital",
-        type: "Healthcare",
-        avatar: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=300&fit=crop",
-        followers: "12.5k followers",
-        verified: true,
-        icon: "🏥",
-    },
-    {
-        name: "Metropolitan University",
-        type: "Education",
-        avatar: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=300&h=300&fit=crop",
-        followers: "25.3k followers",
-        verified: true,
-        icon: "🎓",
-    },
-    {
-        name: "Ward Office 5",
-        type: "Government Office",
-        avatar: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=300&fit=crop",
-        followers: "5.2k followers",
-        verified: true,
-        icon: "🏛️",
-    },
-];
-
-const peopleYouMayKnow = [
-    {
-        name: "Sarah Johnson",
-        username: "@sarah.design",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
-        followers: "2.5k followers",
-        mutualFriends: [
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "Michael Chen",
-        username: "@mike.dev",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-        followers: "1.8k followers",
-        mutualFriends: [
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "Emma Wilson",
-        username: "@emma.creative",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
-        followers: "3.2k followers",
-        mutualFriends: [
-            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "James Rodriguez",
-        username: "@james.photo",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop",
-        followers: "4.1k followers",
-        mutualFriends: [
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-        ],
-    },
-];
-
-const nearbyInstitutions = [
-    {
-        name: "City General Hospital",
-        type: "Healthcare",
-        location: "2.5 km away",
-        avatar: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200&h=200&fit=crop",
-        followers: "12.5k followers",
-        verified: true,
-        mutualConnections: [
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "Metropolitan University",
-        type: "Education",
-        location: "4.1 km away",
-        avatar: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=200&h=200&fit=crop",
-        followers: "25.3k followers",
-        verified: true,
-        mutualConnections: [
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "Ward Office 5",
-        type: "Government Office",
-        location: "1.8 km away",
-        avatar: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200&h=200&fit=crop",
-        followers: "5.2k followers",
-        verified: true,
-        mutualConnections: [
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=100&h=100&fit=crop",
-        ],
-    },
-    {
-        name: "Central Municipality",
-        type: "Government Office",
-        location: "3.2 km away",
-        avatar: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=200&h=200&fit=crop",
-        followers: "8.9k followers",
-        verified: true,
-        mutualConnections: [
-            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-            "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop",
-        ],
-    },
-];
+import { Search, CheckCircle2, Building2, MapPin, Users } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useGetNearbyGeneralUsers } from "@/hooks/useGetNearbyGeneralUsers";
+import { useGetNearbyInstitutions } from "@/hooks/useGetNearbyInstitutions";
 
 export default function ExplorePage() {
+    const { data: nearbyUsersData, isLoading: isLoadingUsers } = useGetNearbyGeneralUsers();
+    const { data: institutionsData, isLoading: isLoadingInstitutions } = useGetNearbyInstitutions();
+
+    const nearbyUsers = nearbyUsersData?.data || [];
+    const institutions = institutionsData?.data || [];
+
+    // Separate institutions by type
+    const governmentOffices = institutions.filter(inst => inst.userType === "GOVERNMENT_OFFICE");
+    const businesses = institutions.filter(inst => inst.userType === "BUSINESS");
+
     return (
         <div className="min-h-screen p-8">
             <div className="max-w-6xl mx-auto">
@@ -160,192 +30,203 @@ export default function ExplorePage() {
                     </div>
                 </div>
 
-                {/* Suggested People Section */}
+                {/* Nearby General Users Section */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-base font-semibold text-gray-900">Suggested</h2>
-                        <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
-                            See All
-                        </button>
+                        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                            <Users className="w-5 h-5" />
+                            People from Your Wada
+                        </h2>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                        {suggestedUsers.map((user, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
-                                    <img
-                                        src={user.avatar}
-                                        alt={user.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                    {user.verified && (
-                                        <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                            <CheckCircle2 className="w-4 h-4 text-white" fill="currentColor" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-5">
-                                    <h3 className="font-semibold text-gray-900 text-sm mb-0.5">
-                                        {user.name}
-                                    </h3>
-                                    <p className="text-xs text-gray-500 mb-3">{user.followers}</p>
-                                    <button className="w-full py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm border border-gray-100">
-                                        Follow
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
-                {/* Suggested Institutions Section */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-base font-semibold text-gray-900">Suggested Institutions</h2>
-                        <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
-                            See All
-                        </button>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                        {suggestedInstitutions.map((institution, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
-                                    <img
-                                        src={institution.avatar}
-                                        alt={institution.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                    <div className="absolute top-3 left-3 text-3xl drop-shadow-lg">{institution.icon}</div>
-                                    {institution.verified && (
-                                        <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                            <CheckCircle2 className="w-4 h-4 text-white" fill="currentColor" />
-                                        </div>
-                                    )}
+                    {isLoadingUsers ? (
+                        <div className="grid grid-cols-3 gap-4">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-sm animate-pulse">
+                                    <div className="aspect-[4/3] bg-gray-200" />
+                                    <div className="p-5 space-y-3">
+                                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                                        <div className="h-10 bg-gray-200 rounded" />
+                                    </div>
                                 </div>
-                                <div className="p-5">
-                                    <h3 className="font-semibold text-gray-900 text-sm mb-0.5">
-                                        {institution.name}
-                                    </h3>
-                                    <p className="text-xs text-gray-500 mb-3">{institution.followers}</p>
-                                    <button className="w-full py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm border border-gray-100">
-                                        Follow
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* People You May Know Section */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-base font-semibold text-gray-900">People You May Know</h2>
-                        <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
-                            See All
-                        </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {peopleYouMayKnow.map((person, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50">
-                                    <img
-                                        src={person.avatar}
-                                        alt={person.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
-                                        {person.name}
-                                    </h3>
-                                    <p className="text-xs text-gray-500 mb-1.5">{person.followers}</p>
-                                    <div className="flex items-center">
-                                        {person.mutualFriends.map((avatar, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="w-6 h-6 rounded-full overflow-hidden border-2 border-white -ml-2 first:ml-0 shadow-sm"
-                                            >
-                                                <img
-                                                    src={avatar}
-                                                    alt="Mutual friend"
-                                                    className="w-full h-full object-cover"
-                                                />
+                            ))}
+                        </div>
+                    ) : nearbyUsers.length > 0 ? (
+                        <div className="grid grid-cols-3 gap-4">
+                            {nearbyUsers.slice(0, 6).map((user) => (
+                                <Link
+                                    key={user.id}
+                                    href={`/profile/${user.id}`}
+                                    className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
+                                        {user.profilePicture ? (
+                                            <Image
+                                                src={user.profilePicture}
+                                                alt={user.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                                                {user.name[0]}
                                             </div>
-                                        ))}
+                                        )}
+                                        {user.isVerified && (
+                                            <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                                <CheckCircle2 className="w-4 h-4 text-white" fill="currentColor" />
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                                <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
-                                    Follow
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                                    <div className="p-5">
+                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
+                                            {user.name}
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-3 flex items-center gap-1">
+                                            <MapPin className="w-3 h-3" />
+                                            Ward {user.wada}, {user.palika}
+                                        </p>
+                                        <button className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors text-sm">
+                                            Connect
+                                        </button>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
+                            <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-sm text-gray-500">No nearby users found</p>
+                        </div>
+                    )}
                 </div>
 
-                {/* Nearby Institutions Section */}
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-base font-semibold text-gray-900">Nearby Institutions</h2>
-                        <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
-                            See All
-                        </button>
+                {/* Government Offices Section */}
+                {governmentOffices.length > 0 && (
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                                <Building2 className="w-5 h-5" />
+                                Government Offices
+                            </h2>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            {governmentOffices.map((office) => (
+                                <Link
+                                    key={office.id}
+                                    href={`/profile/${office.id}`}
+                                    className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 relative">
+                                        {office.profilePicture ? (
+                                            <Image
+                                                src={office.profilePicture}
+                                                alt={office.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-2xl">
+                                                🏛️
+                                            </div>
+                                        )}
+                                        {office.isVerified && (
+                                            <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                                <CheckCircle2 className="w-3 h-3 text-white" fill="currentColor" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
+                                            {office.name}
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-1.5">Government Office</p>
+                                        <p className="text-xs text-gray-400 flex items-center gap-1">
+                                            <MapPin className="w-3 h-3" />
+                                            {office.palika}, {office.district}
+                                        </p>
+                                    </div>
+                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
+                                        Follow
+                                    </button>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {nearbyInstitutions.map((institution, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 relative">
-                                    <img
-                                        src={institution.avatar}
-                                        alt={institution.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                    {institution.verified && (
-                                        <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                            <CheckCircle2 className="w-3 h-3 text-white" fill="currentColor" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
-                                        {institution.name}
-                                    </h3>
-                                    <p className="text-xs text-gray-500 mb-1.5">{institution.type}</p>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center">
-                                            {institution.mutualConnections.map((avatar, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="w-5 h-5 rounded-full overflow-hidden border-2 border-white -ml-1.5 first:ml-0 shadow-sm"
-                                                >
-                                                    <img
-                                                        src={avatar}
-                                                        alt="Connection"
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <span className="text-xs text-gray-400">• {institution.location}</span>
+                )}
+
+                {/* Businesses Section */}
+                {isLoadingInstitutions ? (
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-base font-semibold text-gray-900">Nearby Businesses</h2>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[1, 2].map((i) => (
+                                <div key={i} className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm animate-pulse">
+                                    <div className="w-16 h-16 rounded-2xl bg-gray-200" />
+                                    <div className="flex-1 space-y-2">
+                                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                                        <div className="h-3 bg-gray-200 rounded w-2/3" />
                                     </div>
                                 </div>
-                                <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
-                                    Follow
-                                </button>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                ) : businesses.length > 0 ? (
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                                <Building2 className="w-5 h-5" />
+                                Nearby Businesses
+                            </h2>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            {businesses.map((business) => (
+                                <Link
+                                    key={business.id}
+                                    href={`/profile/${business.id}`}
+                                    className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 relative">
+                                        {business.profilePicture ? (
+                                            <Image
+                                                src={business.profilePicture}
+                                                alt={business.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center text-white text-2xl">
+                                                🏪
+                                            </div>
+                                        )}
+                                        {business.isVerified && (
+                                            <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                                <CheckCircle2 className="w-3 h-3 text-white" fill="currentColor" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
+                                            {business.name}
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-1.5">Business</p>
+                                        <p className="text-xs text-gray-400 flex items-center gap-1">
+                                            <MapPin className="w-3 h-3" />
+                                            {business.palika}, {business.district}
+                                        </p>
+                                    </div>
+                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
+                                        Follow
+                                    </button>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                ) : null}
             </div>
         </div>
     );

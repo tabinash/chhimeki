@@ -20,7 +20,7 @@ export function Sidebar() {
     const showLabels = layout.sidebar.showLabels;
 
     const navItems = [
-        { icon: LayoutGrid, href: "/", label: "Feed" },
+        { icon: LayoutGrid, href: "/home", label: "Feed" },
         { icon: Users, href: "/groups", label: "Groups" },
         { icon: Compass, href: "/explore", label: "Explore" },
         { icon: GraduationCap, href: "/jobs", label: "Jobs" },

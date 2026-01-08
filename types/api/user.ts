@@ -50,30 +50,22 @@ export interface UserSummaryResponse {
 export type GetCurrentUserProfileResponse = ApiResponse<UserProfileResponse>;
 
 // ============================================
-// Update Profile API
+// Update Profile API (Unified)
 // PUT /api/users/profile
+// Content-Type: multipart/form-data (when updating pictures) or application/json (when updating info)
 // ============================================
 
+export type UpdatePurpose = "profile_info" | "profile_picture" | "cover_picture";
+
 export interface UpdateProfileRequest {
-    name: string;
-    dateOfBirth: string; // Format: yyyy-MM-dd
+    purpose: UpdatePurpose;         // Required: Indicates what is being updated
+    name?: string;                  // For profile_info
+    dateOfBirth?: string;           // For profile_info (Format: yyyy-MM-dd)
+    profilePicture?: File;          // For profile_picture
+    coverPicture?: File;            // For cover_picture
 }
 
 export type UpdateProfileResponse = ApiResponse<UserProfileResponse>;
-
-// ============================================
-// Update Profile Picture API
-// PUT /api/users/profile-picture
-// ============================================
-
-export type UpdateProfilePictureResponse = ApiResponse<UserProfileResponse>;
-
-// ============================================
-// Update Cover Picture API
-// PUT /api/users/cover-picture
-// ============================================
-
-export type UpdateCoverPictureResponse = ApiResponse<UserProfileResponse>;
 
 // ============================================
 // Get User By ID API

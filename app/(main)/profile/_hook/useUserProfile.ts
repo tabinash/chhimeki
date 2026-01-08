@@ -16,3 +16,15 @@ export function useUserProfile(userId: number): UseQueryResult<GetUserByIdRespon
         staleTime: 5 * 60 * 1000, // 5 minutes
     });
 }
+
+/**
+ * Hook to fetch the current authenticated user's profile
+ * @returns Query result with current user profile data
+ */
+export function useCurrentUserProfile(): UseQueryResult<GetUserByIdResponse, ApiError> {
+    return useQuery<GetUserByIdResponse, ApiError>({
+        queryKey: ["userProfile", "me"],
+        queryFn: () => userRepository.getCurrentUserProfile(),
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+}

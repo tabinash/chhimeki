@@ -14,7 +14,7 @@ export default function GroupsLayout({
 
             {/* Groups-specific Right Sidebar */}
             <div className="flex-shrink-0 h-full overflow-y-auto">
-                <GroupsRightSidebar />
+                {/* <GroupsRightSidebar /> */}
             </div>
         </>
     );
