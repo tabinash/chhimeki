@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { gilroy, notoDevanagari } from "./fonts";
 import "./globals.css";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 export const metadata: Metadata = {
   title: "Chhimeki - Nepali Neighborhood Network",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${gilroy.variable} ${notoDevanagari.variable} font-sans antialiased`}>
-        {children}
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   );
