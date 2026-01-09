@@ -19,6 +19,8 @@ import {
 import { getChatUrl } from "@/lib/chatUtils";
 import { UserProfileResponse } from "@/types/api/user";
 import { useUpdateProfile } from "../_hook/useUpdateProfile";
+import { useFollowUser } from "../_hook/useFollowUser";
+import { useUnfollowUser } from "../_hook/useUnfollowUser";
 
 interface ProfileHeaderProps {
     user: UserProfileResponse;
@@ -30,6 +32,8 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: user.name, dateOfBirth: user.dateOfBirth || "" });
     const router = useRouter();
+    const followuser = useFollowUser();
+    const unfollowuser = useUnfollowUser();
 
     // Refs for file inputs
     const profilePictureInputRef = useRef<HTMLInputElement>(null);
@@ -76,6 +80,8 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
             }
         );
     };
+
+
 
     const tabs = [
         { id: "posts", label: "Posts", icon: <Briefcase className="w-4 h-4" /> },

@@ -11,7 +11,7 @@ import MarketplaceCard from "./MarketplaceCard";
 import BusinessCard from "./BusinessCard";
 import JobCard from "./JobCard";
 import PostDetailModal from "@/components/modals/PostDetailModal";
-import ProductDetailModal from "@/components/modals/ProductDetailModal";
+import ProductDetailModal from "@/app/(main)/marketplace/_modals/ProductDetailModal";
 import JobDetailModal from "@/components/modals/JobDetailModal";
 
 type TabItem = {

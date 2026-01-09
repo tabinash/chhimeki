@@ -15,8 +15,8 @@ import { MarketplaceLeftSidebar } from "./_components/MarketplaceLeftSidebar";
 
 // Global modals (keep these in global components folder)
 import CreateProductModal from "@/app/(main)/marketplace/_modals/CreateProductModal";
-import EditProductModal from "@/components/modals/EditProductModal";
-import ProductDetailModal from "@/components/modals/ProductDetailModal";
+import EditProductModal from "@/app/(main)/marketplace/_modals/EditProductModal";
+import ProductDetailModal from "@/app/(main)/marketplace/_modals/ProductDetailModal";
 
 // Types
 import { ProductResponse, ProductCategory } from "@/types/api/products";

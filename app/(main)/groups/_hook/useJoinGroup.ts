@@ -14,9 +14,11 @@ export function useJoinGroup(): UseMutationResult<
         mutationFn: (groupId: number) => groupRepository.joinGroup(groupId),
         onSuccess: (_, groupId) => {
             // Update group details and lists
-            queryClient.invalidateQueries({ queryKey: ["group", groupId] });
+            queryClient.invalidateQueries({ queryKey: ["groupById", groupId] });
             queryClient.invalidateQueries({ queryKey: ["allGroups"] });
             queryClient.invalidateQueries({ queryKey: ["myGroups"] });
+            queryClient.invalidateQueries({ queryKey: ["groupFeed", groupId] });
+            queryClient.invalidateQueries({ queryKey: ["groupMembers", groupId] });
         },
     });
 }

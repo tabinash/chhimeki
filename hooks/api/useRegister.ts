@@ -4,7 +4,8 @@ import { RegisterRequest, RegisterResponse } from "@/types/api/auth";
 import { ApiError } from "@/repository/http";
 
 /**
- * Hook for user registration
+ * Hook for user registration (Step 1: Send OTP)
+ * Does NOT auto-login - only sends OTP
  * @returns Mutation object with register function and state
  */
 export function useRegister(): UseMutationResult<RegisterResponse, ApiError, RegisterRequest> {
@@ -12,12 +13,7 @@ export function useRegister(): UseMutationResult<RegisterResponse, ApiError, Reg
         mutationKey: ["register"],
         mutationFn: (data: RegisterRequest) => authRepository.register(data),
         onSuccess: (data) => {
-            // Auto-login on success (save tokens)
-            if (typeof window !== "undefined") {
-                localStorage.setItem("user", JSON.stringify(data.data.user));
-                localStorage.setItem("accessToken", data.data.tokens.accessToken);
-                localStorage.setItem("refreshToken", data.data.tokens.refreshToken);
-            }
+            console.log("OTP sent to:", data.data.identifier);
         },
         onError: (error: ApiError) => {
             console.error("Registration failed:", error.message);

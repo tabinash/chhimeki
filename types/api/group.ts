@@ -14,7 +14,24 @@ export interface ApiResponse<T> {
 export interface PagedResponse<T> {
     status: string;
     message: string;
-    data: T[];
+    data: [{
+        id: number;
+        content: string;
+        postType: "GENERAL" | "ALERT" | "GROUP";
+        visibility: "WADA" | "PALIKA" | "DISTRICT" | null;
+        authorId: number;
+        authorName: string;
+        authorProfilePicture: string | null;
+        authorUserType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
+        imageUrls: string[];
+        videoUrl: string | null;
+        videoThumbnail: string | null;
+        videoDuration: number | null;
+        likeCount: number;
+        commentCount: number;
+        isLikedByCurrentUser: boolean;
+        createdAt: string;
+    }];
     pagination: {
         page: number;
         size: number;

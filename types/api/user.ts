@@ -87,3 +87,17 @@ export type GetNearbyGeneralUsersResponse = ApiResponse<UserSummaryResponse[]>;
 // ============================================
 
 export type GetNearbyInstitutionsResponse = ApiResponse<UserSummaryResponse[]>;
+
+// ============================================
+// Follow User API
+// POST /api/users/{userId}/follow
+// ============================================
+
+export type FollowUserResponse = ApiResponse<void>;
+
+// ============================================
+// Unfollow User API
+// DELETE /api/users/{userId}/follow
+// ============================================
+
+export type UnfollowUserResponse = ApiResponse<void>;

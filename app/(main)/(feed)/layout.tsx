@@ -10,16 +10,16 @@ export default function FeedLayout({
     const { main, rightPanel } = useFeedLayout();
 
     return (
-        <div className="flex h-full overflow-y-auto">
+        <div className="flex h-full ">
             <main
-                className="flex-1 h-full "
+                className="flex-1 h-full overflow-y-auto "
                 style={{ maxWidth: main.width }}
             >
                 {children}
             </main>
 
             {rightPanel.visible && (
-                <div className="flex-shrink-0 h-full ">
+                <div className="flex-shrink-0 h-full overflow-y-auto ">
                     <FeedRightSidebar
                         width={rightPanel.width}
                         compact={rightPanel.compact}

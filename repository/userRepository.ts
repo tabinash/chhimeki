@@ -6,6 +6,8 @@ import {
     GetUserByIdResponse,
     GetNearbyGeneralUsersResponse,
     GetNearbyInstitutionsResponse,
+    FollowUserResponse,
+    UnfollowUserResponse,
 } from "@/types/api/user";
 
 // ============================================
@@ -137,6 +139,30 @@ export const userRepository = {
         console.log("Fetching nearby institutions...");
         const response = await api.get<GetNearbyInstitutionsResponse>("/users/institutions");
         console.log("Nearby Institutions Response:", response);
+        return response;
+    },
+
+    /**
+     * Follow a user
+     * @param userId - The ID of the user to follow
+     * @returns Success response
+     */
+    followUser: async (userId: number): Promise<FollowUserResponse> => {
+        console.log("Following user ID:", userId);
+        const response = await api.post<FollowUserResponse>(`/users/${userId}/follow`);
+        console.log("Follow User Response:", response);
+        return response;
+    },
+
+    /**
+     * Unfollow a user
+     * @param userId - The ID of the user to unfollow
+     * @returns Success response
+     */
+    unfollowUser: async (userId: number): Promise<UnfollowUserResponse> => {
+        console.log("Unfollowing user ID:", userId);
+        const response = await api.delete<UnfollowUserResponse>(`/users/${userId}/follow`);
+        console.log("Unfollow User Response:", response);
         return response;
     },
 };

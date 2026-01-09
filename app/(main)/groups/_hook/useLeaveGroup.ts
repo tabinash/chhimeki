@@ -18,6 +18,7 @@ export function useLeaveGroup(): UseMutationResult<
             queryClient.invalidateQueries({ queryKey: ["allGroups"] });
             queryClient.invalidateQueries({ queryKey: ["myGroups"] });
             // Also invalidate group feed and members since user is no longer a member
+            queryClient.invalidateQueries({ queryKey: ["groupById", groupId] })
             queryClient.removeQueries({ queryKey: ["groupFeed", groupId] });
             queryClient.removeQueries({ queryKey: ["groupMembers", groupId] });
         },

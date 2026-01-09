@@ -31,7 +31,7 @@ export function getChatUrl(
     }
 ): string {
     const params = new URLSearchParams();
-    params.set('chat', userId);
+    params.set('userId', userId);
 
     if (options?.hideSidebar) {
         params.set('hideMessageSidebar', 'true');

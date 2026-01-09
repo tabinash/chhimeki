@@ -1,10 +1,14 @@
 "use client";
 
-import { Search, CheckCircle2, Building2, MapPin, Users } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useGetNearbyGeneralUsers } from "@/hooks/useGetNearbyGeneralUsers";
-import { useGetNearbyInstitutions } from "@/hooks/useGetNearbyInstitutions";
+import { Search, Building2, Users } from "lucide-react";
+import { useGetNearbyGeneralUsers } from "./_hook/useGetNearbyGeneralUsers";
+import { useGetNearbyInstitutions } from "./_hook/useGetNearbyInstitutions";
+import {
+    UserCard,
+    InstitutionCard,
+    UserCardSkeleton,
+    InstitutionCardSkeleton
+} from "./_components";
 
 export default function ExplorePage() {
     const { data: nearbyUsersData, isLoading: isLoadingUsers } = useGetNearbyGeneralUsers();
@@ -42,56 +46,13 @@ export default function ExplorePage() {
                     {isLoadingUsers ? (
                         <div className="grid grid-cols-3 gap-4">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-sm animate-pulse">
-                                    <div className="aspect-[4/3] bg-gray-200" />
-                                    <div className="p-5 space-y-3">
-                                        <div className="h-4 bg-gray-200 rounded w-3/4" />
-                                        <div className="h-3 bg-gray-200 rounded w-1/2" />
-                                        <div className="h-10 bg-gray-200 rounded" />
-                                    </div>
-                                </div>
+                                <UserCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : nearbyUsers.length > 0 ? (
                         <div className="grid grid-cols-3 gap-4">
                             {nearbyUsers.slice(0, 6).map((user) => (
-                                <Link
-                                    key={user.id}
-                                    href={`/profile/${user.id}`}
-                                    className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                    <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
-                                        {user.profilePicture ? (
-                                            <Image
-                                                src={user.profilePicture}
-                                                alt={user.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
-                                                {user.name[0]}
-                                            </div>
-                                        )}
-                                        {user.isVerified && (
-                                            <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                                <CheckCircle2 className="w-4 h-4 text-white" fill="currentColor" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="p-5">
-                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
-                                            {user.name}
-                                        </h3>
-                                        <p className="text-xs text-gray-500 mb-3 flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" />
-                                            Ward {user.wada}, {user.palika}
-                                        </p>
-                                        <button className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors text-sm">
-                                            Connect
-                                        </button>
-                                    </div>
-                                </Link>
+                                <UserCard key={user.id} user={user} />
                             ))}
                         </div>
                     ) : (
@@ -113,44 +74,7 @@ export default function ExplorePage() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {governmentOffices.map((office) => (
-                                <Link
-                                    key={office.id}
-                                    href={`/profile/${office.id}`}
-                                    className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                    <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 relative">
-                                        {office.profilePicture ? (
-                                            <Image
-                                                src={office.profilePicture}
-                                                alt={office.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-2xl">
-                                                🏛️
-                                            </div>
-                                        )}
-                                        {office.isVerified && (
-                                            <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                                <CheckCircle2 className="w-3 h-3 text-white" fill="currentColor" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
-                                            {office.name}
-                                        </h3>
-                                        <p className="text-xs text-gray-500 mb-1.5">Government Office</p>
-                                        <p className="text-xs text-gray-400 flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" />
-                                            {office.palika}, {office.district}
-                                        </p>
-                                    </div>
-                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
-                                        Follow
-                                    </button>
-                                </Link>
+                                <InstitutionCard key={office.id} institution={office} />
                             ))}
                         </div>
                     </div>
@@ -164,14 +88,7 @@ export default function ExplorePage() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {[1, 2].map((i) => (
-                                <div key={i} className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm animate-pulse">
-                                    <div className="w-16 h-16 rounded-2xl bg-gray-200" />
-                                    <div className="flex-1 space-y-2">
-                                        <div className="h-4 bg-gray-200 rounded w-3/4" />
-                                        <div className="h-3 bg-gray-200 rounded w-1/2" />
-                                        <div className="h-3 bg-gray-200 rounded w-2/3" />
-                                    </div>
-                                </div>
+                                <InstitutionCardSkeleton key={i} />
                             ))}
                         </div>
                     </div>
@@ -185,44 +102,7 @@ export default function ExplorePage() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {businesses.map((business) => (
-                                <Link
-                                    key={business.id}
-                                    href={`/profile/${business.id}`}
-                                    className="bg-white rounded-3xl p-5 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                    <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 relative">
-                                        {business.profilePicture ? (
-                                            <Image
-                                                src={business.profilePicture}
-                                                alt={business.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center text-white text-2xl">
-                                                🏪
-                                            </div>
-                                        )}
-                                        {business.isVerified && (
-                                            <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                                <CheckCircle2 className="w-3 h-3 text-white" fill="currentColor" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">
-                                            {business.name}
-                                        </h3>
-                                        <p className="text-xs text-gray-500 mb-1.5">Business</p>
-                                        <p className="text-xs text-gray-400 flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" />
-                                            {business.palika}, {business.district}
-                                        </p>
-                                    </div>
-                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-900 font-medium rounded-xl hover:bg-gray-100 transition-colors text-sm flex-shrink-0 border border-gray-100">
-                                        Follow
-                                    </button>
-                                </Link>
+                                <InstitutionCard key={business.id} institution={business} />
                             ))}
                         </div>
                     </div>
@@ -231,3 +111,4 @@ export default function ExplorePage() {
         </div>
     );
 }
+

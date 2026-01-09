@@ -1,4 +1,5 @@
 "use client";
+
 import { GroupListResponse } from "@/types/api/group";
 import { useJoinGroup } from "../_hook";
 
@@ -13,35 +14,51 @@ export function SuggestedGroupCard({ group }: SuggestedGroupCardProps) {
         joinMutation.mutate(group.id, {
             onError: (error) => {
                 alert(`Failed to join group: ${error.message}`);
-            }
+            },
         });
     };
 
     return (
-        <div className="bg-white rounded-2xl overflow-hidden">
-            <div className="aspect-[4/3] overflow-hidden bg-white">
+        <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm hover:shadow-md transition-shadow">
+
+            {/* Avatar */}
+            <div className="h-12 w-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
                 <img
                     src={group.profileImage || "/placeholder-group.png"}
                     alt={group.name}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                 />
             </div>
-            <div className="p-4">
-                <h3 className="font-semibold text-gray-900 text-sm mb-0.5">
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-gray-900 truncate">
                     {group.name}
                 </h3>
-                <p className="text-xs text-gray-500 mb-3">
-                    {group.memberCount} {group.memberCount === 1 ? 'member' : 'members'}
+                <p className="text-xs text-gray-500">
+                    {group.memberCount.toLocaleString()}{" "}
+                    {group.memberCount === 1 ? "member" : "members"}
                 </p>
-                <button
-                    onClick={handleJoin}
-                    disabled={joinMutation.isPending || group.isMember}
-                    className={`w-full py-2 
-                    bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors text-sm border border-gray-200 disabled:opacity-80 disabled:cursor-not-allowed`}
-                >
-                    {joinMutation.isPending ? 'Joining...' : group.isMember ? 'Joined' : 'Join Group'}
-                </button>
             </div>
+
+            {/* CTA */}
+            <button
+                onClick={handleJoin}
+                disabled={joinMutation.isPending || group.isMember}
+                className={`ml-auto rounded-lg px-3 py-1.5 text-xs font-semibold transition-all
+          ${group.isMember
+                        ? "bg-gray-100 text-gray-500 cursor-default"
+                        : "bg-blue-600 text-white hover:bg-blue-700"
+                    }
+          ${joinMutation.isPending ? "opacity-80" : ""}
+        `}
+            >
+                {joinMutation.isPending
+                    ? "Joining…"
+                    : group.isMember
+                        ? "Joined"
+                        : "Join"}
+            </button>
         </div>
     );
 }

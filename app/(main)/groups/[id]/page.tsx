@@ -1,12 +1,13 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useGetGroupById, useGetGroupFeed, useGetGroupMembers } from "../_hook";
+import { useGetGroupById, useGetGroupFeed, useGetGroupMembers, useRemoveMember } from "../_hook";
 import GroupLeftSidebar from "./_components/GroupLeftSidebar";
 import PostCard from "../_components/PostCard";
 import CreatePostWidget from "../_components/CreatePostWidget";
-import { MessageSquare, Users as UsersIcon, ShieldCheck } from "lucide-react";
+import { MessageSquare, Users as UsersIcon, ShieldCheck, UserX } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function GroupDetailPage() {
     const params = useParams();
@@ -14,25 +15,52 @@ export default function GroupDetailPage() {
     const groupId = Number(params.id);
     const activeTab = searchParams.get("tab") || "feed";
 
+    // State for remove member modal
+    const [memberToRemove, setMemberToRemove] = useState<{ userId: number; name: string } | null>(null);
+
     // Fetch group details (also fetched in layout, but cached by React Query)
     const { data: groupData } = useGetGroupById(groupId);
 
     // Fetch group feed
     const { data: feedData, isLoading: isLoadingFeed } = useGetGroupFeed(groupId, { page: 0, size: 20 });
+    console.log("feed data", feedData);
 
     // Fetch group members
     const { data: membersData, isLoading: isLoadingMembers } = useGetGroupMembers(groupId, { page: 0, size: 20 });
+
+    // Remove member mutation
+    const removeMemberMutation = useRemoveMember();
 
     const group = groupData?.data;
 
     if (!group) return null;
 
     const isMember = group.isMember;
+    const isAdmin = group.isAdmin;
 
     // Helper to calculate days ago
     const getDaysAgo = (dateString: string) => {
         const diff = Date.now() - new Date(dateString).getTime();
         return Math.floor(diff / (1000 * 60 * 60 * 24));
+    };
+
+    const handleRemoveMember = () => {
+        if (!memberToRemove) return;
+
+        removeMemberMutation.mutate(
+            {
+                groupId,
+                userId: memberToRemove.userId,
+            },
+            {
+                onSuccess: () => {
+                    setMemberToRemove(null);
+                },
+                onError: (error) => {
+                    alert(`Failed to remove member: ${error.message}`);
+                },
+            }
+        );
     };
 
     return (
@@ -61,8 +89,8 @@ export default function GroupDetailPage() {
                                 <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
                                 <p className="text-gray-600 mt-4">Loading feed...</p>
                             </div>
-                        ) : feedData?.data.data && feedData.data.data.length > 0 ? (
-                            feedData.data.data.map((post) => (
+                        ) : feedData?.data && feedData.data.length > 0 ? (
+                            feedData.data.map((post) => (
                                 <PostCard
                                     key={post.id}
                                     userName={post.authorName}
@@ -130,11 +158,19 @@ export default function GroupDetailPage() {
                                                     Joined {new Date(member.joinedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                                                 </p>
                                             </div>
-                                            {member.role === "ADMIN" && (
+                                            {member.role === "ADMIN" ? (
                                                 <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-md">
                                                     Admin
                                                 </span>
-                                            )}
+                                            ) : isAdmin ? (
+                                                <button
+                                                    onClick={() => setMemberToRemove({ userId: member.userId, name: member.name })}
+                                                    className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                                                >
+                                                    <UserX className="w-3.5 h-3.5" />
+                                                    Remove
+                                                </button>
+                                            ) : null}
                                         </div>
                                     ))}
                                 </div>
@@ -148,36 +184,65 @@ export default function GroupDetailPage() {
                     </div>
                 )}
 
-                {/* About Tab */}
-                {activeTab === "about" && (
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                        <h3 className="font-bold text-gray-900 mb-4">About This Group</h3>
 
-                        {group.description ? (
-                            <p className="text-gray-700 leading-relaxed mb-6">{group.description}</p>
-                        ) : (
-                            <p className="text-gray-400 italic mb-6">No description provided</p>
-                        )}
+            </div>
 
-                        <div className="space-y-3 text-sm border-t border-gray-100 pt-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-500">Created</span>
-                                <span className="font-semibold text-gray-900">
-                                    {new Date(group.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                                </span>
+            {/* Remove Member Confirmation Modal */}
+            {memberToRemove && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold text-red-600">Remove Member</h2>
+                            <button
+                                onClick={() => setMemberToRemove(null)}
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                disabled={removeMemberMutation.isPending}
+                            >
+                                <span className="text-gray-600 text-xl">✕</span>
+                            </button>
+                        </div>
+
+                        <div className="mb-6">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <UserX className="w-8 h-8 text-red-600" />
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-500">Total Members</span>
-                                <span className="font-semibold text-gray-900">{group.memberCount}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-500">Created By</span>
-                                <span className="font-semibold text-gray-900">{group.admin.name}</span>
-                            </div>
+                            <p className="text-gray-800 text-center mb-2">
+                                Are you sure you want to remove <span className="font-bold">{memberToRemove.name}</span> from this group?
+                            </p>
+                            <p className="text-sm text-gray-500 text-center">
+                                They will no longer have access to group posts and content.
+                            </p>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setMemberToRemove(null)}
+                                disabled={removeMemberMutation.isPending}
+                                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleRemoveMember}
+                                disabled={removeMemberMutation.isPending}
+                                className="flex-1 px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {removeMemberMutation.isPending ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                                        Removing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <UserX className="w-4 h-4" />
+                                        Remove Member
+                                    </>
+                                )}
+                            </button>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

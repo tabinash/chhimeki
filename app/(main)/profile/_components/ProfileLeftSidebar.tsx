@@ -5,7 +5,9 @@ import {
     Briefcase,
     Home,
     MapPin,
-    Calendar
+    Calendar,
+    Mail,
+    Phone
 } from "lucide-react";
 import { UserProfileResponse } from "@/types/api/user";
 
@@ -54,6 +56,17 @@ export default function ProfileLeftSidebar({ user }: ProfileLeftSidebarProps) {
                         <Calendar className="w-5 h-5 text-gray-400" />
                         <span>Joined <span className="font-bold text-gray-900">{joinedDate}</span></span>
                     </div>
+                </div>
+                {/* email */}
+                <div className="flex items-center gap-3 text-gray-600">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                    <span>Email <span className="font-bold text-gray-900">{user.email}</span></span>
+                </div>
+
+                {/* phone number */}
+                <div className="flex items-center gap-3 text-gray-600">
+                    <Phone className="w-5 h-5 text-gray-400" />
+                    <span>Phone <span className="font-bold text-gray-900">{user.phone}</span></span>
                 </div>
 
                 {user.isMine && (
