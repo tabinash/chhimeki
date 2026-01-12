@@ -12,6 +12,14 @@ import ProfileLeftSidebar from "../_components/ProfileLeftSidebar";
 import PostCard from "../_components/PostCard";
 import ProductCard from "../_components/ProductCard";
 import JobCard from "../_components/JobCard";
+import ProductDetailModal from "../../marketplace/_modals/ProductDetailModal";
+import EditProductModal from "../../marketplace/_modals/EditProductModal";
+import JobDetailModal from "../../jobs/_modal/JobDetailModal";
+import EditJobModal from "../../jobs/_modal/EditJobModal";
+
+
+
+
 
 export default function ProfilePage() {
     const params = useParams();
@@ -131,7 +139,7 @@ export default function ProfilePage() {
                             products.map((product) => (
                                 <ProductCard
                                     key={product.id}
-                                    id={String(product.id)}
+                                    id={product.id}
                                     title={product.title}
                                     price={`Rs. ${product.price.toLocaleString()}`}
                                     image={product.images[0]?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop"}
@@ -161,7 +169,7 @@ export default function ProfilePage() {
                             jobs.map((job) => (
                                 <JobCard
                                     key={job.id}
-                                    id={String(job.id)}
+                                    id={job.id}
                                     title={job.title}
                                     company={job.poster.name}
                                     type={formatEmploymentType(job.employmentType)}
@@ -181,6 +189,10 @@ export default function ProfilePage() {
                     </div>
                 )}
             </div>
+            <ProductDetailModal />
+            <EditProductModal />
+            <JobDetailModal />
+            <EditJobModal />
         </div>
     );
 }

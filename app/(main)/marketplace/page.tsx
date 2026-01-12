@@ -6,9 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { useBrowseProducts, useMyProducts } from "./_hook";
 
+
 // Local components
-import { MarketplaceHeader } from "./_components/MarketplaceHeader";
-import { MarketplaceSearchBar } from "./_components/MarketplaceSearchBar";
+import { MarketplaceHeroSection } from "./_components/MarketplaceHeroSection";
 import { ProductCard } from "./_components/ProductCard";
 import { EmptyMarketplaceState } from "./_components/EmptyMarketplaceState";
 import { MarketplaceLeftSidebar } from "./_components/MarketplaceLeftSidebar";
@@ -17,6 +17,7 @@ import { MarketplaceLeftSidebar } from "./_components/MarketplaceLeftSidebar";
 import CreateProductModal from "@/app/(main)/marketplace/_modals/CreateProductModal";
 import EditProductModal from "@/app/(main)/marketplace/_modals/EditProductModal";
 import ProductDetailModal from "@/app/(main)/marketplace/_modals/ProductDetailModal";
+
 
 // Types
 import { ProductResponse, ProductCategory } from "@/types/api/products";
@@ -28,8 +29,7 @@ export default function MarketplacePage() {
 
     const searchParams = useSearchParams();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editingProduct, setEditingProduct] = useState<ProductResponse | null>(null);
+
 
     // Get current user for geography
     const { user } = useUser();
@@ -64,32 +64,20 @@ export default function MarketplacePage() {
         setIsCreateModalOpen(true);
     };
 
-    const handleEditClick = (product: ProductResponse) => {
-        setEditingProduct(product);
-        setIsEditModalOpen(true);
-        setSelectedProduct(null); // Close the detail view
-    };
+
 
     const handleCreateModalClose = () => {
         setIsCreateModalOpen(false);
         window.history.replaceState(null, '', '/marketplace');
     };
 
-    const handleEditModalClose = () => {
-        setIsEditModalOpen(false);
-        setEditingProduct(null);
-    };
 
     const handleCreateSuccess = () => {
         // Product created successfully - cache will auto-refresh
         window.history.replaceState(null, '', '/marketplace');
     };
 
-    const handleEditSuccess = () => {
-        // Product updated successfully - cache will auto-refresh
-        setIsEditModalOpen(false);
-        window.history.replaceState(null, '', '/marketplace');
-    };
+
 
     // Get products based on view mode
     const products = viewMode === 'selling'
@@ -112,15 +100,13 @@ export default function MarketplacePage() {
             <div className="flex-1 h-full ">
                 <div className="min-h-screen p-8 relative">
                     <div className="max-w-6xl mx-auto">
-                        {/* Header Row: Title, Tabs, Action */}
-                        <MarketplaceHeader
+                        {/* Unified Hero Section */}
+                        <MarketplaceHeroSection
                             viewMode={viewMode}
                             onViewModeChange={setViewMode}
                             onSellClick={handlePostClick}
+                            productCount={viewMode === 'browse' ? browseData?.data?.length : myProductsData?.data?.length}
                         />
-
-                        {/* Search Row: Search Bar & Filters */}
-                        <MarketplaceSearchBar viewMode={viewMode} />
 
                         {/* Loading State */}
                         {isLoading ? (
@@ -154,11 +140,7 @@ export default function MarketplacePage() {
                     </div>
 
                     {/* Product Detail Modal */}
-                    <ProductDetailModal
-                        item={selectedProduct}
-                        onClose={() => setSelectedProduct(null)}
-                        onEdit={handleEditClick}
-                    />
+                    <ProductDetailModal />
 
                     {/* Create Product Modal */}
                     <CreateProductModal
@@ -168,14 +150,8 @@ export default function MarketplacePage() {
                     />
 
                     {/* Edit Product Modal */}
-                    {editingProduct && (
-                        <EditProductModal
-                            isOpen={isEditModalOpen}
-                            onClose={handleEditModalClose}
-                            product={editingProduct}
-                            onSuccess={handleEditSuccess}
-                        />
-                    )}
+                    <EditProductModal />
+
                 </div>
             </div>
         </div>

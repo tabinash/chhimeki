@@ -10,6 +10,7 @@ import {
     ShoppingCart,
     Settings,
     Bell,
+    StoreIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -37,6 +38,7 @@ export function Sidebar() {
         { icon: Compass, href: "/explore", label: "Explore" },
         { icon: GraduationCap, href: "/jobs", label: "Jobs" },
         { icon: ShoppingCart, href: "/marketplace", label: "Marketplace" },
+        { icon: StoreIcon, href: "/storefront", label: "Pasal" },
         { icon: Settings, href: "/settings", label: "Settings" },
     ];
 
@@ -54,9 +56,9 @@ export function Sidebar() {
                             href={item.href}
                             className={cn(
                                 "flex items-center gap-3 rounded-2xl transition-all",
-                                showLabels ? "px-4 py-3" : "px-3 py-3 justify-center",
+                                showLabels ? "px-5 py-3" : "px-3 py-3 justify-center",
                                 isActive
-                                    ? "bg-white border border-gray-200 shadow-sm"
+                                    ? "bg-[#F6F6F4]"
                                     : "border border-transparent hover:bg-gray-50 hover:border-gray-200"
                             )}
                             title={!showLabels ? item.label : undefined}

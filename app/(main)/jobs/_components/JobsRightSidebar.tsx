@@ -1,10 +1,17 @@
 "use client";
-import { Plus, Briefcase, UserCheck, ShieldCheck } from "lucide-react";
+import { Plus, Briefcase, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
-export function JobsRightSidebar() {
+interface JobsRightSidebarProps {
+    width?: number;
+}
+
+export function JobsRightSidebar({ width }: JobsRightSidebarProps) {
     return (
-        <aside className="w-50 min-w-[280px] dashed flex-shrink-0 flex flex-col p-4 gap-6">
+        <aside
+            className="flex-shrink-0 flex flex-col p-4 gap-6"
+            style={{ width: width || 280 }}
+        >
 
             {/* Hiring Widget -- Main Action for Locals */}
             <div className="bg-blue-600 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden group">

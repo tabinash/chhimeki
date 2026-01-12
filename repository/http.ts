@@ -199,6 +199,32 @@ export const api = {
     post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
         http.post<T>(url, data, config).then(res => res.data),
 
+    /**
+     * POST request with upload progress tracking
+     * Used for file uploads (images, videos) where progress feedback is needed
+     * @param url - API endpoint
+     * @param data - Request body (typically FormData)
+     * @param onProgress - Callback with progress percentage (0-100)
+     * @param config - Additional Axios config
+     */
+    postWithProgress: <T>(
+        url: string,
+        data: unknown,
+        onProgress?: (progress: number) => void,
+        config?: AxiosRequestConfig
+    ): Promise<T> =>
+        http.post<T>(url, data, {
+            ...config,
+            onUploadProgress: (progressEvent) => {
+                if (onProgress && progressEvent.total) {
+                    const percentComplete = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                    onProgress(percentComplete);
+                }
+            },
+        }).then(res => res.data),
+
     put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
         http.put<T>(url, data, config).then(res => res.data),
 

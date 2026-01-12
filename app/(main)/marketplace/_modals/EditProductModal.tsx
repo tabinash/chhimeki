@@ -4,13 +4,10 @@ import { X, Check, Upload, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { ProductResponse, ProductCategory } from "@/types/api/products";
 import { useUpdateProduct } from "@/app/(main)/marketplace/_hook/useUpdateProduct";
+import { useDispatch, useSelector } from "react-redux";
+import { closeProductDetailModal, closeProductEditModal } from "@/redux/slices/modalSlice";
+import { RootState } from "@/redux/store";
 
-interface EditProductModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    product: ProductResponse;
-    onSuccess?: () => void;
-}
 
 // API Product Categories
 const categories: { value: ProductCategory; label: string }[] = [
@@ -26,13 +23,16 @@ const categories: { value: ProductCategory; label: string }[] = [
     { value: "OTHERS", label: "Others" },
 ];
 
-export default function EditProductModal({ isOpen, onClose, product, onSuccess }: EditProductModalProps) {
+export default function EditProductModal() {
     // Form state
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState<ProductCategory>("ELECTRONICS");
     const [isNegotiable, setIsNegotiable] = useState(false);
+    const dispatch = useDispatch();
+    const productEditModal = useSelector((state: RootState) => state.modal.productEditModal)
+    const product = productEditModal.data
 
     // Image management
     const [existingImages, setExistingImages] = useState<{ id: number; url: string }[]>([]);
@@ -40,11 +40,11 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
     const [newFiles, setNewFiles] = useState<File[]>([]);
     const [newPreviews, setNewPreviews] = useState<string[]>([]);
 
-    const updateMutation = useUpdateProduct(product.id);
+    const updateMutation = useUpdateProduct(12);
 
     // Initialize form with product data
     useEffect(() => {
-        if (isOpen && product) {
+        if (productEditModal.isOpen && product) {
             setTitle(product.title);
             setDescription(product.description);
             setPrice(product.price.toString());
@@ -59,9 +59,9 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
         return () => {
             newPreviews.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [isOpen, product]);
+    }, [productEditModal.isOpen, product]);
 
-    if (!isOpen) return null;
+    if (!productEditModal.isOpen) return null;
 
     const handleNewFilesSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -124,8 +124,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
 
         updateMutation.mutate(updateData, {
             onSuccess: () => {
-                onSuccess?.();
-                onClose();
+                dispatch(closeProductDetailModal())
             },
             onError: (error) => {
                 alert(`Error updating product: ${error.message || "Unknown error"}`);
@@ -141,7 +140,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
                     <h2 className="text-xl font-bold text-gray-900">Edit Listing</h2>
                     <button
-                        onClick={onClose}
+                        onClick={() => dispatch(closeProductEditModal())}
                         disabled={updateMutation.isPending}
                         className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
                     >
@@ -165,8 +164,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
                                 <div
                                     key={img.id}
                                     className={`relative aspect-square rounded-lg overflow-hidden border-2 ${imagesToRemove.includes(img.id)
-                                            ? 'border-red-300 opacity-50'
-                                            : 'border-gray-200'
+                                        ? 'border-red-300 opacity-50'
+                                        : 'border-gray-200'
                                         } group`}
                                 >
                                     <Image src={img.url} alt="Product" fill className="object-cover" />
@@ -315,7 +314,7 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
                     <div className="flex gap-3 pt-4 border-t border-gray-100 mt-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={() => dispatch(closeProductEditModal())}
                             disabled={updateMutation.isPending}
                             className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-sm transition-colors disabled:opacity-50"
                         >

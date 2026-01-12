@@ -44,9 +44,13 @@ export const postRepository = {
      * Create a post with media files (images and/or video)
      * Content-Type: multipart/form-data
      * @param data - Post creation data with optional images (max 5) and video (max 1)
+     * @param onProgress - Optional callback for upload progress (0-100)
      * @returns Created post data
      */
-    createPostWithMedia: async (data: CreatePostWithMediaRequest): Promise<CreatePostWithMediaResponse> => {
+    createPostWithMedia: async (
+        data: CreatePostWithMediaRequest,
+        onProgress?: (progress: number) => void
+    ): Promise<CreatePostWithMediaResponse> => {
         console.log("Creating post with media:", {
             postType: data.postType,
             hasImages: data.images && data.images.length > 0,
@@ -73,11 +77,16 @@ export const postRepository = {
             formData.append("video", data.video);
         }
 
-        const response = await api.post<CreatePostWithMediaResponse>("/posts", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const response = await api.postWithProgress<CreatePostWithMediaResponse>(
+            "/posts",
+            formData,
+            onProgress,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
         console.log("Create Post (Multipart) Response:", response);
         return response;
     },

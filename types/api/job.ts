@@ -79,6 +79,7 @@ export interface JobResponse {
     viewCount: number;
     createdAt: string;
     updatedAt: string;
+
 }
 
 // ============================================

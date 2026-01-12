@@ -1,7 +1,7 @@
 "use client";
 
 import { useFeedLayout } from "@/hooks/useFeedLayout";
-import { FeedRightSidebar } from "@/app/(main)/(feed)/FeedRightSidebar";
+import { FeedRightSidebar } from "@/app/(main)/(feed)/home/_components/FeedRightSidebar";
 
 export default function NotificationsLayout({
     children,

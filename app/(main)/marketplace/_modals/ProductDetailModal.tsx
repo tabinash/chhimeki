@@ -14,19 +14,18 @@ import {
     Trash2,
 } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { getChatUrl } from "@/lib/chatUtils";
 import { ProductResponse } from "@/types/api/products";
 import { useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useUpdateProduct } from "@/app/(main)/marketplace/_hook/useUpdateProduct";
-import { useDeleteProduct } from "../_hook";
+import { useDeleteProduct, useProductById } from "../_hook";
+import { useDispatch, useSelector } from "react-redux";
+import { openChat } from "@/redux/slices/chatSlice";
+import { RootState } from "@/redux/store";
+import { closeProductDetailModal, openProductEditModal } from "@/redux/slices/modalSlice";
 
-interface ProductDetailModalProps {
-    item: ProductResponse | null;
-    onClose: () => void;
-    onEdit?: (item: ProductResponse) => void;
-}
+
+
 
 /* ---------------- helpers ---------------- */
 
@@ -67,20 +66,31 @@ function getStatusBadge(status: string) {
 
 /* ---------------- component ---------------- */
 
-export default function ProductDetailModal({
-    item,
-    onClose,
-    onEdit,
-}: ProductDetailModalProps) {
-    const router = useRouter();
+export default function ProductDetailModal() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { user } = useUser();
+    // const {data:productDetail,isLoading:productDetailLoading }=useProductById(item?.id ?? 0);
+    const productDetailModal = useSelector((state: RootState) => state.modal.productDetailModal);
+
+    const { data: response, isLoading: productDetailLoading } = useProductById(productDetailModal.productId ?? 0);
+    const item = response?.data;
 
     const updateMutation = useUpdateProduct(item?.id ?? 0);
     const deleteMutation = useDeleteProduct();
+    const dispatch = useDispatch();
 
-    if (!item) return null;
 
+
+
+    if (!productDetailModal.isOpen) return null;
+
+    if (productDetailLoading || !item) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                <Loader2 className="animate-spin w-8 h-8 text-white" />
+            </div>
+        );
+    }
     /* ---------------- derived data ---------------- */
 
     const formattedPrice = `Rs. ${item.price.toLocaleString()}`;
@@ -127,7 +137,7 @@ export default function ProductDetailModal({
         updateMutation.mutate(
             { status: newStatus },
             {
-                onSuccess: onClose,
+                onSuccess: () => dispatch(closeProductDetailModal()),
                 onError: err =>
                     alert(
                         `Failed to update status: ${(err as any)?.message ?? "Unknown error"
@@ -139,7 +149,7 @@ export default function ProductDetailModal({
 
     const handleDelete = () => {
         deleteMutation.mutate(item.id, {
-            onSuccess: onClose,
+            onSuccess: () => dispatch(closeProductDetailModal()),
             onError: err =>
                 alert(
                     `Failed to delete product: ${(err as any)?.message ?? "Unknown error"
@@ -157,7 +167,7 @@ export default function ProductDetailModal({
 
                 {/* Close Button */}
                 <button
-                    onClick={onClose}
+                    onClick={() => dispatch(closeProductDetailModal())}
                     className="absolute top-4 left-4 z-10 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors"
                 >
                     <X className="w-5 h-5" />
@@ -289,7 +299,10 @@ export default function ProductDetailModal({
                                     ) : item.status === "ACTIVE" ? "Mark as Sold" : "Mark as Active"}
                                 </button>
                                 <button
-                                    onClick={() => onEdit?.(item)}
+                                    onClick={() => {
+                                        dispatch(openProductEditModal(item))
+                                        dispatch(closeProductDetailModal())
+                                    }}
                                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-sm transition-colors"
                                 >
                                     Edit Listing
@@ -309,17 +322,11 @@ export default function ProductDetailModal({
                         ) : (
                             <>
                                 <button
-                                    onClick={() =>
-                                        router.push(
-                                            getChatUrl(String(item.seller.id), {
-                                                hideSidebar: true,
-                                                source: "marketplace",
-                                            })
-                                        )
-                                    }
+                                    onClick={() => dispatch(openChat({ id: item.seller.id, name: item.seller.name, profilePicture: item.seller.profileImage }))}
                                     className="flex-1 bg-black hover:bg-gray-800 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
                                 >
-                                    <MessageCircle className="w-4 h-4" />
+                                    <MessageCircle
+                                        className="w-4 h-4" />
                                     Message Seller
                                 </button>
                                 <button className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">

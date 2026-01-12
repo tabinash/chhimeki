@@ -30,35 +30,40 @@ export interface PagedResponse<T> {
 // Feed Domain Types
 // ============================================
 
-export interface PostAuthor {
-    id: number;
-    name: string;
-    userType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
-    profilePicture: string | null;
-    isVerified: boolean;
-}
-
-export interface MediaItem {
-    id: number;
-    url: string;
-    thumbnailUrl: string | null;
-    mediaType: "IMAGE" | "VIDEO";
-    processingStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-    duration: number | null;
-}
-
-export interface PostResponse {
-    id: number;
+export interface FeedItemResponse {
+    // Post information
+    postId: number;
     content: string;
-    postType: "GENERAL" | "ALERT" | "GROUP";
-    visibility: "WADA" | "PALIKA" | "DISTRICT";
-    author: PostAuthor;
-    media: MediaItem[];
-    likeCount: number;
-    commentCount: number;
-    isLikedByMe: boolean;
+    postType: string; // "GENERAL", "ALERT", "NEWS", "GROUP", etc.
+    visibilityLevel: string | null; // "WADA", "PALIKA", "DISTRICT" (null for GROUP posts)
     createdAt: string;
-    updatedAt: string;
+
+    // Geography (null for GROUP posts)
+    district: string | null;
+    palika: string | null;
+    wada: string | null;
+
+    // Author information (flat)
+    authorId: number;
+    authorName: string;
+    authorProfilePicture: string | null;
+    authorType: string; // "GENERAL", "GOVERNMENT", "NON_GOVERNMENT"
+
+    // Group information (only for GROUP posts)
+    groupId: number | null;
+    groupName: string | null;
+    groupProfileImage: string | null;
+
+    // Media information (flat)
+    imageUrls: string[]; // Empty array if no images
+    videoUrl: string | null;
+    videoThumbnail: string | null;
+    videoDuration: number | null; // Duration in seconds
+
+    // Engagement metrics (flat)
+    commentCount: number;
+    likeCount: number;
+    shareCount: number;
 }
 
 // ============================================
@@ -67,11 +72,11 @@ export interface PostResponse {
 // ============================================
 
 export interface GetGeneralFeedParams {
-    page?: number;
-    size?: number;
+    page?: number; // Default: 0
+    size?: number; // Default: 20, max: 50
 }
 
-export type GetGeneralFeedResponse = PagedResponse<PostResponse>;
+export type GetGeneralFeedResponse = ApiResponse<PagedResponse<FeedItemResponse>>;
 
 // ============================================
 // Get Alert Feed API
@@ -79,8 +84,8 @@ export type GetGeneralFeedResponse = PagedResponse<PostResponse>;
 // ============================================
 
 export interface GetAlertFeedParams {
-    page?: number;
-    size?: number;
+    page?: number; // Default: 0
+    size?: number; // Default: 20, max: 50
 }
 
-export type GetAlertFeedResponse = PagedResponse<PostResponse>;
+export type GetAlertFeedResponse = ApiResponse<PagedResponse<FeedItemResponse>>;

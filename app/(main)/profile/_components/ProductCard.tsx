@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { openProductDetailModal } from "@/redux/slices/modalSlice";
 
 interface ProductCardProps {
-    id: string;
+    id: number;
     title: string;
     price: string;
     image: string;
@@ -10,12 +12,14 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({
+    id,
     title,
     price,
     image,
     postedDate,
     status
 }: ProductCardProps) {
+    const dispatch = useDispatch();
     return (
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col">
             {/* Product Image */}
@@ -49,7 +53,9 @@ export default function ProductCard({
                     Listed {postedDate}
                 </p>
 
-                <button className="w-full mt-3 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors">
+                <button
+                    onClick={() => dispatch(openProductDetailModal({ productId: id }))}
+                    className="w-full mt-3 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors">
                     View Details
                 </button>
             </div>

@@ -1,319 +1,262 @@
 
-import { AlertTriangle, MapPin, Info, PawPrint } from "lucide-react";
+import { PostResponse, PostAuthor, MediaItem } from "@/types/api/feed";
 
-export type PostType = 'general' | 'alert' | 'notice' | 'lost-found';
-
-export interface Post {
-    id: number;
-    type: PostType;
-    author: {
-        name: string;
-        avatar: string;
-        location?: string;
-        isOfficial?: boolean;
-        isBusiness?: boolean;
-    };
-    time: string;
-    title?: string;
-    content: string;
-    images: string[];
-    stats: {
-        likes: number;
-        comments: number;
-        shares: number;
-    };
-    isLiked: boolean;
-    priority?: string;
-    comments: {
-        id: number;
-        user: {
-            name: string;
-            avatar: string;
-        };
-        text: string;
-        time: string;
-    }[];
-}
-
-export const posts: Post[] = [
+export const posts: PostResponse[] = [
+    // 1. ALERT (Text-only)
     {
         id: 1,
-        type: 'alert',
+        content: "⚠️ Emergency: Main pipeline maintenance at Shankhamul. Water supply will be disrupted for 4 hours. Tankers are on standby.",
+        postType: "ALERT",
+        visibility: "WADA",
         author: {
+            id: 101,
             name: "Ward 4 Committee",
-            avatar: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=100&h=100&fit=crop",
-            location: "Baneshwor",
-            isOfficial: true
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "10m ago",
-        title: "⚠️ Water Supply Disruption",
-        content: "Due to emergency maintenance in the main pipeline near Shankhamul, water supply will be disrupted for the next 4 hours. Water tanker services have been alerted.",
-        images: [],
-        stats: { likes: 145, comments: 42, shares: 89 },
-        isLiked: false,
-        priority: "High",
-        comments: [
-            {
-                id: 1,
-                user: { name: "Ramesh P.", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop" },
-                text: "Thanks for the heads up! Will store some water.",
-                time: "5m ago"
-            },
-            {
-                id: 2,
-                user: { name: "Sita K.", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" },
-                text: "Is this confirmed for Shankhamul area only?",
-                time: "2m ago"
-            }
-        ]
+        media: [],
+        likeCount: 145,
+        commentCount: 42,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString()
     },
+    // 2. VIDEO (Construction/Civic)
     {
         id: 2,
-        type: 'lost-found',
+        content: "Progress update: The new community park jogging track is nearly finished! Looking forward to the opening next month. 🏗️🌳",
+        postType: "GENERAL",
+        visibility: "WADA",
         author: {
-            name: "Sita Sharma",
-            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-            location: "Koteshwor"
+            id: 107,
+            name: "Urban Planning",
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "1h ago",
-        title: "LOST DOG: Max",
-        content: "Our Golden Retriever 'Max' went missing this morning around 8 AM near the Mahadev Temple. He is wearing a red collar. Please help us find him! 🐕",
-        images: ["https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=500&fit=crop"],
-        stats: { likes: 212, comments: 35, shares: 120 },
-        isLiked: true,
-        priority: "Urgent",
-        comments: []
+        media: [{
+            id: 201,
+            url: "https://youtu.be/Hi_gyY-mMQo?list=RDcFtOwzJA1do",
+            thumbnailUrl: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?w=800&h=500&fit=crop",
+            mediaType: "VIDEO",
+            processingStatus: "COMPLETED",
+            duration: 15
+        }],
+        likeCount: 230,
+        commentCount: 18,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString()
     },
+    // 3. IMAGE (Lost & Found)
     {
         id: 3,
-        type: 'general',
+        content: "Missing: Our Golden Retriever 'Max' last seen near Mahadev Temple. Red collar. Please contact us if found! 🐕 #LostDog",
+        postType: "GENERAL",
+        visibility: "PALIKA",
         author: {
-            name: "New Everest MoMo",
-            avatar: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100&h=100&fit=crop",
-            location: "Mid-Baneshwor",
-            isBusiness: true
+            id: 102,
+            name: "Sita Sharma",
+            userType: "GENERAL",
+            profilePicture: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+            isVerified: false
         },
-        time: "3h ago",
-        content: "Namaste Neighbors! 🙏 We are officially open! Come try our special Jhol MoMo. 20% discount for all Chhimeki members this week!",
-        images: ["https://images.unsplash.com/photo-1626015499273-2c0aaca135fc?w=800&h=500&fit=crop"],
-        stats: { likes: 56, comments: 12, shares: 5 },
-        isLiked: false,
-        comments: []
+        media: [{
+            id: 1,
+            url: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=500&fit=crop",
+            mediaType: "IMAGE",
+            processingStatus: "COMPLETED",
+            thumbnailUrl: null,
+            duration: null
+        }],
+        likeCount: 312,
+        commentCount: 89,
+        isLikedByMe: true,
+        createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 60 * 120).toISOString()
     },
+    // 4. VIDEO (Cultural)
     {
         id: 4,
-        type: 'notice',
+        content: "Breathtaking traditional performance at the Cultural Center today. Our heritage is so vibrant! 💃🕺 #culture #heritage",
+        postType: "GENERAL",
+        visibility: "DISTRICT",
         author: {
-            name: "Community Club",
-            avatar: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=100&h=100&fit=crop",
-            location: "Local Hall",
-            isOfficial: true
+            id: 115,
+            name: "Cultural Center",
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1596290815594-554472c1c1f7?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "5h ago",
-        title: "Saturday Clean-up Campaign",
-        content: "Join us this Saturday for our monthly neighborhood clean-up. Gathering at the main chowk at 7:00 AM. Gloves and bags provided.",
-        images: [],
-        stats: { likes: 89, comments: 24, shares: 15 },
-        isLiked: true,
-        comments: []
+        media: [{
+            id: 401,
+            url: "https://v.pinimg.com/videos/iht/720p/5e/04/30/5e043003020087094254095493019.mp4",
+            thumbnailUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=500&fit=crop",
+            mediaType: "VIDEO",
+            processingStatus: "COMPLETED",
+            duration: 45
+        }],
+        likeCount: 542,
+        commentCount: 67,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 60 * 240).toISOString()
     },
+    // 5. CAROUSEL/IMAGE (Food/Business)
     {
         id: 5,
-        type: 'general',
+        content: "Now Open! 🥟 Come try the best Jhol MoMo in town at New Everest. 20% discount for app users this week!",
+        postType: "GENERAL",
+        visibility: "DISTRICT",
         author: {
-            name: "Rahul M.",
-            avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-            location: "Koteshwor"
+            id: 103,
+            name: "New Everest MoMo",
+            userType: "BUSINESS",
+            profilePicture: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "6h ago",
-        content: "Just tried the new bakery 'SweetTooth' near the junction. Their donuts are amazing! 🍩 Highly recommend checking them out.",
-        images: ["https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=500&fit=crop"],
-        stats: { likes: 45, comments: 8, shares: 2 },
-        isLiked: false,
-        comments: []
+        media: [{
+            id: 501,
+            url: "https://images.unsplash.com/photo-1626015499273-2c0aaca135fc?w=800&h=500&fit=crop",
+            mediaType: "IMAGE",
+            processingStatus: "COMPLETED",
+            thumbnailUrl: null,
+            duration: null
+        }],
+        likeCount: 89,
+        commentCount: 14,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 480).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 60 * 480).toISOString()
     },
+    // 6. ALERT (Text-only)
     {
         id: 6,
-        type: 'alert',
+        content: "📅 Scheduled Power Cut: Ward 4 transformer maintenance tomorrow from 10:00 AM to 2:00 PM. Please plan accordingly.",
+        postType: "ALERT",
+        visibility: "WADA",
         author: {
-            name: "Nepal Electricity Authority",
-            avatar: "https://images.unsplash.com/photo-1560179707-f14e90ef3dab?w=100&h=100&fit=crop",
-            location: "Baneshwor Branch",
-            isOfficial: true
+            id: 106,
+            name: "Nepal Electricity",
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1560179707-f14e90ef3dab?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "8h ago",
-        title: "⚡ Scheduled Power Cut",
-        content: "Power supply will be cut off in Ward 4 area tomorrow from 10:00 AM to 2:00 PM for transformer maintenance.",
-        images: [],
-        stats: { likes: 89, comments: 56, shares: 120 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
+        media: [],
+        likeCount: 201,
+        commentCount: 95,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 3600 * 8).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 3600 * 8).toISOString()
     },
+    // 7. IMAGE (Lifestyle/General)
     {
         id: 7,
-        type: 'general',
+        content: "Morning vibes at the local tea stall. Nothing beats a hot cup of chiya and local conversation! ☕✨",
+        postType: "GENERAL",
+        visibility: "WADA",
         author: {
-            name: "Priya S.",
-            avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
-            location: "Shankhamul"
+            id: 108,
+            name: "Rahul K.",
+            userType: "GENERAL",
+            profilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+            isVerified: false
         },
-        time: "10h ago",
-        content: "Beautiful sunset view from the rooftop today! 🌇 The air feels cleaner after the rain yesterday.",
-        images: ["https://images.unsplash.com/photo-1477862767330-941193636ee2?w=800&h=500&fit=crop"],
-        stats: { likes: 132, comments: 15, shares: 4 },
-        isLiked: true,
-        comments: []
+        media: [{
+            id: 701,
+            url: "https://images.unsplash.com/photo-1582733315328-849a6c276a6e?w=800&h=500&fit=crop",
+            mediaType: "IMAGE",
+            processingStatus: "COMPLETED",
+            thumbnailUrl: null,
+            duration: null
+        }],
+        likeCount: 112,
+        commentCount: 9,
+        isLikedByMe: true,
+        createdAt: new Date(Date.now() - 1000 * 3600 * 12).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 3600 * 12).toISOString()
     },
+    // 8. IMAGE (Health/Business)
     {
         id: 8,
-        type: 'lost-found',
+        content: "Organic greens just arrived from the farm! Spinach, cauliflower, and radish. Support your local farmers! 🌿🍅",
+        postType: "GENERAL",
+        visibility: "WADA",
         author: {
-            name: "Bikash T.",
-            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-            location: "Old Baneshwor"
+            id: 114,
+            name: "Organic Mart",
+            userType: "BUSINESS",
+            profilePicture: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "12h ago",
-        title: "FOUND: Blue Wallet",
-        content: "Found a blue leather wallet near the Global IME Bank ATM. It contains an ID card with the name 'Suresh Karki'. Please contact me to claim it.",
-        images: [],
-        stats: { likes: 78, comments: 12, shares: 45 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
+        media: [{
+            id: 801,
+            url: "https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=800&h=500&fit=crop",
+            mediaType: "IMAGE",
+            processingStatus: "COMPLETED",
+            thumbnailUrl: null,
+            duration: null
+        }],
+        likeCount: 76,
+        commentCount: 21,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 3600 * 24).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 3600 * 24).toISOString()
     },
+    // 9. VIDEO (Street View)
     {
         id: 9,
-        type: 'notice',
+        content: "The evening traffic at the square is getting better with the new lane system. Slow but steady! 🚦🏙️",
+        postType: "GENERAL",
+        visibility: "PALIKA",
         author: {
-            name: "Local Library",
-            avatar: "https://images.unsplash.com/photo-1524813686514-a57563d77965?w=100&h=100&fit=crop",
-            location: "Community Center",
-            isOfficial: true
+            id: 120,
+            name: "City Traffic",
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "1d ago",
-        title: "📚 Book Reading Session",
-        content: "We are organizing a children's book reading session this Saturday at 2 PM. All kids aged 5-10 are welcome!",
-        images: ["https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=500&fit=crop"],
-        stats: { likes: 67, comments: 10, shares: 20 },
-        isLiked: false,
-        comments: []
+        media: [{
+            id: 901,
+            url: "https://v.pinimg.com/videos/iht/720p/12/34/56/123456...mp4", // Replace with a generic city mp4 if needed
+            thumbnailUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop",
+            mediaType: "VIDEO",
+            processingStatus: "COMPLETED",
+            duration: 10
+        }],
+        likeCount: 156,
+        commentCount: 44,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 3600 * 48).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 3600 * 48).toISOString()
     },
+    // 10. IMAGE (Community Event)
     {
         id: 10,
-        type: 'general',
+        content: "Saturday Clean-up Drive: 50+ neighbors showed up! Let's keep our chowk clean together. 🧹🌍 #CleanCity",
+        postType: "GENERAL",
+        visibility: "WADA",
         author: {
-            name: "Tech Solutions",
-            avatar: "https://images.unsplash.com/photo-1531297461136-82lw8e2d4b3b?w=100&h=100&fit=crop",
-            location: "New Road",
-            isBusiness: true
+            id: 104,
+            name: "Community Club",
+            userType: "GOVERNMENT_OFFICE",
+            profilePicture: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=100&h=100&fit=crop",
+            isVerified: true
         },
-        time: "1d ago",
-        content: "Need your laptop fixed? We offer same-day repair services for all major brands. Visit us for a free diagnostic!",
-        images: ["https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800&h=500&fit=crop"],
-        stats: { likes: 34, comments: 5, shares: 3 },
-        isLiked: false,
-        comments: []
-    },
-    {
-        id: 11,
-        type: 'alert',
-        author: {
-            name: "Traffic Police",
-            avatar: "https://images.unsplash.com/photo-1545459720-aac3e5ca967e?w=100&h=100&fit=crop",
-            location: "Metropolitan",
-            isOfficial: true
-        },
-        time: "1d ago",
-        title: "🚧 Road Diversion Alert",
-        content: "Heavy traffic jam at Maitighar due to a rally. Please use alternative routes via Anamnagar or Thapathali.",
-        images: [],
-        stats: { likes: 256, comments: 88, shares: 340 },
-        isLiked: true,
-        priority: "High",
-        comments: []
-    },
-    {
-        id: 12,
-        type: 'general',
-        author: {
-            name: "Anjali G.",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-            location: "Buddhanagar"
-        },
-        time: "2d ago",
-        content: "Does anyone know a good plumber available for urgent work? My kitchen sink is leaking badly.",
-        images: [],
-        stats: { likes: 12, comments: 24, shares: 1 },
-        isLiked: false,
-        comments: []
-    },
-    {
-        id: 13,
-        type: 'notice',
-        author: {
-            name: "Green Club",
-            avatar: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=100&h=100&fit=crop",
-            location: "Ward 4",
-            isOfficial: true
-        },
-        time: "2d ago",
-        title: "🌱 Tree Plantation Drive",
-        content: "Let's make our neighborhood greener! Join us for a tree plantation drive near the river bank next Sunday.",
-        images: ["https://images.unsplash.com/photo-1542601906990-24ccd08d7455?w=800&h=500&fit=crop"],
-        stats: { likes: 156, comments: 45, shares: 67 },
-        isLiked: true,
-        comments: []
-    },
-    {
-        id: 14,
-        type: 'general',
-        author: {
-            name: "Organic Mart",
-            avatar: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=100&h=100&fit=crop",
-            location: "Lagankhel",
-            isBusiness: true
-        },
-        time: "3d ago",
-        content: "Fresh organic vegetables from local farmers have just arrived! spinach, carrots, and cauliflower available.",
-        images: ["https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=800&h=500&fit=crop"],
-        stats: { likes: 88, comments: 22, shares: 15 },
-        isLiked: false,
-        comments: []
-    },
-    {
-        id: 15,
-        type: 'lost-found',
-        author: {
-            name: "Ritika M.",
-            avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop",
-            location: "Shantinagar"
-        },
-        time: "3d ago",
-        title: "LOST: House Keys",
-        content: "I lost a bunch of keys with a 'Home Sweet Home' keychain somewhere between Shantinagar gate and the grocery store. Please help!",
-        images: [],
-        stats: { likes: 45, comments: 12, shares: 33 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
-    },
-    {
-        id: 16,
-        type: 'general',
-        author: {
-            name: "Fitness First Gym",
-            avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&h=100&fit=crop",
-            location: "Koteshwor",
-            isBusiness: true
-        },
-        time: "4d ago",
-        title: "New Year Offer!",
-        content: "Get 3 months free on annual membership! Offer valid till end of this month. Start your fitness journey today. 💪",
-        images: ["https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=500&fit=crop"],
-        stats: { likes: 210, comments: 45, shares: 12 },
-        isLiked: false,
-        comments: []
+        media: [{
+            id: 1001,
+            url: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&h=500&fit=crop",
+            mediaType: "IMAGE",
+            processingStatus: "COMPLETED",
+            thumbnailUrl: null,
+            duration: null
+        }],
+        likeCount: 412,
+        commentCount: 56,
+        isLikedByMe: false,
+        createdAt: new Date(Date.now() - 1000 * 3600 * 72).toISOString(),
+        updatedAt: new Date(Date.now() - 1000 * 3600 * 72).toISOString()
     }
 ];
 

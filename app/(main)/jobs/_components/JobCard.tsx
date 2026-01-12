@@ -2,6 +2,9 @@
 import { MapPin, Clock } from "lucide-react";
 import { JobResponse, EmploymentType } from "@/types/api/job";
 import { useUser } from "@/hooks/useUser";
+import { useDispatch } from "react-redux";
+import { openJobDetailModal } from "@/redux/slices/modalSlice";
+
 
 interface JobCardProps {
     job: JobResponse;
@@ -40,13 +43,14 @@ function formatRelativeTime(dateString: string): string {
 }
 
 export function JobCard({ job, onClick }: JobCardProps) {
+    const dispatch = useDispatch();
     const { user } = useUser();
     const isPostedByMe = job.poster.id === user?.id;
     const isLocal = true; // Always true since filtered by geography
 
     return (
         <div
-            onClick={onClick}
+            onClick={() => dispatch(openJobDetailModal({ jobId: job.id }))}
             className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
         >
             {isPostedByMe && (

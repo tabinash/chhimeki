@@ -3,6 +3,10 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { ProductResponse } from "@/types/api/products";
 import { useUser } from "@/hooks/useUser";
+import { useDispatch } from "react-redux";
+import { openProductDetailModal } from "@/redux/slices/modalSlice";
+
+
 
 interface ProductCardProps {
     product: ProductResponse;
@@ -29,6 +33,9 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
     const { user } = useUser();
     const formattedPrice = `Rs. ${product.price.toLocaleString()}`;
 
+    const dispatch = useDispatch();
+
+
     // Get primary image or fallback
     const primaryImage = product.images[0]?.url || "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop";
 
@@ -44,7 +51,7 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
 
     return (
         <div
-            onClick={onClick}
+            onClick={() => { dispatch(openProductDetailModal({ productId: product.id })) }}
             className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-gray-100 flex flex-col"
         >
             <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">

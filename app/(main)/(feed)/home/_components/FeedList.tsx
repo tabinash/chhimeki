@@ -1,18 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { posts } from "@/data/mockFeedData";
-import { marketplaceItems, MarketplaceItem } from "@/data/mockMarketplaceData";
-import { businesses } from "@/data/mockBusinessData";
-import { jobs } from "@/data/mockJobsData";
 import PostCard from "./PostCard";
-import MarketplaceCard from "./MarketplaceCard";
-import BusinessCard from "./BusinessCard";
-import JobCard from "./JobCard";
 import PostDetailModal from "@/components/modals/PostDetailModal";
-import ProductDetailModal from "@/app/(main)/marketplace/_modals/ProductDetailModal";
-import JobDetailModal from "@/components/modals/JobDetailModal";
+import { useGeneralFeed, useAlertFeed } from "../_hook";
+import { Loader2 } from "lucide-react";
+import { FeedItemResponse } from "@/types/api/feed";
 
 type TabItem = {
     id: string;
@@ -22,25 +15,40 @@ type TabItem = {
 export default function FeedList() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const activeTab = searchParams.get('tab') || 'all';
-    const postId = searchParams.get('postId');
+    const activeTab = searchParams.get('tab') || 'foryou';
 
-    // Modal state management
-    const [selectedProduct, setSelectedProduct] = useState<MarketplaceItem | null>(null);
-    const [selectedJob, setSelectedJob] = useState<typeof jobs[0] | null>(null);
+    // Fetch feed data
+    const { data: generalFeedData, isLoading: isLoadingGeneral } = useGeneralFeed({ page: 1, size: 20 });
+    const { data: alertFeedData, isLoading: isLoadingAlerts } = useAlertFeed({ page: 0, size: 20 });
 
-    // Find the selected post for modal
-    const selectedPost = postId ? posts.find(p => p.id.toString() === postId) || null : null;
+
+    // Extract posts from API response
+    // Response structure: { status, message, data: { data: [...posts], pagination: {...} }, timestamp }
+    const extractPosts = (response: typeof generalFeedData): FeedItemResponse[] => {
+        if (!response) return [];
+        // Check if it's the nested structure
+        if (response.data && 'data' in response.data && Array.isArray(response.data.data)) {
+            return response.data.data;
+        }
+        // Fallback if data is directly an array
+        if (Array.isArray(response.data)) {
+            return response.data as unknown as FeedItemResponse[];
+        }
+        return [];
+    };
+
+    const generalPosts = extractPosts(generalFeedData);
+    const alertPosts = extractPosts(alertFeedData);
+
 
     const TABS: TabItem[] = [
-        { id: "all", label: "Following" },
-        { id: "alerts", label: "Near You" },
-        { id: "notices", label: "Interests" },
+        { id: "foryou", label: "For You" },
+        { id: "alerts", label: "Alerts" },
     ];
 
     const handleTabChange = (tab: string) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (tab === 'all') {
+        if (tab === 'foryou') {
             params.delete('tab');
         } else {
             params.set('tab', tab);
@@ -48,21 +56,16 @@ export default function FeedList() {
         router.replace(`?${params.toString()}`, { scroll: false });
     };
 
-    const filteredPosts = activeTab === 'all'
-        ? posts
-        : posts.filter(post => {
-            if (activeTab === 'alerts') return post.type === 'alert';
-            if (activeTab === 'lost-found') return post.type === 'lost-found';
-            if (activeTab === 'notices') return post.type === 'notice';
-            return true;
-        });
+    // Get posts based on active tab
+    const posts = activeTab === 'alerts' ? alertPosts : generalPosts;
+    const isLoading = activeTab === 'alerts' ? isLoadingAlerts : isLoadingGeneral;
 
     return (
         <div>
             {/* Tabs */}
-            <div className="flex gap-8 border-b border-gray-200 mb-6 bg-white rounded-t-xl px-4">
+            <div className="flex gap-4 border-b border-gray-200 mb-2 bg-white rounded-t-xl px-4">
                 {TABS.map((tab) => {
-                    const isActive = activeTab === tab.id;
+                    const isActive = activeTab === tab.id || (activeTab === 'foryou' && tab.id === 'foryou');
 
                     return (
                         <button
@@ -81,93 +84,36 @@ export default function FeedList() {
                 })}
             </div>
 
-            {/* Posts Feed with Injected Content */}
-            <div className="space-y-6">
-                {filteredPosts.map((post, index) => (
-                    <div key={post.id}>
-                        <PostCard post={post} />
+            {/* Loading State */}
+            {isLoading && (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                </div>
+            )}
 
-                        {/* Inject Marketplace after 3rd post */}
-                        {index === 2 && activeTab === 'all' && (
-                            <div className="mt-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-gray-900 font-bold text-lg">Marketplace Picks</h3>
-                                    <button
-                                        onClick={() => router.push('/marketplace')}
-                                        className="text-blue-600 text-sm font-semibold hover:underline"
-                                    >
-                                        See All →
-                                    </button>
-                                </div>
-                                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
-                                    {marketplaceItems.slice(0, 6).map((item) => (
-                                        <div key={item.id} onClick={() => setSelectedProduct(item)}>
-                                            <MarketplaceCard item={item} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+            {/* Empty State */}
+            {!isLoading && posts.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl">
+                    <p className="text-gray-500 text-lg font-medium">No posts yet</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                        {activeTab === 'alerts'
+                            ? "No alerts in your area right now"
+                            : "Be the first to share something!"}
+                    </p>
+                </div>
+            )}
 
-                        {/* Inject Jobs after 5th post (2 posts after marketplace) */}
-                        {index === 4 && activeTab === 'all' && (
-                            <div className="mt-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-gray-900 font-bold text-lg">Neighborhood Jobs</h3>
-                                    <button
-                                        onClick={() => router.push('/jobs')}
-                                        className="text-blue-600 text-sm font-semibold hover:underline"
-                                    >
-                                        See All →
-                                    </button>
-                                </div>
-                                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
-                                    {jobs.slice(0, 5).map((job) => (
-                                        <div key={job.id} onClick={() => setSelectedJob(job)}>
-                                            <JobCard job={job} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Inject Business after 8th post */}
-                        {index === 7 && activeTab === 'all' && (
-                            <div className="mt-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-gray-900 font-bold text-lg">Local Businesses</h3>
-                                    <button
-                                        onClick={() => router.push('/businesses')}
-                                        className="text-blue-600 text-sm font-semibold hover:underline"
-                                    >
-                                        See All →
-                                    </button>
-                                </div>
-                                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
-                                    {businesses.map((business) => (
-                                        <BusinessCard key={business.id} business={business} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {/* Posts Feed */}
+            {!isLoading && posts.length > 0 && (
+                <div className="space-y-3">
+                    {posts.map((post) => (
+                        <PostCard key={post.postId} post={post} />
+                    ))}
+                </div>
+            )}
 
             {/* Post Detail Modal */}
-            <PostDetailModal post={selectedPost} />
-
-            {/* Product Detail Modal */}
-            <ProductDetailModal
-                item={selectedProduct}
-                onClose={() => setSelectedProduct(null)}
-            />
-
-            {/* Job Detail Modal */}
-            <JobDetailModal
-                job={selectedJob}
-                onClose={() => setSelectedJob(null)}
-            />
+            <PostDetailModal post={null} />
         </div>
     );
 }

@@ -1,21 +1,36 @@
+"use client";
 import { JobsRightSidebar } from "./_components/JobsRightSidebar";
+import { useContentLayout } from "@/hooks/useContentLayout";
 
 export default function JobsLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    return (
-        <>
-            {/* Main Jobs Content */}
-            <main className="flex-1 min-w-0 h-full overflow-y-auto">
-                {children}
-            </main>
+    const { main, rightPanel } = useContentLayout("jobs");
 
-            {/* Jobs-specific Right Sidebar */}
-            <div className="flex-shrink-0 h-full overflow-y-auto">
-                <JobsRightSidebar />
+    return (
+        <div className="flex min-h-full w-full justify-center">
+            {/* Main + Right sidebar container - both grow proportionally */}
+            <div className="flex w-full ">
+                {/* Main content - dynamic width */}
+                <main
+                    className="flex-shrink-0 min-h-screen"
+                    style={{ width: main.width }}
+                >
+                    {children}
+                </main>
+
+                {/* Right sidebar - dynamic width, sticky */}
+                {rightPanel.visible && (
+                    <aside
+                        className="flex-shrink-0 sticky top-16 max-h-[calc(100vh-64px)] overflow-y-auto self-start scrollbar-hide"
+                        style={{ width: rightPanel.width }}
+                    >
+                        <JobsRightSidebar width={rightPanel.width} />
+                    </aside>
+                )}
             </div>
-        </>
+        </div>
     );
 }

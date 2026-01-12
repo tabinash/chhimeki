@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, useRef, ChangeEvent } from "react";
 import {
     Edit3,
@@ -16,11 +16,13 @@ import {
     Loader2,
     X
 } from "lucide-react";
-import { getChatUrl } from "@/lib/chatUtils";
 import { UserProfileResponse } from "@/types/api/user";
 import { useUpdateProfile } from "../_hook/useUpdateProfile";
 import { useFollowUser } from "../_hook/useFollowUser";
 import { useUnfollowUser } from "../_hook/useUnfollowUser";
+import { useDispatch } from "react-redux";
+import { openChat } from "@/redux/slices/chatSlice";
+
 
 interface ProfileHeaderProps {
     user: UserProfileResponse;
@@ -31,7 +33,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
     const activeTab = searchParams.get("tab") || "posts";
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: user.name, dateOfBirth: user.dateOfBirth || "" });
-    const router = useRouter();
+    const dispatch = useDispatch();
     const followuser = useFollowUser();
     const unfollowuser = useUnfollowUser();
 
@@ -211,7 +213,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
                                         Follow
                                     </button>
                                     <button
-                                        onClick={() => router.push(getChatUrl(String(user.id), { hideSidebar: true, source: "profile" }))}
+                                        onClick={() => dispatch(openChat({ id: user.id, name: user.name, profilePicture: user.profilePicture }))}
                                         className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors flex items-center gap-2">
                                         <MessageCircle className="w-4 h-4" />
                                         Message

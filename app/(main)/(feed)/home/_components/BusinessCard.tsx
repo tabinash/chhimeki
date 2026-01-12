@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Star, MapPin } from "lucide-react";
-import { Business } from "@/data/mockBusinessData";
+import { Business } from "@/data/mockStoreFrontData";
 
 interface BusinessCardProps {
     business: Business;

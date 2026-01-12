@@ -7,16 +7,14 @@ import { useUser } from "@/hooks/useUser";
 import { useBrowseJobs, useMyJobs } from "./_hook";
 
 // Local components
-import { JobsHeader } from "./_components/JobsHeader";
-import { JobsSearchBar } from "./_components/JobsSearchBar";
-import { JobCategoriesFilter } from "./_components/JobCategoriesFilter";
+import { JobsHeroSection } from "./_components/JobsHeroSection";
 import { JobCard } from "./_components/JobCard";
 import { EmptyJobsState } from "./_components/EmptyJobsState";
 
 // Global modals (keep these in global components folder)
-import CreateJobModal from "@/components/modals/CreateJobModal";
-import EditJobModal from "@/components/modals/EditJobModal";
-import JobDetailModal from "@/components/modals/JobDetailModal";
+import CreateJobModal from "@/app/(main)/jobs/_modal/CreateJobModal";
+import EditJobModal from "@/app/(main)/jobs/_modal/EditJobModal";
+import JobDetailModal from "@/app/(main)/jobs/_modal/JobDetailModal";
 
 // Types
 import { JobResponse, JobCategory } from "@/types/api/job";
@@ -96,19 +94,15 @@ export default function JobsPage() {
     return (
         <div className="min-h-screen p-6 md:p-8 relative">
             <div className="max-w-4xl mx-auto">
-                {/* Header & Tabs */}
-                <JobsHeader viewMode={viewMode} onViewModeChange={setViewMode} />
-
-                {/* Search & Filter */}
-                <JobsSearchBar viewMode={viewMode} />
-
-                {/* Categories Pills */}
-                {viewMode === 'all' && (
-                    <JobCategoriesFilter
-                        selectedCategory={selectedCategory}
-                        onCategoryChange={setSelectedCategory}
-                    />
-                )}
+                {/* Unified Hero Section */}
+                <JobsHeroSection
+                    viewMode={viewMode}
+                    onViewModeChange={setViewMode}
+                    onPostJobClick={handlePostClick}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                    jobCount={viewMode === 'all' ? browseData?.data?.length : myJobsData?.data?.length}
+                />
 
                 {/* Job Listings */}
                 <div className="space-y-4">
@@ -147,11 +141,7 @@ export default function JobsPage() {
             </div>
 
             {/* Job Detail Modal */}
-            <JobDetailModal
-                job={selectedJob}
-                onClose={() => setSelectedJob(null)}
-                onEdit={handleEditClick}
-            />
+            <JobDetailModal />
 
             {/* Create Job Modal */}
             <CreateJobModal
@@ -161,11 +151,7 @@ export default function JobsPage() {
             />
 
             {/* Edit Job Modal */}
-            <EditJobModal
-                isOpen={isEditModalOpen}
-                onClose={handleEditClose}
-                job={editingJob}
-            />
+            <EditJobModal />
         </div>
     );
 }
