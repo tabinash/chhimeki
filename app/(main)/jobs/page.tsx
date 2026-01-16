@@ -57,14 +57,14 @@ export default function JobsPage() {
             <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3">
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900">Neighborhood Jobs</h1>
-                        <p className="text-xs text-gray-500">
+                        <h1 className="text-2xl font-bold text-gray-900">Neighborhood Jobs</h1>
+                        <p className="text-[13px] text-gray-500">
                             {user?.palika ? `Jobs in ${user.palika}` : "Find work nearby"}
                         </p>
                     </div>
                     <Link
                         href="/jobs/new"
-                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-lg shadow-blue-200 active:scale-95 transition-transform"
+                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-900 text-white rounded-full text-[14px] font-bold shadow-lg shadow-blue-200 active:scale-95 transition-transform"
                     >
                         <Plus className="w-4 h-4" />
                         <span>Post Job</span>
@@ -78,7 +78,7 @@ export default function JobsPage() {
                             setViewMode("All");
                             setSelectedCategory(undefined);
                         }}
-                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === "All"
+                        className={`flex-1 py-2 text-[13px] font-bold rounded-lg transition-all ${viewMode === "All"
                             ? "bg-white text-gray-900 shadow-sm"
                             : "text-gray-500"
                             }`}
@@ -87,7 +87,7 @@ export default function JobsPage() {
                     </button>
                     <button
                         onClick={() => setViewMode("My Jobs")}
-                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${viewMode === "My Jobs"
+                        className={`flex-1 py-2 text-[13px] font-bold rounded-lg transition-all ${viewMode === "My Jobs"
                             ? "bg-white text-gray-900 shadow-sm"
                             : "text-gray-500"
                             }`}
@@ -99,11 +99,11 @@ export default function JobsPage() {
                 {/* Search Bar */}
                 <div className="flex gap-2">
                     <div className="flex-1 relative">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-900" strokeWidth={2} />
                         <input
                             type="text"
                             placeholder={viewMode === "My Jobs" ? "Search your posts..." : "Search jobs..."}
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                            className="w-full pl-12 pr-4 py-3 bg-[#e4e1dd] rounded-xl text-[16px] font-medium focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
                         />
                     </div>
                     {viewMode === "All" && (
@@ -120,7 +120,7 @@ export default function JobsPage() {
                             <button
                                 key={cat.label}
                                 onClick={() => setSelectedCategory(cat.value)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.value
+                                className={`px-4 py-2 rounded-full text-[13px] font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.value
                                     ? "bg-black text-white"
                                     : "bg-white border border-gray-200 text-gray-600"
                                     }`}
@@ -147,8 +147,8 @@ export default function JobsPage() {
                         <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Briefcase className="w-6 h-6 text-red-400" />
                         </div>
-                        <h3 className="text-base font-bold text-gray-900">Failed to load jobs</h3>
-                        <p className="text-gray-500 text-xs mt-1">{browseError.message}</p>
+                        <h3 className="text-[16px] font-bold text-gray-900">Failed to load jobs</h3>
+                        <p className="text-gray-500 text-[13px] mt-1">{browseError.message}</p>
                     </div>
                 )}
 
@@ -168,8 +168,8 @@ export default function JobsPage() {
                                 <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <Briefcase className="w-6 h-6 text-gray-400" />
                                 </div>
-                                <h3 className="text-base font-bold text-gray-900">No jobs found</h3>
-                                <p className="text-gray-500 text-xs mt-1 mb-4">
+                                <h3 className="text-[16px] font-bold text-gray-900">No jobs found</h3>
+                                <p className="text-gray-500 text-[13px] mt-1 mb-4">
                                     {viewMode === "My Jobs"
                                         ? "You haven't posted any jobs yet."
                                         : "No jobs match your search."}
@@ -177,7 +177,7 @@ export default function JobsPage() {
                                 {viewMode === "My Jobs" && (
                                     <Link
                                         href="/jobs/new"
-                                        className="px-5 py-2 inline-flex bg-blue-600 text-white rounded-xl text-xs font-bold"
+                                        className="px-5 py-2.5 inline-flex bg-blue-600 text-white rounded-xl text-[14px] font-bold"
                                     >
                                         Post a Job
                                     </Link>

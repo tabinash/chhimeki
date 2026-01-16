@@ -14,11 +14,9 @@ const CATEGORIES: { label: string; value: ProductCategory }[] = [
     { label: "Electronics", value: "ELECTRONICS" },
     { label: "Vehicles", value: "VEHICLES" },
     { label: "Fashion", value: "FASHION" },
-    { label: "Home & Garden", value: "HOME_GARDEN" },
-    { label: "Sports", value: "SPORTS" },
+
     { label: "Books", value: "BOOKS" },
-    { label: "Toys", value: "TOYS" },
-    { label: "Mobile", value: "MOBILE" },
+
     { label: "Others", value: "OTHERS" },
 ];
 
@@ -124,21 +122,38 @@ export default function SellItemPage() {
     return (
         <div className="min-h-screen bg-white pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+            <div className="sticky top-0 z-10 bg-[#e4e1dd] border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.back()}
+                        className="p-2 -ml-2 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                        <ArrowLeft className="w-6 h-6 text-gray-900" />
+                    </button>
+                    <h1 className="text-[17px] font-bold text-gray-900">Sell an Item</h1>
+                </div>
                 <button
-                    onClick={() => router.back()}
-                    className="p-2 -ml-2 hover:bg-gray-50 rounded-full transition-colors"
+                    type="submit"
+                    form="sell-form"
+                    disabled={isPending}
+                    className="px-5 py-2 bg-blue-900 text-white rounded-full text-[15px] font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5"
                 >
-                    <ArrowLeft className="w-5 h-5 text-gray-900" />
+                    {isPending ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Posting...
+                        </>
+                    ) : (
+                        "Post Item"
+                    )}
                 </button>
-                <h1 className="text-lg font-bold text-gray-900">Sell an Item</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-6">
+            <form id="sell-form" onSubmit={handleSubmit} className="p-5 space-y-6">
 
                 {/* Image Upload - Multiple Images */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                    <label className="block text-[15px] font-bold text-gray-700 mb-2">
                         Product Photos <span className="text-gray-400 font-normal">({imageFiles.length}/5)</span>
                     </label>
 
@@ -156,7 +171,7 @@ export default function SellItemPage() {
                                     <X className="w-4 h-4" />
                                 </button>
                                 {index === 0 && (
-                                    <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                    <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[11px] px-1.5 py-0.5 rounded font-medium">
                                         Cover
                                     </div>
                                 )}
@@ -169,7 +184,7 @@ export default function SellItemPage() {
                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-1">
                                     <ImageIcon className="w-5 h-5 text-gray-400" />
                                 </div>
-                                <p className="text-xs text-gray-500 font-medium">Add Photo</p>
+                                <p className="text-[13px] text-gray-500 font-medium">Add Photo</p>
                                 <input
                                     type="file"
                                     className="hidden"
@@ -180,19 +195,19 @@ export default function SellItemPage() {
                             </label>
                         )}
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">Add 1-5 photos. First photo will be the cover.</p>
+                    <p className="text-[13px] text-gray-500 mt-2">Add 1-5 photos. First photo will be the cover.</p>
                 </div>
 
                 {/* Title */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">What are you selling?</label>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">What are you selling?</label>
                     <input
                         type="text"
                         required
                         minLength={3}
                         maxLength={100}
                         placeholder="e.g. Wooden Dining Table"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
@@ -201,20 +216,20 @@ export default function SellItemPage() {
                 {/* Price & Category */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Price</label>
+                        <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Price</label>
                         <input
                             type="text"
                             required
                             placeholder="Rs. 0"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
+                        <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Category</label>
                         <select
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium appearance-none"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium appearance-none"
                             value={formData.category}
                             onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
                         >
@@ -228,8 +243,8 @@ export default function SellItemPage() {
                 {/* Negotiable Toggle */}
                 <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
                     <div>
-                        <p className="text-sm font-bold text-gray-700">Price Negotiable?</p>
-                        <p className="text-xs text-gray-500">Let buyers know if you're open to offers</p>
+                        <p className="text-[15px] font-bold text-gray-700">Price Negotiable?</p>
+                        <p className="text-[13px] text-gray-500">Let buyers know if you're open to offers</p>
                     </div>
                     <button
                         type="button"
@@ -246,52 +261,52 @@ export default function SellItemPage() {
 
                 {/* Location Fields */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Listing Location</label>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Listing Location</label>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <input
                                 type="text"
                                 required
                                 placeholder={user?.palika || "Palika"}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                                 value={formData.palika}
                                 onChange={(e) => setFormData({ ...formData, palika: e.target.value })}
                             />
-                            <p className="text-[10px] text-gray-400 mt-1">Palika / Municipality</p>
+                            <p className="text-[13px] text-gray-400 mt-1">Palika / Municipality</p>
                         </div>
                         <div>
                             <input
                                 type="text"
                                 required
                                 placeholder={user?.district || "District"}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                                 value={formData.district}
                                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                             />
-                            <p className="text-[10px] text-gray-400 mt-1">District</p>
+                            <p className="text-[13px] text-gray-400 mt-1">District</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Description</label>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Description</label>
                     <textarea
                         required
                         minLength={10}
                         maxLength={2000}
                         rows={5}
                         placeholder="Describe your item... (Brand, age, condition, etc.)"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium resize-none"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium resize-none"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
-                    <p className="text-xs text-gray-400 mt-1">{formData.description.length}/2000</p>
+                    <p className="text-[13px] text-gray-400 mt-1">{formData.description.length}/2000</p>
                 </div>
 
                 {/* Error Display */}
                 {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-600">
                         {error.message}
                     </div>
                 )}
@@ -299,36 +314,7 @@ export default function SellItemPage() {
                 {/* Spacer for fixed footer */}
                 <div className="h-20" />
 
-                {/* Fixed Footer */}
-                <div className=" bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 safe-area-pb z-20">
-                    <div className="max-w-md mx-auto grid grid-cols-2 gap-3">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            disabled={isPending}
-                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl text-sm transition-colors disabled:opacity-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isPending}
-                            className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
-                            {isPending ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    Posting...
-                                </>
-                            ) : (
-                                <>
-                                    <Check className="w-4 h-4" />
-                                    Post Item
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </div>
+
             </form>
         </div>
     );

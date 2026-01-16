@@ -1,10 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userRepository } from "@/repository/userRepository";
-import { UpdateProfileRequest, UpdateProfileResponse, UpdateProfilePictureResponse, UpdateCoverPictureResponse } from "@/types/api/user";
+import { UpdateProfileRequest, UpdateProfileResponse } from "@/types/api/user";
 import { ApiError } from "@/repository/http";
 
 /**
- * Hook to update user profile (name and date of birth)
+ * Unified hook to update user profile
+ * Supports updating:
+ * - Profile info only (name, dateOfBirth)
+ * - Profile picture only
+ * - Cover picture only
+ * - Any combination of the above
+ * 
  * Invalidates user profile cache on success
  */
 export function useUpdateProfile() {
@@ -18,42 +24,6 @@ export function useUpdateProfile() {
                 queryClient.invalidateQueries({ queryKey: ["userProfile", response.data.id] });
             }
             // Also invalidate current user cache
-            queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-        },
-    });
-}
-
-/**
- * Hook to update user profile picture
- * Invalidates user profile cache on success
- */
-export function useUpdateProfilePicture() {
-    const queryClient = useQueryClient();
-
-    return useMutation<UpdateProfilePictureResponse, ApiError, File>({
-        mutationFn: (file: File) => userRepository.updateProfilePicture(file),
-        onSuccess: (response) => {
-            if (response.data?.id) {
-                queryClient.invalidateQueries({ queryKey: ["userProfile", response.data.id] });
-            }
-            queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-        },
-    });
-}
-
-/**
- * Hook to update user cover picture
- * Invalidates user profile cache on success
- */
-export function useUpdateCoverPicture() {
-    const queryClient = useQueryClient();
-
-    return useMutation<UpdateCoverPictureResponse, ApiError, File>({
-        mutationFn: (file: File) => userRepository.updateCoverPicture(file),
-        onSuccess: (response) => {
-            if (response.data?.id) {
-                queryClient.invalidateQueries({ queryKey: ["userProfile", response.data.id] });
-            }
             queryClient.invalidateQueries({ queryKey: ["currentUser"] });
         },
     });

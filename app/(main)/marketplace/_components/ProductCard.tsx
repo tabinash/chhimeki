@@ -44,29 +44,25 @@ export default function ProductCard({ product, isOwner }: ProductCardProps) {
                     fill
                     className="object-cover"
                 />
-                {isOwner && (
-                    <div className="absolute top-2 left-2 bg-orange-500 text-white px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                        You
-                    </div>
-                )}
+
                 {product.status === "SOLD" && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">SOLD</span>
+                        <span className="text-white font-bold text-[15px]">SOLD</span>
                     </div>
                 )}
             </div>
             <div className="p-3 flex flex-col flex-1">
                 <div className="flex justify-between items-start gap-1 mb-1">
-                    <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">{product.title}</h3>
+                    <h3 className="font-semibold text-gray-900 text-[15px] leading-tight line-clamp-2">{product.title}</h3>
                 </div>
-                <div className="font-bold text-gray-900 text-sm mb-2">
+                <div className="font-bold text-gray-900 text-[13px] mb-2">
                     {formatPrice(product.price)}
                     {product.isNegotiable && (
-                        <span className="text-[10px] text-gray-500 font-normal ml-1">(Negotiable)</span>
+                        <span className="text-[13px] text-gray-900 font-normal ml-1">(Negotiable)</span>
                     )}
                 </div>
 
-                <div className="mt-auto flex items-center justify-between text-[10px] text-gray-500">
+                <div className="mt-auto flex items-center justify-between text-[13px] text-gray-500">
                     <div className="flex items-center gap-1 truncate max-w-[80px]">
                         <MapPin className="h-3 w-3 flex-shrink-0" />
                         <span className="truncate">{product.palika}</span>

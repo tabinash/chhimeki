@@ -71,14 +71,14 @@ const ExplorePage: React.FC = () => {
     };
 
     return (
-        <div className="pb-8 bg-white">
+        <div className="pb-8 ">
             {/* Header */}
             <div className="p-4">
                 <h1 className="text-2xl font-bold text-gray-900">Explore</h1>
             </div>
 
             {/* ================= Suggested People ================= */}
-            <section className="mb-6">
+            <section className="mb-1">
                 <div className="flex justify-between px-4 mb-3">
                     <h2 className="text-base font-bold">Suggested People</h2>
                     <Link
@@ -101,8 +101,8 @@ const ExplorePage: React.FC = () => {
 
                     <div
                         ref={peopleRef}
-                        className="flex gap-3 overflow-x-auto px-4 pb-4
-              snap-x snap-mandatory no-scrollbar"
+                        className="flex gap-2 overflow-x-auto px-4 pb-4
+              snap-x snap-mandatory no-scrollbar ml-4"
                     >
                         {suggestedUsers.map((user) => (
                             <PeopleCard key={user.username} user={user} />
@@ -112,7 +112,7 @@ const ExplorePage: React.FC = () => {
             </section>
 
             {/* ================= Organizations ================= */}
-            <section className="mb-6">
+            <section className="mb- ">
                 <div className="flex justify-between px-4 mb-3">
                     <h2 className="text-base font-bold">Organizations</h2>
                     <Link

@@ -105,13 +105,13 @@ export default function ProductDetailPage() {
     if (error || !product) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Item not found</h2>
-                <p className="text-gray-500 mb-6">
+                <h2 className="text-[22px] font-bold text-gray-900 mb-2">Item not found</h2>
+                <p className="text-[15px] text-gray-500 mb-6">
                     {error?.message || "This item may have been removed or sold."}
                 </p>
                 <button
                     onClick={() => router.back()}
-                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-sm"
+                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-[15px]"
                 >
                     Go Back
                 </button>
@@ -145,7 +145,7 @@ export default function ProductDetailPage() {
 
             {/* Hero Image with Swipe & Navigation */}
             <div
-                className="relative w-full aspect-[4/3] bg-gray-100"
+                className="relative w-full aspect-[5/5] bg-gray-100"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
@@ -180,7 +180,7 @@ export default function ProductDetailPage() {
 
                 {/* Image counter badge */}
                 {hasMultipleImages && (
-                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-[13px] px-2.5 py-1 rounded-full font-medium">
                         {activeImageIndex + 1} / {product.images.length}
                     </div>
                 )}
@@ -203,14 +203,14 @@ export default function ProductDetailPage() {
 
                 {/* Owner badge */}
                 {isOwner && (
-                    <div className="absolute bottom-4 left-4 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm">
+                    <div className="absolute bottom-4 left-4 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[13px] font-bold uppercase tracking-wider shadow-sm">
                         Your Listing
                     </div>
                 )}
 
                 {/* Sold overlay */}
                 {product.status === "SOLD" && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                         <span className="text-white font-bold text-2xl tracking-wider">SOLD</span>
                     </div>
                 )}
@@ -221,34 +221,33 @@ export default function ProductDetailPage() {
 
                 {/* Title & Price Section */}
                 <div className="mb-6">
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                        <h1 className="text-2xl font-bold text-gray-900 leading-tight">{product.title}</h1>
+                    <div className="flex flex-col items-start justify-between gap-4 mb-2">
+                        <h1 className="text-[20px] font-bold  text-gray-900 leading-[12px]"> {product.title}</h1>
                         <div className="text-right">
-                            <span className="text-2xl font-bold text-black whitespace-nowrap block">
+                            <span className="text-[20px]  text-black whitespace-nowrap block">
                                 {formatPrice(product.price)}
                             </span>
                             {product.isNegotiable && (
-                                <span className="text-xs text-gray-500">Negotiable</span>
+                                <span className="text-[16px] text-gray-500">Negotiable</span>
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                        <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-3 text-[15px] text-black mb-4">
+                        {/* <span className="flex items-center gap-1 bg-[#e4e1dd] px-3 py-1 rounded-full text-[13px] font-bold uppercase tracking-wider">
                             {product.category}
-                        </span>
-                        <span className="flex items-center gap-1">
+                        </span> */}
+                        <span className="flex items-center bg-[#e4e1dd] font-medium px-3 py-1 rounded-full gap-1">
                             <Eye className="w-3.5 h-3.5" />
                             {product.viewCount} views
                         </span>
-                        <span>•</span>
-                        <span>{getRelativeTime(product.createdAt)}</span>
+                        <span className="text-[15px] font-medium bg-[#e4e1dd] px-3 py-1 rounded-full">• {getRelativeTime(product.createdAt)}</span>
                     </div>
                 </div>
 
                 <hr className="border-gray-100 my-6" />
 
                 {/* Seller Profile */}
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex bg-[#e4e1dd] p-4 rounded-lg items-center gap-4 mb-6">
                     <div className="w-14 h-14 rounded-full overflow-hidden relative border border-gray-100 bg-gray-50">
                         {product.seller.profileImage ? (
                             <Image
@@ -264,42 +263,29 @@ export default function ProductDetailPage() {
                         )}
                     </div>
                     <div className="flex-1">
-                        <div className="font-bold text-gray-900 text-base flex items-center gap-2">
+                        <div className="font-bold text-gray-900 text-[17px] flex items-center gap-2">
                             {product.seller.name}
                             {product.seller.type === "STOREFRONT" && (
-                                <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold">
+                                <span className="text-[11px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold">
                                     Store
                                 </span>
                             )}
                         </div>
-                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" />
+                        <div className="text-[15px] text-black flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-blue-600 " />
                             {product.palika}, {product.district}
                         </div>
                     </div>
-                    {!isOwner && (
-                        <button className="p-2.5 bg-gray-50 rounded-full text-gray-400 hover:text-red-500 transition-colors">
-                            <Heart className="w-6 h-6" />
-                        </button>
-                    )}
+
                 </div>
 
                 {/* Description */}
                 <div className="mb-8">
-                    <h3 className="font-bold text-gray-900 mb-2">Description</h3>
-                    <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line">
+                    <h3 className="font-bold text-gray-900 text-[17px] ">Description</h3>
+                    <p className="text-gray-600 text-[16px]  whitespace-pre-line">
+                        Hi everyone we are here in the new imprelesim in the world. we are currently going throught some issue
                         {product.description}
                     </p>
-                </div>
-
-                {/* Safety Tips (Optional, good for mobile) */}
-                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-4">
-                    <h4 className="text-xs font-bold text-blue-700 uppercase mb-2">Safety Tips</h4>
-                    <ul className="text-xs text-blue-600 space-y-1 list-disc pl-4">
-                        <li>Meet in a safe, public place.</li>
-                        <li>Check the item before paying.</li>
-                        <li>Pay only after collecting the item.</li>
-                    </ul>
                 </div>
 
             </div>
@@ -353,8 +339,8 @@ export default function ProductDetailPage() {
                         </>
                     ) : (
                         <Link
-                            href={`/messages/${product.seller.id}`}
-                            className="flex-1 bg-black text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
+                            href={`/messages/${product.seller.id}?bottomNav=false`}
+                            className="flex-1 bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
                             <MessageCircle className="w-5 h-5" />
                             Message Seller
                         </Link>
@@ -377,8 +363,8 @@ export default function ProductDetailPage() {
                             <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
                                 <Trash2 className="w-7 h-7 text-red-600" />
                             </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Listing?</h3>
-                            <p className="text-sm text-gray-500 mb-6">
+                            <h3 className="text-[17px] font-bold text-gray-900 mb-2">Delete Listing?</h3>
+                            <p className="text-[15px] text-gray-500 mb-6">
                                 This will permanently remove your listing. This action cannot be undone.
                             </p>
 

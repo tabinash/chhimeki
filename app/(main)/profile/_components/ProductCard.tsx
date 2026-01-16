@@ -1,5 +1,8 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { MapPin } from "lucide-react";
 import { ProductResponse } from "@/types/api/products";
 
 interface ProductCardProps {
@@ -8,65 +11,87 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, isOwnProfile }: ProductCardProps) {
-    // Get first image or use placeholder
-    const productImage = product.images && product.images.length > 0
-        ? product.images[0].url
-        : "https://via.placeholder.com/300x300?text=No+Image";
+    // Format price with NPR currency
+    const formatPrice = (price: number) => {
+        return `Rs. ${price.toLocaleString("en-NP")}`;
+    };
 
-    // Format price
-    const formattedPrice = `Rs. ${product.price.toLocaleString()}`;
+    // Format relative time from createdAt
+    const getRelativeTime = (dateString: string) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+        if (diffInSeconds < 60) return "Just now";
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        return date.toLocaleDateString();
+    };
+
+    // Get first image URL or placeholder
+    const imageUrl = product.images?.[0]?.url || "/placeholder-product.jpg";
 
     const isSold = product.status === "SOLD";
     const isInactive = product.status === "INACTIVE";
 
     return (
-        <Link href={`/marketplace/${product.id}`}>
-            <div className={`bg-gray-50 rounded-xl p-2.5 ${isSold ? "opacity-70" : ""}`}>
-                {/* Product Image */}
-                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gray-200 mb-2">
-                    <Image
-                        src={productImage}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                    />
+        <Link
+            href={`/marketplace/${product.id}`}
+            className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm flex flex-col active:scale-[0.98] transition-transform duration-200"
+        >
+            <div className="aspect-square relative bg-gray-100">
+                <Image
+                    src={imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                />
 
+                {/* SOLD overlay */}
+                {isSold && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span className="text-white font-bold text-[15px]">SOLD</span>
+                    </div>
+                )}
 
-                    {/* Status Badge - Top Right (only for SOLD/INACTIVE) */}
-                    {isSold && (
-                        <div className="absolute top-1.5 right-1.5 px-2 py-0.5 bg-red-500 rounded-md text-[10px] font-bold text-white">
-                            SOLD
-                        </div>
-                    )}
-                    {isInactive && (
-                        <div className="absolute top-1.5 right-1.5 px-2 py-0.5 bg-gray-500 rounded-md text-[10px] font-bold text-white">
-                            Hidden
-                        </div>
-                    )}
+                {/* INACTIVE/Hidden overlay */}
+                {isInactive && (
+                    <div className="absolute inset-0 bg-gray-500/50 flex items-center justify-center">
+                        <span className="text-white font-bold text-[15px]">Hidden</span>
+                    </div>
+                )}
 
-                    {/* Image count badge (if multiple images) */}
-                    {product.images && product.images.length > 1 && (
-                        <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/50 rounded text-[10px] text-white">
-                            📷 {product.images.length}
-                        </div>
+                {/* Image count badge (if multiple images) */}
+                {product.images && product.images.length > 1 && !isSold && !isInactive && (
+                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/50 rounded text-[10px] text-white">
+                        📷 {product.images.length}
+                    </div>
+                )}
+            </div>
+
+            <div className="p-3 flex flex-col flex-1">
+                {/* Title */}
+                <h3 className="font-semibold text-gray-900 text-[15px] leading-tight line-clamp-2 mb-1">
+                    {product.title}
+                </h3>
+
+                {/* Price */}
+                <div className="font-bold text-gray-900 text-[13px] mb-2">
+                    {formatPrice(product.price)}
+                    {product.isNegotiable && (
+                        <span className="text-[13px] text-gray-900 font-normal ml-1">(Negotiable)</span>
                     )}
                 </div>
 
-                {/* Title */}
-                <h4 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2">
-                    {product.title}
-                    <span className="text-xs text-black">(Rs. {product.price} )</span>
-                </h4>
-
-                {/* Location - subtle */}
-                <p className="text-[11px] text-gray-500 mt-0.5 truncate">
-                    {product.palika}
-                </p>
-
-                {/* Action Button */}
-                <button className="w-full mt-2 px-3 py-1.5 bg-blue-500 text-white rounded-md text-xs font-bold shadow-sm text-center hover:bg-blue-600 transition-colors">
-                    View
-                </button>
+                {/* Location & Time */}
+                <div className="mt-auto flex items-center justify-between text-[13px] text-gray-500">
+                    <div className="flex items-center gap-1 truncate max-w-[80px]">
+                        <MapPin className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate">{product.palika}</span>
+                    </div>
+                    <span>{getRelativeTime(product.createdAt)}</span>
+                </div>
             </div>
         </Link>
     );

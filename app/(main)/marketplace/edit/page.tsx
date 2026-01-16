@@ -23,9 +23,8 @@ const CATEGORIES: { label: string; value: ProductCategory }[] = [
 ];
 
 const STATUS_OPTIONS: { label: string; value: ProductStatus }[] = [
-    { label: "Active", value: "ACTIVE" },
+    { label: "Available", value: "ACTIVE" },
     { label: "Sold", value: "SOLD" },
-    { label: "Inactive", value: "INACTIVE" },
 ];
 
 export default function EditProductPage() {
@@ -49,7 +48,6 @@ export default function EditProductPage() {
         category: "FURNITURE" as ProductCategory,
         description: "",
         isNegotiable: false,
-        status: "ACTIVE" as ProductStatus,
     });
 
     // Existing images from product (can be marked for removal)
@@ -69,7 +67,6 @@ export default function EditProductPage() {
                 category: product.category,
                 description: product.description,
                 isNegotiable: product.isNegotiable,
-                status: product.status,
             });
             setExistingImages(product.images);
         }
@@ -148,7 +145,6 @@ export default function EditProductPage() {
                 price: price,
                 isNegotiable: formData.isNegotiable,
                 category: formData.category,
-                status: formData.status,
                 newImages: newImageFiles.length > 0 ? newImageFiles : undefined,
                 removeImageIds: imagesToRemove.length > 0 ? imagesToRemove : undefined,
             },
@@ -178,11 +174,11 @@ export default function EditProductPage() {
     if (fetchError || !product) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Product not found</h2>
-                <p className="text-gray-500 mb-6">{fetchError?.message || "Unable to load product."}</p>
+                <h2 className="text-[22px] font-bold text-gray-900 mb-2">Product not found</h2>
+                <p className="text-[15px] text-gray-500 mb-6">{fetchError?.message || "Unable to load product."}</p>
                 <button
                     onClick={() => router.back()}
-                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-sm"
+                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-[15px]"
                 >
                     Go Back
                 </button>
@@ -194,11 +190,11 @@ export default function EditProductPage() {
     if (!isOwner) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
-                <p className="text-gray-500 mb-6">You can only edit your own listings.</p>
+                <h2 className="text-[22px] font-bold text-gray-900 mb-2">Access Denied</h2>
+                <p className="text-[15px] text-gray-500 mb-6">You can only edit your own listings.</p>
                 <button
                     onClick={() => router.back()}
-                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-sm"
+                    className="px-6 py-2.5 bg-black text-white rounded-xl font-bold text-[15px]"
                 >
                     Go Back
                 </button>
@@ -213,21 +209,21 @@ export default function EditProductPage() {
     return (
         <div className="min-h-screen bg-white pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+            <div className="sticky top-0 z-10 bg-[#e4e1dd] border-b border-gray-200 px-4 py-3 flex items-center gap-3">
                 <button
                     onClick={() => router.back()}
-                    className="p-2 -ml-2 hover:bg-gray-50 rounded-full transition-colors"
+                    className="p-2 -ml-2 hover:bg-white/50 rounded-full transition-colors"
                 >
-                    <ArrowLeft className="w-5 h-5 text-gray-900" />
+                    <ArrowLeft className="w-6 h-6 text-gray-900" />
                 </button>
-                <h1 className="text-lg font-bold text-gray-900">Edit Listing</h1>
+                <h1 className="text-[17px] font-bold text-gray-900">Edit Listing</h1>
             </div>
 
             <form onSubmit={handleSubmit} className="p-5 space-y-6">
 
                 {/* Image Management */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                    <label className="block text-[15px] font-bold text-gray-700 mb-2">
                         Product Photos <span className="text-gray-400 font-normal">({totalImages}/5)</span>
                     </label>
 
@@ -246,7 +242,7 @@ export default function EditProductPage() {
                                         <button
                                             type="button"
                                             onClick={() => restoreExistingImage(img.id)}
-                                            className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-xs font-bold"
+                                            className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[13px] font-bold"
                                         >
                                             Tap to restore
                                         </button>
@@ -260,7 +256,7 @@ export default function EditProductPage() {
                                         </button>
                                     )}
                                     {index === 0 && !isMarkedForRemoval && (
-                                        <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                        <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[11px] px-1.5 py-0.5 rounded font-medium">
                                             Cover
                                         </div>
                                     )}
@@ -279,7 +275,7 @@ export default function EditProductPage() {
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
-                                <div className="absolute bottom-1 left-1 bg-green-600 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                <div className="absolute bottom-1 left-1 bg-green-600 text-white text-[11px] px-1.5 py-0.5 rounded font-medium">
                                     New
                                 </div>
                             </div>
@@ -291,7 +287,7 @@ export default function EditProductPage() {
                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-1">
                                     <ImageIcon className="w-5 h-5 text-gray-400" />
                                 </div>
-                                <p className="text-xs text-gray-500 font-medium">Add Photo</p>
+                                <p className="text-[13px] text-gray-500 font-medium">Add Photo</p>
                                 <input
                                     type="file"
                                     className="hidden"
@@ -302,19 +298,19 @@ export default function EditProductPage() {
                             </label>
                         )}
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">Tap trash icon to remove. Add 1-5 photos total.</p>
+                    <p className="text-[13px] text-gray-500 mt-2">Tap trash icon to remove. Add 1-5 photos total.</p>
                 </div>
 
                 {/* Title */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Title</label>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Title</label>
                     <input
                         type="text"
                         required
                         minLength={3}
                         maxLength={100}
                         placeholder="Product title"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
@@ -323,20 +319,20 @@ export default function EditProductPage() {
                 {/* Price & Category */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Price</label>
+                        <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Price</label>
                         <input
                             type="text"
                             required
                             placeholder="Rs. 0"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
+                        <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Category</label>
                         <select
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium appearance-none"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium appearance-none"
                             value={formData.category}
                             onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
                         >
@@ -347,35 +343,13 @@ export default function EditProductPage() {
                     </div>
                 </div>
 
-                {/* Status */}
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Listing Status</label>
-                    <div className="flex gap-2">
-                        {STATUS_OPTIONS.map(status => (
-                            <button
-                                key={status.value}
-                                type="button"
-                                onClick={() => setFormData({ ...formData, status: status.value })}
-                                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors ${formData.status === status.value
-                                    ? status.value === "SOLD"
-                                        ? "bg-green-600 text-white"
-                                        : status.value === "INACTIVE"
-                                            ? "bg-gray-600 text-white"
-                                            : "bg-black text-white"
-                                    : "bg-gray-100 text-gray-600"
-                                    }`}
-                            >
-                                {status.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+
 
                 {/* Negotiable Toggle */}
                 <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
                     <div>
-                        <p className="text-sm font-bold text-gray-700">Price Negotiable?</p>
-                        <p className="text-xs text-gray-500">Let buyers know if you're open to offers</p>
+                        <p className="text-[15px] font-bold text-gray-700">Price Negotiable?</p>
+                        <p className="text-[13px] text-gray-500">Let buyers know if you're open to offers</p>
                     </div>
                     <button
                         type="button"
@@ -392,23 +366,23 @@ export default function EditProductPage() {
 
                 {/* Description */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Description</label>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">Description</label>
                     <textarea
                         required
                         minLength={10}
                         maxLength={2000}
                         rows={5}
                         placeholder="Describe your item..."
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium resize-none"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium resize-none"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
-                    <p className="text-xs text-gray-400 mt-1">{formData.description.length}/2000</p>
+                    <p className="text-[13px] text-gray-400 mt-1">{formData.description.length}/2000</p>
                 </div>
 
                 {/* Error Display */}
                 {updateError && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-600">
                         {updateError.message}
                     </div>
                 )}
@@ -423,14 +397,14 @@ export default function EditProductPage() {
                             type="button"
                             onClick={() => router.back()}
                             disabled={isPending}
-                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl text-sm transition-colors disabled:opacity-50"
+                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl text-[15px] transition-colors disabled:opacity-50"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-[15px] transition-colors flex items-center justify-center  disabled:opacity-50"
                         >
                             {isPending ? (
                                 <>
@@ -439,7 +413,6 @@ export default function EditProductPage() {
                                 </>
                             ) : (
                                 <>
-                                    <Check className="w-4 h-4" />
                                     Save Changes
                                 </>
                             )}

@@ -1,357 +1,636 @@
+import { FeedItemResponse } from "@/types/api/feed";
 
-import { AlertTriangle, MapPin, Info, PawPrint } from "lucide-react";
+// Mock feed data matching FeedItemResponse interface
+// Variety: Multiple images, Group posts, Different postTypes, Different authorTypes
+export const posts: FeedItemResponse[] = [
+    // ============================================
+    // ALERT posts (GOVERNMENT authors, urgent community alerts)
+    // ============================================
+    {
+        postId: 1,
+        content: "⚠️ Due to emergency maintenance in the main pipeline near Shankhamul, water supply will be disrupted for the next 4 hours. Water tanker services have been alerted. Please store water accordingly.",
+        postType: "ALERT",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 101,
+        authorName: "Ward 4 Committee",
+        authorProfilePicture: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [],
+        videoUrl: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8",
+        videoThumbnail: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=500&fit=crop",
+        videoDuration: null,
+        commentCount: 42,
+        likeCount: 145,
+        shareCount: 89
+    },
+    {
+        postId: 2,
+        content: "⚡ Power supply will be cut off in Ward 4 area tomorrow from 10:00 AM to 2:00 PM for transformer maintenance. Plan accordingly.",
+        postType: "ALERT",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T13:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 106,
+        authorName: "Nepal Electricity Authority",
+        authorProfilePicture: "https://images.unsplash.com/photo-1560179707-f14e90ef3dab?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 56,
+        likeCount: 89,
+        shareCount: 120
+    },
+    {
+        postId: 3,
+        content: "🚧 Heavy traffic jam at Maitighar due to a rally. Please use alternative routes via Anamnagar or Thapathali. Expected to clear by 5 PM.",
+        postType: "ALERT",
+        visibilityLevel: "DISTRICT",
+        createdAt: "2026-01-15T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: null,
+        authorId: 111,
+        authorName: "Traffic Police Kathmandu",
+        authorProfilePicture: "https://images.unsplash.com/photo-1545459720-aac3e5ca967e?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 88,
+        likeCount: 256,
+        shareCount: 340
+    },
 
-export type PostType = 'general' | 'alert' | 'notice' | 'lost-found';
+    // ============================================
+    // LOST_FOUND posts (with single/multiple images)
+    // ============================================
+    {
+        postId: 4,
+        content: "🐕 LOST DOG: Our Golden Retriever 'Max' went missing this morning around 8 AM near the Mahadev Temple. He is wearing a red collar with a bone-shaped tag. Please help us find him! Contact: 9841234567",
+        postType: "LOST_FOUND",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-16T20:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "7",
+        authorId: 102,
+        authorName: "Sita Sharma",
+        authorProfilePicture: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 35,
+        likeCount: 212,
+        shareCount: 120
+    },
+    {
+        postId: 5,
+        content: "📱 FOUND: Blue leather wallet near the Global IME Bank ATM. It contains an ID card with the name 'Suresh Karki'. Please contact me to claim it.",
+        postType: "LOST_FOUND",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-16T09:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 108,
+        authorName: "Bikash Thapa",
+        authorProfilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 12,
+        likeCount: 78,
+        shareCount: 45
+    },
+    {
+        postId: 6,
+        content: "🔑 LOST: I lost a bunch of keys with a 'Home Sweet Home' keychain somewhere between Shantinagar gate and the grocery store. Has anyone seen them? Please help!",
+        postType: "LOST_FOUND",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-13T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "6",
+        authorId: 115,
+        authorName: "Ritika Maharjan",
+        authorProfilePicture: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 12,
+        likeCount: 45,
+        shareCount: 33
+    },
 
-export interface Post {
-    id: number;
-    type: PostType;
-    author: {
-        name: string;
-        avatar: string;
-        location?: string;
-        isOfficial?: boolean;
-        isBusiness?: boolean;
-    };
-    time: string;
-    title?: string;
-    content: string;
-    images: string[];
-    stats: {
-        likes: number;
-        comments: number;
-        shares: number;
-    };
-    isLiked: boolean;
-    priority?: string;
-    comments: {
-        id: number;
-        user: {
-            name: string;
-            avatar: string;
-        };
-        text: string;
-        time: string;
-    }[];
-}
+    // ============================================
+    // NOTICE posts (GOVERNMENT or NON_GOVERNMENT, community events)
+    // ============================================
+    {
+        postId: 7,
+        content: "📢 Join us this Saturday for our monthly neighborhood clean-up. Gathering at the main chowk at 7:00 AM. Gloves, bags, and refreshments will be provided. Let's keep our neighborhood clean!",
+        postType: "NOTICE",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T16:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 104,
+        authorName: "Ward 4 Community Club",
+        authorProfilePicture: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 24,
+        likeCount: 89,
+        shareCount: 15
+    },
+    {
+        postId: 8,
+        content: "📚 We are organizing a children's book reading session this Saturday at 2 PM at the Local Library. All kids aged 5-10 are welcome! Parents, please accompany your children.",
+        postType: "NOTICE",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-15T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 109,
+        authorName: "Kathmandu Public Library",
+        authorProfilePicture: "https://images.unsplash.com/photo-1524813686514-a57563d77965?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 10,
+        likeCount: 67,
+        shareCount: 20
+    },
+    {
+        postId: 9,
+        content: "🌱 Let's make our neighborhood greener! Join us for a tree plantation drive near the Bagmati river bank next Sunday at 8 AM. Saplings will be provided free of cost.",
+        postType: "NOTICE",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-14T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 113,
+        authorName: "Green Nepal Club",
+        authorProfilePicture: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=100&h=100&fit=crop",
+        authorType: "NON_GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1542601906990-24ccd08d7455?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1446080501695-8e929f879f2b?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 45,
+        likeCount: 156,
+        shareCount: 67
+    },
 
-export const posts: Post[] = [
+    // ============================================
+    // NEWS posts (Local news and updates)
+    // ============================================
     {
-        id: 1,
-        type: 'alert',
-        author: {
-            name: "Ward 4 Committee",
-            avatar: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=100&h=100&fit=crop",
-            location: "Baneshwor",
-            isOfficial: true
-        },
-        time: "10m ago",
-        title: "⚠️ Water Supply Disruption",
-        content: "Due to emergency maintenance in the main pipeline near Shankhamul, water supply will be disrupted for the next 4 hours. Water tanker services have been alerted.",
-        images: [],
-        stats: { likes: 145, comments: 42, shares: 89 },
-        isLiked: false,
-        priority: "High",
-        comments: [
-            {
-                id: 1,
-                user: { name: "Ramesh P.", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop" },
-                text: "Thanks for the heads up! Will store some water.",
-                time: "5m ago"
-            },
-            {
-                id: 2,
-                user: { name: "Sita K.", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" },
-                text: "Is this confirmed for Shankhamul area only?",
-                time: "2m ago"
-            }
-        ]
+        postId: 10,
+        content: "📰 Breaking: New metro bus route launched connecting Ratnapark to Lagankhel! The fare is Rs. 30 for regular and Rs. 15 for students with ID. Buses run every 15 minutes from 6 AM to 9 PM.",
+        postType: "NEWS",
+        visibilityLevel: "DISTRICT",
+        createdAt: "2026-01-16T10:00:00Z",
+        district: "Kathmandu",
+        palika: null,
+        wada: null,
+        authorId: 120,
+        authorName: "Kathmandu Metro Transport",
+        authorProfilePicture: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 78,
+        likeCount: 342,
+        shareCount: 189
     },
     {
-        id: 2,
-        type: 'lost-found',
-        author: {
-            name: "Sita Sharma",
-            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-            location: "Koteshwor"
-        },
-        time: "1h ago",
-        title: "LOST DOG: Max",
-        content: "Our Golden Retriever 'Max' went missing this morning around 8 AM near the Mahadev Temple. He is wearing a red collar. Please help us find him! 🐕",
-        images: ["https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=500&fit=crop"],
-        stats: { likes: 212, comments: 35, shares: 120 },
-        isLiked: true,
-        priority: "Urgent",
-        comments: []
+        postId: 11,
+        content: "📰 The new children's park in Baluwatar is now open! Features include swings, slides, a mini football ground, and a dedicated area for toddlers. Free entry for all. Open daily 6 AM - 8 PM.",
+        postType: "NEWS",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-15T14:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "3",
+        authorId: 121,
+        authorName: "KMC Parks Division",
+        authorProfilePicture: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=100&h=100&fit=crop",
+        authorType: "GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1597466765990-64ad1c35dafc?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1564429238980-16e26652f449?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 56,
+        likeCount: 289,
+        shareCount: 124
+    },
+
+    // ============================================
+    // GENERAL posts (Regular community posts from individuals/businesses)
+    // ============================================
+    {
+        postId: 12,
+        content: "Namaste Neighbors! 🙏 We are officially open! Come try our special Jhol MoMo and Steam MoMo. 20% discount for all Chhimeki members this week! Visit us at Mid-Baneshwor, near Kumari Bank.",
+        postType: "GENERAL",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T18:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 103,
+        authorName: "New Everest MoMo",
+        authorProfilePicture: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100&h=100&fit=crop",
+        authorType: "NON_GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1626015499273-2c0aaca135fc?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 12,
+        likeCount: 56,
+        shareCount: 5
     },
     {
-        id: 3,
-        type: 'general',
-        author: {
-            name: "New Everest MoMo",
-            avatar: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100&h=100&fit=crop",
-            location: "Mid-Baneshwor",
-            isBusiness: true
-        },
-        time: "3h ago",
-        content: "Namaste Neighbors! 🙏 We are officially open! Come try our special Jhol MoMo. 20% discount for all Chhimeki members this week!",
-        images: ["https://images.unsplash.com/photo-1626015499273-2c0aaca135fc?w=800&h=500&fit=crop"],
-        stats: { likes: 56, comments: 12, shares: 5 },
-        isLiked: false,
-        comments: []
+        postId: 13,
+        content: "Just tried the new bakery 'SweetTooth' near the junction. Their donuts and croissants are amazing! 🍩🥐 Highly recommend checking them out. They also have great coffee!",
+        postType: "GENERAL",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T15:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "7",
+        authorId: 105,
+        authorName: "Rahul Malla",
+        authorProfilePicture: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 8,
+        likeCount: 45,
+        shareCount: 2
     },
     {
-        id: 4,
-        type: 'notice',
-        author: {
-            name: "Community Club",
-            avatar: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=100&h=100&fit=crop",
-            location: "Local Hall",
-            isOfficial: true
-        },
-        time: "5h ago",
-        title: "Saturday Clean-up Campaign",
-        content: "Join us this Saturday for our monthly neighborhood clean-up. Gathering at the main chowk at 7:00 AM. Gloves and bags provided.",
-        images: [],
-        stats: { likes: 89, comments: 24, shares: 15 },
-        isLiked: true,
-        comments: []
+        postId: 14,
+        content: "Beautiful sunset view from the rooftop today! 🌇 The air feels cleaner after the rain yesterday. Sometimes I forget how beautiful our city can be.",
+        postType: "GENERAL",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-16T11:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "4",
+        authorId: 107,
+        authorName: "Priya Shrestha",
+        authorProfilePicture: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1477862767330-941193636ee2?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 15,
+        likeCount: 132,
+        shareCount: 4
     },
     {
-        id: 5,
-        type: 'general',
-        author: {
-            name: "Rahul M.",
-            avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-            location: "Koteshwor"
-        },
-        time: "6h ago",
-        content: "Just tried the new bakery 'SweetTooth' near the junction. Their donuts are amazing! 🍩 Highly recommend checking them out.",
-        images: ["https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=500&fit=crop"],
-        stats: { likes: 45, comments: 8, shares: 2 },
-        isLiked: false,
-        comments: []
+        postId: 15,
+        content: "Does anyone know a good plumber available for urgent work? My kitchen sink is leaking badly. Would appreciate any recommendations! 🔧",
+        postType: "GENERAL",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-14T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "5",
+        authorId: 112,
+        authorName: "Anjali Gurung",
+        authorProfilePicture: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 24,
+        likeCount: 12,
+        shareCount: 1
     },
     {
-        id: 6,
-        type: 'alert',
-        author: {
-            name: "Nepal Electricity Authority",
-            avatar: "https://images.unsplash.com/photo-1560179707-f14e90ef3dab?w=100&h=100&fit=crop",
-            location: "Baneshwor Branch",
-            isOfficial: true
-        },
-        time: "8h ago",
-        title: "⚡ Scheduled Power Cut",
-        content: "Power supply will be cut off in Ward 4 area tomorrow from 10:00 AM to 2:00 PM for transformer maintenance.",
-        images: [],
-        stats: { likes: 89, comments: 56, shares: 120 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
+        postId: 16,
+        content: "🥬 Fresh organic vegetables from local farmers have just arrived! Spinach, carrots, cauliflower, and seasonal greens available. Come early for the best picks!",
+        postType: "GENERAL",
+        visibilityLevel: "WADA",
+        createdAt: "2026-01-13T21:00:00Z",
+        district: "Lalitpur",
+        palika: "Lalitpur Metropolitan",
+        wada: "3",
+        authorId: 114,
+        authorName: "Organic Haat Bazaar",
+        authorProfilePicture: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=100&h=100&fit=crop",
+        authorType: "NON_GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1518843875459-f738682238a6?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 22,
+        likeCount: 88,
+        shareCount: 15
     },
     {
-        id: 7,
-        type: 'general',
-        author: {
-            name: "Priya S.",
-            avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
-            location: "Shankhamul"
-        },
-        time: "10h ago",
-        content: "Beautiful sunset view from the rooftop today! 🌇 The air feels cleaner after the rain yesterday.",
-        images: ["https://images.unsplash.com/photo-1477862767330-941193636ee2?w=800&h=500&fit=crop"],
-        stats: { likes: 132, comments: 15, shares: 4 },
-        isLiked: true,
-        comments: []
+        postId: 17,
+        content: "💪 Get 3 months free on annual gym membership! Offer valid till end of this month. Start your fitness journey today with us. We have cardio, weight training, yoga, and Zumba classes!",
+        postType: "GENERAL",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-12T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "7",
+        authorId: 116,
+        authorName: "Fitness First Gym",
+        authorProfilePicture: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&h=100&fit=crop",
+        authorType: "NON_GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 45,
+        likeCount: 210,
+        shareCount: 12
     },
     {
-        id: 8,
-        type: 'lost-found',
-        author: {
-            name: "Bikash T.",
-            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-            location: "Old Baneshwor"
-        },
-        time: "12h ago",
-        title: "FOUND: Blue Wallet",
-        content: "Found a blue leather wallet near the Global IME Bank ATM. It contains an ID card with the name 'Suresh Karki'. Please contact me to claim it.",
-        images: [],
-        stats: { likes: 78, comments: 12, shares: 45 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
+        postId: 18,
+        content: "🔧 Need your laptop fixed? We offer same-day repair services for all major brands. Cracked screen? Battery issues? Slow performance? Visit us for a FREE diagnostic!",
+        postType: "GENERAL",
+        visibilityLevel: "PALIKA",
+        createdAt: "2026-01-15T21:00:00Z",
+        district: "Kathmandu",
+        palika: "Kathmandu Metropolitan",
+        wada: "10",
+        authorId: 110,
+        authorName: "Tech Solutions Nepal",
+        authorProfilePicture: "https://images.unsplash.com/photo-1531297461136-82lw8e2d4b3b?w=100&h=100&fit=crop",
+        authorType: "NON_GOVERNMENT",
+        groupId: null,
+        groupName: null,
+        groupProfileImage: null,
+        imageUrls: [
+            "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 5,
+        likeCount: 34,
+        shareCount: 3
+    },
+
+    // ============================================
+    // GROUP posts (Posted in community groups - visibilityLevel = null)
+    // ============================================
+    {
+        postId: 19,
+        content: "Hey fellow photographers! 📸 Sharing some shots from the Patan Durbar Square photo walk last weekend. The morning light was absolutely magical. Who's joining for the next one in Bhaktapur?",
+        postType: "GROUP",
+        visibilityLevel: null,
+        createdAt: "2026-01-16T19:00:00Z",
+        district: null,
+        palika: null,
+        wada: null,
+        authorId: 130,
+        authorName: "Aashish Rai",
+        authorProfilePicture: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: 1,
+        groupName: "Kathmandu Photographers",
+        groupProfileImage: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=100&h=100&fit=crop",
+        imageUrls: [
+            "https://images.unsplash.com/photo-1558862107-d49ef2a04d72?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 28,
+        likeCount: 156,
+        shareCount: 12
     },
     {
-        id: 9,
-        type: 'notice',
-        author: {
-            name: "Local Library",
-            avatar: "https://images.unsplash.com/photo-1524813686514-a57563d77965?w=100&h=100&fit=crop",
-            location: "Community Center",
-            isOfficial: true
-        },
-        time: "1d ago",
-        title: "📚 Book Reading Session",
-        content: "We are organizing a children's book reading session this Saturday at 2 PM. All kids aged 5-10 are welcome!",
-        images: ["https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=500&fit=crop"],
-        stats: { likes: 67, comments: 10, shares: 20 },
-        isLiked: false,
-        comments: []
+        postId: 20,
+        content: "🚴 Trail update: The Shivapuri route is clear after yesterday's rain! Did a morning ride and it was perfect. Just be careful near the second checkpoint - some loose rocks. Happy cycling everyone!",
+        postType: "GROUP",
+        visibilityLevel: null,
+        createdAt: "2026-01-16T08:00:00Z",
+        district: null,
+        palika: null,
+        wada: null,
+        authorId: 131,
+        authorName: "Binod Khadka",
+        authorProfilePicture: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: 2,
+        groupName: "Kathmandu Cycling Club",
+        groupProfileImage: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=100&h=100&fit=crop",
+        imageUrls: [
+            "https://images.unsplash.com/photo-1476631259273-7d4ffaf7c1bb?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1530143584546-02191bc84eb5?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 34,
+        likeCount: 89,
+        shareCount: 8
     },
     {
-        id: 10,
-        type: 'general',
-        author: {
-            name: "Tech Solutions",
-            avatar: "https://images.unsplash.com/photo-1531297461136-82lw8e2d4b3b?w=100&h=100&fit=crop",
-            location: "New Road",
-            isBusiness: true
-        },
-        time: "1d ago",
-        content: "Need your laptop fixed? We offer same-day repair services for all major brands. Visit us for a free diagnostic!",
-        images: ["https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800&h=500&fit=crop"],
-        stats: { likes: 34, comments: 5, shares: 3 },
-        isLiked: false,
-        comments: []
+        postId: 21,
+        content: "Looking for recommendations for a good pediatrician in Lalitpur area. My daughter has been having recurring cold issues. Any suggestions would be appreciated! 🏥",
+        postType: "GROUP",
+        visibilityLevel: null,
+        createdAt: "2026-01-15T18:00:00Z",
+        district: null,
+        palika: null,
+        wada: null,
+        authorId: 132,
+        authorName: "Sunita Bajracharya",
+        authorProfilePicture: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: 3,
+        groupName: "Lalitpur Parents Network",
+        groupProfileImage: "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=100&h=100&fit=crop",
+        imageUrls: [],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 42,
+        likeCount: 23,
+        shareCount: 2
     },
     {
-        id: 11,
-        type: 'alert',
-        author: {
-            name: "Traffic Police",
-            avatar: "https://images.unsplash.com/photo-1545459720-aac3e5ca967e?w=100&h=100&fit=crop",
-            location: "Metropolitan",
-            isOfficial: true
-        },
-        time: "1d ago",
-        title: "🚧 Road Diversion Alert",
-        content: "Heavy traffic jam at Maitighar due to a rally. Please use alternative routes via Anamnagar or Thapathali.",
-        images: [],
-        stats: { likes: 256, comments: 88, shares: 340 },
-        isLiked: true,
-        priority: "High",
-        comments: []
+        postId: 22,
+        content: "📖 This week's book club pick: 'Palpasa Cafe' by Narayan Wagle. Such a beautiful and heartbreaking story set during the conflict era. What are your thoughts? Discussion meetup this Friday at 5 PM at the usual cafe!",
+        postType: "GROUP",
+        visibilityLevel: null,
+        createdAt: "2026-01-14T20:00:00Z",
+        district: null,
+        palika: null,
+        wada: null,
+        authorId: 133,
+        authorName: "Maya Poudel",
+        authorProfilePicture: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: 4,
+        groupName: "Kathmandu Book Lovers",
+        groupProfileImage: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=100&h=100&fit=crop",
+        imageUrls: [
+            "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 56,
+        likeCount: 78,
+        shareCount: 5
     },
     {
-        id: 12,
-        type: 'general',
-        author: {
-            name: "Anjali G.",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-            location: "Buddhanagar"
-        },
-        time: "2d ago",
-        content: "Does anyone know a good plumber available for urgent work? My kitchen sink is leaking badly.",
-        images: [],
-        stats: { likes: 12, comments: 24, shares: 1 },
-        isLiked: false,
-        comments: []
-    },
-    {
-        id: 13,
-        type: 'notice',
-        author: {
-            name: "Green Club",
-            avatar: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=100&h=100&fit=crop",
-            location: "Ward 4",
-            isOfficial: true
-        },
-        time: "2d ago",
-        title: "🌱 Tree Plantation Drive",
-        content: "Let's make our neighborhood greener! Join us for a tree plantation drive near the river bank next Sunday.",
-        images: ["https://images.unsplash.com/photo-1542601906990-24ccd08d7455?w=800&h=500&fit=crop"],
-        stats: { likes: 156, comments: 45, shares: 67 },
-        isLiked: true,
-        comments: []
-    },
-    {
-        id: 14,
-        type: 'general',
-        author: {
-            name: "Organic Mart",
-            avatar: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=100&h=100&fit=crop",
-            location: "Lagankhel",
-            isBusiness: true
-        },
-        time: "3d ago",
-        content: "Fresh organic vegetables from local farmers have just arrived! spinach, carrots, and cauliflower available.",
-        images: ["https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=800&h=500&fit=crop"],
-        stats: { likes: 88, comments: 22, shares: 15 },
-        isLiked: false,
-        comments: []
-    },
-    {
-        id: 15,
-        type: 'lost-found',
-        author: {
-            name: "Ritika M.",
-            avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop",
-            location: "Shantinagar"
-        },
-        time: "3d ago",
-        title: "LOST: House Keys",
-        content: "I lost a bunch of keys with a 'Home Sweet Home' keychain somewhere between Shantinagar gate and the grocery store. Please help!",
-        images: [],
-        stats: { likes: 45, comments: 12, shares: 33 },
-        isLiked: false,
-        priority: "Medium",
-        comments: []
-    },
-    {
-        id: 16,
-        type: 'general',
-        author: {
-            name: "Fitness First Gym",
-            avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&h=100&fit=crop",
-            location: "Koteshwor",
-            isBusiness: true
-        },
-        time: "4d ago",
-        title: "New Year Offer!",
-        content: "Get 3 months free on annual membership! Offer valid till end of this month. Start your fitness journey today. 💪",
-        images: ["https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=500&fit=crop"],
-        stats: { likes: 210, comments: 45, shares: 12 },
-        isLiked: false,
-        comments: []
+        postId: 23,
+        content: "🍳 Tried making sel roti at home for the first time! It's not perfect like dai ko pasal wala, but my family loved it. Sharing the recipe in comments for anyone interested!",
+        postType: "GROUP",
+        visibilityLevel: null,
+        createdAt: "2026-01-13T16:00:00Z",
+        district: null,
+        palika: null,
+        wada: null,
+        authorId: 134,
+        authorName: "Kamala Adhikari",
+        authorProfilePicture: "https://images.unsplash.com/photo-1542596768-5d1d21f1cf98?w=100&h=100&fit=crop",
+        authorType: "GENERAL",
+        groupId: 5,
+        groupName: "Nepali Home Cooks",
+        groupProfileImage: "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=100&h=100&fit=crop",
+        imageUrls: [
+            "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?w=800&h=500&fit=crop",
+            "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&h=500&fit=crop"
+        ],
+        videoUrl: null,
+        videoThumbnail: null,
+        videoDuration: null,
+        commentCount: 67,
+        likeCount: 245,
+        shareCount: 34
     }
-];
-
-export const alertStories = [
-    {
-        id: 1,
-        title: "Water Cut",
-        source: "Ward 4",
-        time: "10m",
-        type: "warning",
-        image: "https://images.unsplash.com/photo-1574169208507-84376144848b?w=400&h=600&fit=crop",
-        iconType: "alert"
-    },
-    {
-        id: 2,
-        title: "Road Block",
-        source: "Traffic Police",
-        time: "1h",
-        type: "danger",
-        image: "https://images.unsplash.com/photo-1545459720-aac3e5ca967e?w=400&h=600&fit=crop",
-        iconType: "map-pin"
-    },
-    {
-        id: 3,
-        title: "Vaccine Camp",
-        source: "Health Post",
-        time: "2h",
-        type: "info",
-        image: "https://images.unsplash.com/photo-1632635939763-8a35368a4875?w=400&h=600&fit=crop",
-        iconType: "info"
-    },
-    {
-        id: 4,
-        title: "Lost Key",
-        source: "Suman G.",
-        time: "4h",
-        type: "help",
-        image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=600&fit=crop",
-        iconType: "paw-print"
-    },
 ];

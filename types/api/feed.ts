@@ -2,7 +2,14 @@
 // Feed API Types
 // ============================================
 
-// Common API Response Wrapper
+// ============================================
+// Common API Response Wrappers
+// ============================================
+
+/**
+ * Standard API Response Wrapper
+ * All endpoints return this structure
+ */
 export interface ApiResponse<T> {
     status: string;
     message: string;
@@ -10,55 +17,73 @@ export interface ApiResponse<T> {
     timestamp: string;
 }
 
-// Pagination Wrapper
+/**
+ * Pagination Metadata
+ */
+export interface PaginationMetadata {
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    isFirst: boolean;
+    isLast: boolean;
+}
+
+/**
+ * Paginated Response Wrapper
+ */
 export interface PagedResponse<T> {
     status: string;
     message: string;
     data: T[];
-    pagination: {
-        page: number;
-        size: number;
-        totalElements: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrevious: boolean;
-    };
+    pagination: PaginationMetadata;
     timestamp: string;
 }
 
 // ============================================
-// Feed Domain Types
+// Feed Item Response (Flat Structure)
 // ============================================
 
-export interface PostAuthor {
-    id: number;
-    name: string;
-    userType: "GENERAL" | "GOVERNMENT_OFFICE" | "BUSINESS";
-    profilePicture: string | null;
-    isVerified: boolean;
-}
-
-export interface MediaItem {
-    id: number;
-    url: string;
-    thumbnailUrl: string | null;
-    mediaType: "IMAGE" | "VIDEO";
-    processingStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-    duration: number | null;
-}
-
-export interface PostResponse {
-    id: number;
+/**
+ * FeedItemResponse - Flat feed item structure for mobile performance
+ * Used in: GET /api/feed/general, GET /api/feed/alerts, GET /api/groups/{groupId}/feed
+ */
+export interface FeedItemResponse {
+    // Post information
+    postId: number;
     content: string;
-    postType: "GENERAL" | "ALERT" | "GROUP";
-    visibility: "WADA" | "PALIKA" | "DISTRICT";
-    author: PostAuthor;
-    media: MediaItem[];
-    likeCount: number;
-    commentCount: number;
-    isLikedByMe: boolean;
+    postType: "GENERAL" | "ALERT" | "NEWS" | "NOTICE" | "LOST_FOUND" | "GROUP";
+    visibilityLevel: "WADA" | "PALIKA" | "DISTRICT" | null; // null for GROUP posts
     createdAt: string;
-    updatedAt: string;
+
+    // Geography (null for GROUP posts)
+    district: string | null;
+    palika: string | null;
+    wada: string | null;
+
+    // Author information (flat - no nested author object)
+    authorId: number;
+    authorName: string;
+    authorProfilePicture: string | null;
+    authorType: "GENERAL" | "GOVERNMENT" | "NON_GOVERNMENT";
+
+    // Group information (only for GROUP posts - null otherwise)
+    groupId: number | null;
+    groupName: string | null;
+    groupProfileImage: string | null;
+
+    // Media information (flat - no nested media objects)
+    imageUrls: string[];       // Empty array if no images
+    videoUrl: string | null;   // null if no video
+    videoThumbnail: string | null;
+    videoDuration: number | null; // in seconds
+
+    // Engagement metrics
+    commentCount: number;
+    likeCount: number;
+    shareCount: number;
 }
 
 // ============================================
@@ -71,7 +96,8 @@ export interface GetGeneralFeedParams {
     size?: number;
 }
 
-export type GetGeneralFeedResponse = PagedResponse<PostResponse>;
+// Controller returns: ApiResponse<PagedResponse<FeedItemResponse>>
+export type GetGeneralFeedResponse = PagedResponse<FeedItemResponse>;
 
 // ============================================
 // Get Alert Feed API
@@ -83,4 +109,4 @@ export interface GetAlertFeedParams {
     size?: number;
 }
 
-export type GetAlertFeedResponse = PagedResponse<PostResponse>;
+export type GetAlertFeedResponse = PagedResponse<FeedItemResponse>;

@@ -9,11 +9,13 @@ import {
     Camera,
     MessageCircle,
     ShieldCheck,
-    Loader2
+    Loader2,
+    MapPin,
+    Calendar
 } from "lucide-react";
 import { UserProfileResponse } from "@/types/api/user";
 import { AvatarWithFallback } from "@/components/shared-component/AvatarWithFallback";
-import { useUpdateProfilePicture, useUpdateCoverPicture } from "../_hook";
+import { useUpdateProfile } from "../_hook";
 
 interface ProfileHeaderProps {
     user: UserProfileResponse;
@@ -28,30 +30,42 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
     const profilePictureInputRef = useRef<HTMLInputElement>(null);
     const coverPictureInputRef = useRef<HTMLInputElement>(null);
 
-    // Mutation hooks
-    const { mutate: updateProfilePicture, isPending: isUploadingProfile } = useUpdateProfilePicture();
-    const { mutate: updateCoverPicture, isPending: isUploadingCover } = useUpdateCoverPicture();
+    // Unified mutation hook
+    const { mutate: updateProfile, isPending } = useUpdateProfile();
+
+    // Track which upload is active
+    const isUploadingProfile = isPending;
+    const isUploadingCover = isPending;
 
     const tabs = [
-        { id: "about", label: "About" },
         { id: "posts", label: "Posts" },
-        { id: "marketplace", label: "Marketplace" },
+        { id: "marketplace", label: "Products" },
         { id: "jobs", label: "Jobs" },
+        { id: "about", label: "About" },
     ];
 
     // Default cover image if none provided
     const coverImage = user.coverPicture || "https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=400&fit=crop";
 
+    // Format member since date
+    const getMemberSince = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    };
+
     // Handle profile picture selection
     const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            updateProfilePicture(file, {
-                onError: (error) => {
-                    console.error("Failed to upload profile picture:", error);
-                    alert("Failed to upload profile picture. Please try again.");
-                },
-            });
+            updateProfile(
+                { purpose: "profile_picture", profilePicture: file },
+                {
+                    onError: (error) => {
+                        console.error("Failed to upload profile picture:", error);
+                        alert("Failed to upload profile picture. Please try again.");
+                    },
+                }
+            );
         }
     };
 
@@ -59,12 +73,15 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
     const handleCoverPictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            updateCoverPicture(file, {
-                onError: (error) => {
-                    console.error("Failed to upload cover picture:", error);
-                    alert("Failed to upload cover picture. Please try again.");
-                },
-            });
+            updateProfile(
+                { purpose: "cover_picture", coverPicture: file },
+                {
+                    onError: (error) => {
+                        console.error("Failed to upload cover picture:", error);
+                        alert("Failed to upload cover picture. Please try again.");
+                    },
+                }
+            );
         }
     };
 
@@ -141,6 +158,7 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                             </button>
                         )}
 
+                        {/* Verified badge shown when NOT own profile and not uploading */}
                         {user.isVerified && !isOwnProfile && (
                             <div className="absolute bottom-1 right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center border-2 border-white text-white">
                                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -161,7 +179,7 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                                 <button className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-bold shadow-sm">
                                     Follow
                                 </button>
-                                <Link href={`/messages/${user.id}`} className="p-2 bg-gray-100 text-gray-900 rounded-full border border-gray-200">
+                                <Link href={`/messages/${user.id}?bottomNav=false`} className="p-2 bg-gray-100 text-gray-900 rounded-full border border-gray-200">
                                     <MessageCircle className="w-5 h-5" />
                                 </Link>
                             </>
@@ -169,43 +187,50 @@ export default function ProfileHeader({ user, isOwnProfile }: ProfileHeaderProps
                     </div>
                 </div>
 
-                {/* Name & Location */}
+                {/* Name & Info */}
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900 leading-tight">{user.name}</h1>
-                    <p className="text-gray-500 font-medium">
-                        {user.wada}, {user.palika}, {user.district}
-                    </p>
+                    {/* Name with verified badge */}
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-[22px] font-bold text-gray-900 leading-tight">{user.name}</h1>
+                        {user.isVerified && (
+                            <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                                <ShieldCheck className="w-3 h-3" />
+                            </div>
+                        )}
+                    </div>
 
-                    {/* User Type Badge */}
-                    {user.userType !== "GENERAL" && (
-                        <span className={`inline-block mt-2 px-2 py-0.5 rounded-full text-xs font-bold ${user.userType === "GOVERNMENT_OFFICE"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-purple-100 text-purple-700"
-                            }`}>
-                            {user.userType === "GOVERNMENT_OFFICE" ? "Government Office" : "Business"}
-                        </span>
-                    )}
+                    {/* Location */}
+                    <div className="flex items-center gap-1.5 text-[15px] text-gray-500 font-medium mt-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>{user.wada}, {user.palika}, {user.district}</span>
+                    </div>
 
-                    {/* Stats Row */}
-                    <div className="flex items-center gap-6 mt-4 pb-2">
-                        <div className="flex items-center gap-1">
-                            <span className="font-bold text-gray-900">--</span>
-                            <span className="text-gray-500 text-xs">Followers</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <span className="font-bold text-gray-900">--</span>
-                            <span className="text-gray-500 text-xs">Following</span>
+                    {/* User Type Badge & Member Since */}
+                    <div className="flex items-center gap-3 mt-3">
+                        {user.userType !== "GENERAL" && (
+                            <span className={`px-2.5 py-1 rounded-full text-[13px] font-bold ${user.userType === "GOVERNMENT_OFFICE"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-purple-100 text-purple-700"
+                                }`}>
+                                {user.userType === "GOVERNMENT_OFFICE" ? "Government Office" : "Business"}
+                            </span>
+                        )}
+                        <div className="flex items-center gap-1.5 text-[13px] text-gray-400">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>Joined {getMemberSince(user.createdAt)}</span>
                         </div>
                     </div>
+
+
                 </div>
 
                 {/* Tabs */}
-                <div className="flex items-center gap-6 border-b border-gray-300 -mx-4 px-4 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-6 border-b border-gray-200 -mx-4 px-4 overflow-x-auto no-scrollbar">
                     {tabs.map((tab) => (
                         <Link
                             key={tab.id}
                             href={`/profile/${user.id}?tab=${tab.id}`}
-                            className={`relative py-3 text-base font-bold whitespace-nowrap transition-colors ${activeTab === tab.id
+                            className={`relative py-3 text-[15px] font-bold whitespace-nowrap transition-colors ${activeTab === tab.id
                                 ? "text-blue-600 border-b-2 border-blue-600"
                                 : "text-gray-500 hover:text-gray-700"
                                 }`}

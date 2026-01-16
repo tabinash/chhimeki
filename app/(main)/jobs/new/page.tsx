@@ -160,36 +160,53 @@ export default function PostJobPage() {
             )}
 
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+            <div className="sticky top-0 z-10 bg-[#e4e1dd] border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.back()}
+                        className="p-2 -ml-2 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                        <ArrowLeft className="w-6 h-6 text-gray-900" />
+                    </button>
+                    <h1 className="text-[17px] font-bold text-gray-900">Post a Job</h1>
+                </div>
                 <button
-                    onClick={() => router.back()}
-                    className="p-2 -ml-2 hover:bg-gray-50 rounded-full transition-colors"
+                    type="submit"
+                    form="job-form"
+                    disabled={isPending}
+                    className="px-5 py-2 bg-blue-900 text-white rounded-full text-[14px] font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5"
                 >
-                    <ArrowLeft className="w-5 h-5 text-gray-900" />
+                    {isPending ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Posting...
+                        </>
+                    ) : (
+                        "Post Job"
+                    )}
                 </button>
-                <h1 className="text-lg font-bold text-gray-900">Post a Job</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-6">
+            <form id="job-form" onSubmit={handleSubmit} className="p-5 space-y-6">
                 {/* Title */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Job Title</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Job Title</label>
                     <input
                         type="text"
                         placeholder="e.g. Housekeeper Needed"
-                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.title ? "border-red-400" : "border-gray-200"
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.title ? "border-red-400" : "border-gray-200"
                             }`}
                         value={formData.title}
                         onChange={(e) => handleFieldChange("title", e.target.value)}
                     />
-                    {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
+                    {errors.title && <p className="text-[12px] text-red-500 mt-1">{errors.title}</p>}
                 </div>
 
                 {/* Category */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Category</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Category</label>
                     <select
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
                         value={formData.category}
                         onChange={(e) => handleFieldChange("category", e.target.value)}
                     >
@@ -203,16 +220,16 @@ export default function PostJobPage() {
 
                 {/* Employment Type */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Employment Type</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Employment Type</label>
                     <div className="grid grid-cols-2 gap-2">
                         {EMPLOYMENT_TYPES.map((type) => (
                             <button
                                 key={type.value}
                                 type="button"
                                 onClick={() => handleFieldChange("employmentType", type.value)}
-                                className={`py-2.5 rounded-xl text-sm font-bold transition-colors ${formData.employmentType === type.value
-                                        ? "bg-black text-white"
-                                        : "bg-gray-50 border border-gray-200 text-gray-600"
+                                className={`py-2.5 rounded-xl text-[13px] font-bold transition-colors ${formData.employmentType === type.value
+                                    ? "bg-black text-white"
+                                    : "bg-gray-50 border border-gray-200 text-gray-600"
                                     }`}
                             >
                                 {type.label}
@@ -223,11 +240,11 @@ export default function PostJobPage() {
 
                 {/* Salary */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Salary (Rs.)</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Salary (Rs.)</label>
                     <input
                         type="number"
                         placeholder="e.g. 15000"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium"
                         value={formData.salaryAmount}
                         onChange={(e) => handleFieldChange("salaryAmount", e.target.value)}
                     />
@@ -238,89 +255,68 @@ export default function PostJobPage() {
                             onChange={(e) => handleFieldChange("isNegotiable", e.target.checked)}
                             className="w-4 h-4 rounded"
                         />
-                        <span className="text-sm text-gray-600">Salary is negotiable</span>
+                        <span className="text-[14px] text-gray-600">Salary is negotiable</span>
                     </label>
                 </div>
 
                 {/* Contact Phone */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Contact Phone</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Contact Phone</label>
                     <input
                         type="tel"
                         placeholder="e.g. 9801234567"
-                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.contactPhone ? "border-red-400" : "border-gray-200"
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.contactPhone ? "border-red-400" : "border-gray-200"
                             }`}
                         value={formData.contactPhone}
                         onChange={(e) => handleFieldChange("contactPhone", e.target.value)}
                     />
-                    {errors.contactPhone && <p className="text-xs text-red-500 mt-1">{errors.contactPhone}</p>}
+                    {errors.contactPhone && <p className="text-[12px] text-red-500 mt-1">{errors.contactPhone}</p>}
                 </div>
 
                 {/* Location */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Palika</label>
+                        <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Palika</label>
                         <input
                             type="text"
                             placeholder="e.g. Kathmandu"
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.palika ? "border-red-400" : "border-gray-200"
+                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.palika ? "border-red-400" : "border-gray-200"
                                 }`}
                             value={formData.palika}
                             onChange={(e) => handleFieldChange("palika", e.target.value)}
                         />
-                        {errors.palika && <p className="text-xs text-red-500 mt-1">{errors.palika}</p>}
+                        {errors.palika && <p className="text-[12px] text-red-500 mt-1">{errors.palika}</p>}
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">District</label>
+                        <label className="block text-[14px] font-bold text-gray-700 mb-1.5">District</label>
                         <input
                             type="text"
                             placeholder="e.g. Kathmandu"
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.district ? "border-red-400" : "border-gray-200"
+                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium ${errors.district ? "border-red-400" : "border-gray-200"
                                 }`}
                             value={formData.district}
                             onChange={(e) => handleFieldChange("district", e.target.value)}
                         />
-                        {errors.district && <p className="text-xs text-red-500 mt-1">{errors.district}</p>}
+                        {errors.district && <p className="text-[12px] text-red-500 mt-1">{errors.district}</p>}
                     </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Job Description</label>
+                    <label className="block text-[14px] font-bold text-gray-700 mb-1.5">Job Description</label>
                     <textarea
                         rows={5}
                         placeholder="Describe the role, responsibilities, and what you're looking for..."
-                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium resize-none ${errors.description ? "border-red-400" : "border-gray-200"
+                        className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-medium resize-none ${errors.description ? "border-red-400" : "border-gray-200"
                             }`}
                         value={formData.description}
                         onChange={(e) => handleFieldChange("description", e.target.value)}
                     />
-                    {errors.description && <p className="text-xs text-red-500 mt-1">{errors.description}</p>}
+                    {errors.description && <p className="text-[12px] text-red-500 mt-1">{errors.description}</p>}
                 </div>
 
                 {/* Spacer for fixed footer */}
-                <div className="h-20" />
-
-                {/* Fixed Footer */}
-                <div className=" bottom-16 left-0 right-0 p-4 bg-white ">
-                    <div className="max-w-md mx-auto grid grid-cols-2 gap-3">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl text-sm transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isPending}
-                            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200 disabled:opacity-50"
-                        >
-                            {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-                            {isPending ? "Posting..." : "Post Job"}
-                        </button>
-                    </div>
-                </div>
+                <div className="h-10" />
             </form>
         </div>
     );

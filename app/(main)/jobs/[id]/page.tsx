@@ -308,7 +308,7 @@ export default function JobDetailPage() {
                                     Call
                                 </a>
                                 <Link
-                                    href={`/messages/${job.poster.id}`}
+                                    href={`/messages/${job.poster.id}?bottomNav=false`}
                                     className="flex-[2] bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
                                 >
                                     <MessageCircle className="w-5 h-5" />

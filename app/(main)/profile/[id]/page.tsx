@@ -36,6 +36,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     const { data: postsData, isLoading: postsLoading } = useUserPosts(userId);
     const { data: productsData, isLoading: productsLoading } = useUserProducts(userId);
     const { data: jobsData, isLoading: jobsLoading } = useUserJobs(userId);
+    console.log("profileData", profileData);
 
     const user = profileData?.data;
     const posts = postsData?.data || [];

@@ -1,178 +1,197 @@
 "use client";
 
 import { useState } from "react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, X, ImageIcon, Users, Globe, Lock } from "lucide-react";
-import Image from "next/image";
+import { useCreateGroup } from "../_hook";
 
 export default function CreateGroupPage() {
     const router = useRouter();
-    const [groupName, setGroupName] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("");
-    const [privacy, setPrivacy] = useState<"public" | "private">("public");
-    const [coverImage, setCoverImage] = useState<string | null>(null);
+    const { mutate: createGroup, isPending } = useCreateGroup();
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+    });
+
+    const [profileImage, setProfileImage] = useState<File | null>(null);
+    const [coverImage, setCoverImage] = useState<File | null>(null);
+    const [profilePreview, setProfilePreview] = useState<string>("");
+    const [coverPreview, setCoverPreview] = useState<string>("");
+
+    const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setCoverImage(url);
-        }
+        if (!file) return;
+
+        setProfileImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => setProfilePreview(reader.result as string);
+        reader.readAsDataURL(file);
     };
 
-    const handleCreate = () => {
-        console.log({ groupName, description, category, privacy, coverImage });
-        router.back();
+    const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setCoverImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => setCoverPreview(reader.result as string);
+        reader.readAsDataURL(file);
     };
 
-    const categories = ["Business", "Tech", "Sports", "Arts", "Education", "Other"];
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        createGroup(
+            {
+                name: formData.name,
+                description: formData.description || undefined,
+                profileImage: profileImage || undefined,
+                coverImage: coverImage || undefined,
+            },
+            {
+                onSuccess: () => {
+                    router.back();
+                },
+                onError: (error) => {
+                    alert(`Failed to create group: ${error.message}`);
+                },
+            }
+        );
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            {/* Header */}
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-                <div className="flex items-center justify-between px-4 py-3">
-                    <button
-                        onClick={() => router.back()}
-                        className="text-gray-600 hover:text-gray-900"
-                    >
-                        <ArrowLeft className="w-6 h-6" />
-                    </button>
-                    <h1 className="text-lg font-bold text-gray-900">Create Group</h1>
-                    <button
-                        onClick={handleCreate}
-                        disabled={!groupName.trim() || !description.trim()}
-                        className={`px-4 py-1.5 rounded-full text-sm font-bold transition-colors ${groupName.trim() && description.trim()
-                                ? "bg-blue-600 text-white hover:bg-blue-700"
-                                : "bg-gray-100 text-gray-400"
-                            }`}
-                    >
-                        Create
-                    </button>
-                </div>
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Mobile Header */}
+            <div className="sticky bg-[#e4e1dd] top-0 z-10 border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+                <button
+                    onClick={() => router.back()}
+                    className="p-2 rounded-full bg-gray-100 active:bg-gray-200"
+                >
+                    <X className="w-5 h-5 text-gray-600" />
+                </button>
+
+                <h1 className="text-[17px] font-bold text-gray-900">
+                    Create Group
+                </h1>
+
+                {/* CREATE BUTTON */}
+                <button
+                    type="submit"
+                    form="create-group-form"
+                    className="px-5 py-2.5 bg-blue-600 text-white rounded-full font-bold text-[15px] transition-all active:scale-95 flex items-center gap-1.5"
+                >
+                    {isPending ? "Creating..." : "Create"}
+                </button>
             </div>
 
-            <div className="p-4 space-y-4">
+            {/* Form */}
+            <form
+                id="create-group-form"
+                onSubmit={handleSubmit}
+                className="flex-1 px-4 py-5 space-y-5"
+            >
                 {/* Cover Image */}
-                {coverImage ? (
-                    <div className="relative aspect-video bg-gray-100 rounded-2xl overflow-hidden">
-                        <Image src={coverImage} alt="Cover" fill className="object-cover" />
-                        <button
-                            onClick={() => setCoverImage(null)}
-                            className="absolute top-3 right-3 w-8 h-8 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/80"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-                ) : (
-                    <label className="block aspect-video bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-gray-400 cursor-pointer transition-colors">
+                <div>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-2">
+                        Cover Image (Optional)
+                    </label>
+                    <div className="relative h-32 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
+                        {coverPreview ? (
+                            <img
+                                src={coverPreview}
+                                alt="Cover"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                                <ImageIcon className="w-7 h-7 mb-1" />
+                                <span className="text-[13px]">
+                                    Tap to upload cover
+                                </span>
+                            </div>
+                        )}
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
+                            onChange={handleCoverImageChange}
+                            className="absolute inset-0 opacity-0"
                         />
-                        <div className="h-full flex flex-col items-center justify-center gap-2">
-                            <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                                <ImageIcon className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <div className="text-center">
-                                <p className="text-sm font-semibold text-gray-900">Add Cover Image</p>
-                                <p className="text-xs text-gray-500">Tap to upload</p>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+
+                {/* Profile Image */}
+                <div>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-2">
+                        Profile Image (Optional)
                     </label>
-                )}
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-20 h-20 bg-gray-100 rounded-full overflow-hidden border-2 border-dashed border-gray-300">
+                            {profilePreview ? (
+                                <img
+                                    src={profilePreview}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-gray-400">
+                                    <Upload className="w-5 h-5" />
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleProfileImageChange}
+                                className="absolute inset-0 opacity-0"
+                            />
+                        </div>
+                        <p className="text-[13px] text-gray-500 leading-tight">
+                            Upload a profile picture for your group
+                        </p>
+                    </div>
+                </div>
 
                 {/* Group Name */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">
+                        Group Name *
+                    </label>
                     <input
                         type="text"
-                        placeholder="Group name"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                        className="w-full text-lg font-bold text-gray-900 placeholder:text-gray-400 outline-none"
-                        autoFocus
+                        required
+                        maxLength={100}
+                        placeholder="e.g. Baneshwor Community"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-black"
+                        value={formData.name}
+                        onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                        }
                     />
                 </div>
 
                 {/* Description */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div>
+                    <label className="block text-[15px] font-bold text-gray-700 mb-1.5">
+                        Description (Optional)
+                    </label>
                     <textarea
-                        placeholder="Describe your group..."
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
                         rows={4}
-                        className="w-full text-sm text-gray-800 placeholder:text-gray-400 outline-none resize-none"
+                        maxLength={500}
+                        placeholder="Describe what your group is about..."
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] resize-none focus:outline-none focus:ring-2 focus:ring-black"
+                        value={formData.description}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                description: e.target.value,
+                            })
+                        }
                     />
+                    <div className="text-[13px] text-gray-400 mt-1 text-right">
+                        {formData.description.length}/500
+                    </div>
                 </div>
-
-                {/* Category */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">
-                        Category
-                    </label>
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="w-full text-sm text-gray-900 outline-none bg-transparent"
-                    >
-                        <option value="">Select a category</option>
-                        {categories.map((cat) => (
-                            <option key={cat} value={cat}>
-                                {cat}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Privacy */}
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide px-4 pt-4 pb-2 block">
-                        Privacy
-                    </label>
-                    <button
-                        onClick={() => setPrivacy("public")}
-                        className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${privacy === "public" ? "bg-blue-50" : "hover:bg-gray-50"
-                            }`}
-                    >
-                        <div
-                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${privacy === "public" ? "border-blue-600" : "border-gray-300"
-                                }`}
-                        >
-                            {privacy === "public" && (
-                                <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                            )}
-                        </div>
-                        <Globe className="w-5 h-5 text-gray-600" strokeWidth={2} />
-                        <div className="flex-1 text-left">
-                            <p className="text-sm font-semibold text-gray-900">Public</p>
-                            <p className="text-xs text-gray-500">Anyone can see and join</p>
-                        </div>
-                    </button>
-                    <div className="border-t border-gray-100" />
-                    <button
-                        onClick={() => setPrivacy("private")}
-                        className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${privacy === "private" ? "bg-blue-50" : "hover:bg-gray-50"
-                            }`}
-                    >
-                        <div
-                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${privacy === "private" ? "border-blue-600" : "border-gray-300"
-                                }`}
-                        >
-                            {privacy === "private" && (
-                                <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                            )}
-                        </div>
-                        <Lock className="w-5 h-5 text-gray-600" strokeWidth={2} />
-                        <div className="flex-1 text-left">
-                            <p className="text-sm font-semibold text-gray-900">Private</p>
-                            <p className="text-xs text-gray-500">Only members can see content</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
     );
 }

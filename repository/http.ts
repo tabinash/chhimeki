@@ -54,7 +54,6 @@ http.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         // Get token from localStorage and add to headers
         const token = localStorage.getItem("accessToken");
-        console.log("Access token:", token);
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
         }
@@ -72,6 +71,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
     (response: AxiosResponse) => {
         // Return the data directly for cleaner usage in repositories
+        console.log("respone return from http", response)
         return response;
     },
     async (error: AxiosError<ApiErrorResponse>) => {
@@ -112,6 +112,7 @@ http.interceptors.response.use(
 
                 case 401:
                     // Unauthorized - Authentication failed
+                    console.log("Unauthorized", data);
                     apiError.message = data?.message || "Authentication required. Please login.";
                     apiError.errorCode = data?.errorCode || "UNAUTHORIZED";
                     handleUnauthorized();
